@@ -26,7 +26,17 @@ router.get('/orders', validateRequest(schemas.getOrdersSchema), customerControll
 router.get('/vouchers', validateRequest(schemas.getVouchersSchema), customerController.getVouchers);
 
 // Favourites
-router.get('/favourites', customerController.getFavourites); // No params to validate for GET all
+router.get('/favourites', customerController.getFavourites); 
 router.post('/favourites/:productId', validateRequest(schemas.toggleFavouriteSchema), customerController.toggleFavourite);
+
+// Addresses
+router.get('/addresses', customerController.getAddresses);
+router.post('/addresses', validateRequest(schemas.addAddressSchema), customerController.addAddress);
+router.put('/addresses/:id', validateRequest(schemas.updateAddressSchema), customerController.updateAddress);
+router.delete('/addresses/:id', customerController.deleteAddress);
+
+// Security
+router.patch('/security', validateRequest(schemas.updateSecuritySchema), customerController.updateSecuritySettings);
+router.delete('/account', customerController.deleteAccount);
 
 export default router;

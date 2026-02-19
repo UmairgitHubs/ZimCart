@@ -172,8 +172,11 @@ export default function ProfileScreen() {
                         onPress={() => {
                              if (item.id === 'edit-profile') navigation.navigate('EditProfile');
                              else if (item.id === 'orders') navigation.navigate('Orders');
+                             else if (item.id === 'saved-address') navigation.navigate('SavedAddresses');
+                             else if (item.id === 'payment-methods') navigation.navigate('PaymentMethods');
                              else if (item.id === 'notifications') navigation.navigate('Notifications');
-                             // Map other routes
+                             else if (item.id === 'privacy-security') navigation.navigate('PrivacySecurity');
+                             else if (item.id === 'help-support') navigation.navigate('HelpSupport');
                         }}
                       >
                           <View 

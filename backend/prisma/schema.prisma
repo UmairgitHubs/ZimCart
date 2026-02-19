@@ -19,6 +19,10 @@ model User {
   updatedAt DateTime @updatedAt
 
   isPremium Boolean @default(false)
+  
+  // Security & Privacy Settings
+  isTwoFactorEnabled Boolean @default(false)
+  dataSharingConsent Boolean @default(true) // Default to opt-in or opt-out depending on policy
 
   addresses      Address[]
   orders         Order[]
@@ -26,6 +30,7 @@ model User {
   paymentMethods PaymentMethod[]
   notifications  NotificationPreference?
   vouchers       UserVoucher[]
+  supportTickets SupportTicket[]
   refreshToken           String?
   resetPasswordToken     String?
   resetPasswordExpires   DateTime?
@@ -40,8 +45,10 @@ enum Role {
 
 model Address {
   id        String  @id @default(uuid())
-  label     String  @default("Home")
-  detail    String
+  label     String  @default("Home") // Acts as 'type' e.g. Home, Work, Other
+  address   String  // Full formatted address string
+  detail    String? // House number, floor, etc.
+  instructions String? // Delivery instructions
   latitude  Float?
   longitude Float?
   isDefault Boolean @default(false)
@@ -78,6 +85,8 @@ model NotificationPreference {
   userId            String  @unique
   user              User    @relation(fields: [userId], references: [id])
 }
+
+// ... Store, Category, Product, Order ... (unchanged)
 
 model Store { // Mart
   id           String    @id @default(uuid())
@@ -209,4 +218,34 @@ model Favourite {
   product   Product  @relation(fields: [productId], references: [id])
 
   @@unique([userId, productId])
+}
+
+// Help & Support Models
+
+model FAQ {
+  id        String   @id @default(uuid())
+  question  String
+  answer    String
+  category  String?  // e.g. "Orders", "Payments", "Account"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SupportTicket {
+  id        String        @id @default(uuid())
+  subject   String
+  message   String
+  status    TicketStatus  @default(OPEN)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
 }

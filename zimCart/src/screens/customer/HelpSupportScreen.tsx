@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Linking, LayoutAnimation, Platform, UIManager } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Linking, LayoutAnimation, Platform, UIManager, RefreshControl, ActivityIndicator, Modal, KeyboardAvoidingView, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
@@ -11,33 +11,23 @@ if (Platform.OS === 'android') {
   }
 }
 
-const FAQ_ITEMS = [
-  { 
-    id: '1', 
-    question: 'How do I track my order?', 
-    answer: 'You can track your order by going to the "Orders" tab in the bottom navigation bar. Tap on any active order to see its real-time status.' 
-  },
-  { 
-    id: '2', 
-    question: 'What is your refund policy?', 
-    answer: 'We offer a full refund if the items are damaged or incorrect. Please report the issue within 24 hours of delivery through the "Report Issue" button on the order details page.' 
-  },
-  { 
-    id: '3', 
-    question: 'How can I change my delivery address?', 
-    answer: 'You can manage your addresses in Profile > Saved Addresses. You can add, edit, or delete addresses there. During checkout, you can also select or add a new address.' 
-  },
-  { 
-    id: '4', 
-    question: 'Do you offer contactless delivery?', 
-    answer: 'Yes! You can select "Leave at door" in the delivery instructions during checkout for a contactless experience.' 
-  },
-];
+import { useFAQs, useSupportTicket } from '@/hooks/useHelp';
+
+import { parseApiError } from '@/utils/errorUtils';
 
 export default function HelpSupportScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  
+  // Data
+  const { data: faqs, isLoading, refetch } = useFAQs();
+  const { createTicket, isCreating } = useSupportTicket();
+
+  // Ticket Modal State
+  const [ticketModalVisible, setTicketModalVisible] = useState(false);
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
 
   const toggleExpand = (id: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -48,9 +38,27 @@ export default function HelpSupportScreen() {
       if (type === 'call') {
           Linking.openURL('tel:+1234567890');
       } else if (type === 'email') {
-          Linking.openURL('mailto:support@zimcart.com');
+          setSubject('Support Request');
+          setTicketModalVisible(true);
       } else {
           navigation.navigate('ChatSupport' as never);
+      }
+  };
+
+  const handleSubmitTicket = async () => {
+      if (!subject.trim() || !message.trim()) {
+          Alert.alert("Error", "Please fill in all fields");
+          return;
+      }
+
+      try {
+          await createTicket({ subject, message });
+          Alert.alert("Success", "Your support ticket has been submitted. We'll get back to you soon.");
+          setTicketModalVisible(false);
+          setSubject('');
+          setMessage('');
+      } catch (error) {
+          Alert.alert("Error", parseApiError(error));
       }
   };
 
@@ -67,7 +75,13 @@ export default function HelpSupportScreen() {
           <View className="w-10" />
       </View>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        className="flex-1" 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+        }
+      >
           
           {/* Quick Actions */}
           <View className="bg-white p-6 mb-4">
@@ -92,7 +106,7 @@ export default function HelpSupportScreen() {
                       <View className="w-10 h-10 bg-white rounded-full items-center justify-center mb-2 shadow-sm">
                           <MaterialCommunityIcons name="email-outline" size={20} color="#3B82F6" />
                       </View>
-                      <Text className="font-bold text-blue-800 text-sm">Email Us</Text>
+                      <Text className="font-bold text-blue-800 text-sm">Submit Ticket</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity 
@@ -123,36 +137,106 @@ export default function HelpSupportScreen() {
           <View className="px-4 pb-10">
               <Text className="text-gray-900 font-bold text-lg mb-4 ml-1">Frequently Asked Questions</Text>
               
-              {FAQ_ITEMS.map((item) => (
-                  <TouchableOpacity 
-                    key={item.id} 
-                    onPress={() => toggleExpand(item.id)}
-                    className="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100"
-                    activeOpacity={0.9}
-                  >
-                      <View className="flex-row justify-between items-center">
-                          <Text className="flex-1 text-base font-bold text-gray-800 mr-4">{item.question}</Text>
-                          <MaterialCommunityIcons 
-                              name={expandedId === item.id ? "chevron-up" : "chevron-down"} 
-                              size={20} 
-                              color="#9CA3AF" 
-                          />
-                      </View>
-                      {expandedId === item.id && (
-                          <View className="mt-3 pt-3 border-t border-gray-50">
-                              <Text className="text-gray-600 leading-5 text-sm">{item.answer}</Text>
-                          </View>
-                      )}
-                  </TouchableOpacity>
-              ))}
+              {isLoading ? (
+                  <ActivityIndicator size="small" color="#2e7d32" />
+              ) : (
+                  <>
+                    {faqs?.map((item: any) => (
+                        <TouchableOpacity 
+                            key={item.id} 
+                            onPress={() => toggleExpand(item.id)}
+                            className="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100"
+                            activeOpacity={0.9}
+                        >
+                            <View className="flex-row justify-between items-center">
+                                <Text className="flex-1 text-base font-bold text-gray-800 mr-4">{item.question}</Text>
+                                <MaterialCommunityIcons 
+                                    name={expandedId === item.id ? "chevron-up" : "chevron-down"} 
+                                    size={20} 
+                                    color="#9CA3AF" 
+                                />
+                            </View>
+                            {expandedId === item.id && (
+                                <View className="mt-3 pt-3 border-t border-gray-50">
+                                    <Text className="text-gray-600 leading-5 text-sm">{item.answer}</Text>
+                                </View>
+                            )}
+                        </TouchableOpacity>
+                    ))}
+                    {!faqs?.length && (
+                        <Text className="text-gray-500 text-center py-4">No FAQs available.</Text>
+                    )}
+                  </>
+              )}
 
-              <TouchableOpacity className="flex-row items-center justify-center mt-4">
-                  <Text className="text-primary font-bold">View All FAQs</Text>
-                  <MaterialCommunityIcons name="arrow-right" size={16} color="#2e7d32" className="ml-1" />
+              <TouchableOpacity className="flex-row items-center justify-center mt-4" onPress={() => refetch()}>
+                  <Text className="text-primary font-bold">Refresh FAQs</Text>
+                  <MaterialCommunityIcons name="refresh" size={16} color="#2e7d32" className="ml-1" />
               </TouchableOpacity>
           </View>
 
       </ScrollView>
+
+      {/* Support Ticket Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={ticketModalVisible}
+        onRequestClose={() => setTicketModalVisible(false)}
+      >
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            className="flex-1 justify-end"
+        >
+            <TouchableOpacity 
+                style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' }} 
+                activeOpacity={1} 
+                onPress={() => setTicketModalVisible(false)}
+            />
+            <View className="bg-white rounded-t-3xl p-6 shadow-2xl">
+                <View className="flex-row justify-between items-center mb-6">
+                    <Text className="text-xl font-bold text-gray-900">Submit Support Ticket</Text>
+                    <TouchableOpacity onPress={() => setTicketModalVisible(false)} className="p-1 bg-gray-100 rounded-full">
+                        <MaterialCommunityIcons name="close" size={20} color="#6B7280" />
+                    </TouchableOpacity>
+                </View>
+
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <Text className="text-xs font-bold text-gray-500 uppercase mb-2">Subject</Text>
+                    <View className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-4">
+                        <TextInput
+                            value={subject}
+                            onChangeText={setSubject}
+                            placeholder="What do you need help with?"
+                            className="text-gray-900 font-medium text-base"
+                        />
+                    </View>
+
+                    <Text className="text-xs font-bold text-gray-500 uppercase mb-2">Message</Text>
+                    <View className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-6">
+                        <TextInput
+                            value={message}
+                            onChangeText={setMessage}
+                            placeholder="Describe your issue in detail..."
+                            multiline
+                            numberOfLines={5}
+                            className="text-gray-900 font-medium text-base h-32 align-top"
+                        />
+                    </View>
+
+                    <TouchableOpacity 
+                        onPress={handleSubmitTicket}
+                        disabled={isCreating}
+                        className={`bg-primary py-4 rounded-xl shadow-lg shadow-green-500/30 mb-8 flex-row justify-center items-center ${isCreating ? 'opacity-70' : ''}`}
+                    >
+                        {isCreating && <ActivityIndicator size="small" color="white" className="mr-2" />}
+                        <Text className="text-white font-bold text-center text-lg">Submit Ticket</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
     </View>
   );
 }

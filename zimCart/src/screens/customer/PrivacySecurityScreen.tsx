@@ -1,17 +1,66 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Switch, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
+import { useProfile, useSecurity } from '@/hooks/useCustomer';
+import { parseApiError } from '@/utils/errorUtils';
+import { useDispatch } from 'react-redux';
+import { logout } from '@/store/slices/auth.slice';
 
 export default function PrivacySecurityScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
-  // Security States
+  // Data
+  const { data: profile } = useProfile();
+  const { updateSecurity, deleteAccount, isUpdating, isDeleting } = useSecurity();
+
+  // Local state to reflect immediate change while mutating
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [dataSharing, setDataSharing] = useState(true);
+
+  useEffect(() => {
+      if (profile) {
+          setTwoFactorEnabled(profile.isTwoFactorEnabled || false);
+          setDataSharing(profile.dataSharingConsent !== false); // default true
+      }
+  }, [profile]);
+
+  const handleToggleSecurity = async (field: 'isTwoFactorEnabled' | 'dataSharingConsent', value: boolean) => {
+      if (field === 'isTwoFactorEnabled') setTwoFactorEnabled(value);
+      if (field === 'dataSharingConsent') setDataSharing(value);
+
+      try {
+          await updateSecurity({ [field]: value });
+      } catch (error) {
+          // Revert on error
+          if (field === 'isTwoFactorEnabled') setTwoFactorEnabled(!value);
+          if (field === 'dataSharingConsent') setDataSharing(!value);
+          Alert.alert("Error", parseApiError(error));
+      }
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+        "Delete Account",
+        "Are you sure you want to delete your account? This action is irreversible and all your data will be lost.",
+        [
+            { text: "Cancel", style: "cancel" },
+            { text: "Delete", style: "destructive", onPress: async () => {
+                try {
+                    await deleteAccount();
+                    dispatch(logout());
+                    Alert.alert("Account Deleted", "Your account has been successfully deleted.");
+                } catch (error) {
+                    Alert.alert("Error", parseApiError(error));
+                }
+            }}
+        ]
+    );
+  };
 
   const renderSectionHeader = (title: string) => (
       <Text className="px-5 mt-6 mb-3 text-xs font-bold text-gray-400 uppercase tracking-widest">{title}</Text>
@@ -52,20 +101,10 @@ export default function PrivacySecurityScreen() {
               ios_backgroundColor="#E5E7EB"
               onValueChange={onValueChange}
               value={value}
+              disabled={isUpdating}
           />
       </View>
   );
-
-  const handleDeleteAccount = () => {
-    Alert.alert(
-        "Delete Account",
-        "Are you sure you want to delete your account? This action is irreversible and all your data will be lost.",
-        [
-            { text: "Cancel", style: "cancel" },
-            { text: "Delete", style: "destructive", onPress: () => console.log("Account deleted") }
-        ]
-    );
-  };
 
   return (
     <View className="flex-1 bg-gray-50">
@@ -89,14 +128,14 @@ export default function PrivacySecurityScreen() {
           {renderSectionHeader('Login & Security')}
           <View className="bg-white border-y border-gray-100">
               {renderActionItem("Change Password", "lock-reset", "#3B82F6", () => navigation.navigate('ChangePassword' as never), "Update your password regularly")}
-              {renderSwitchItem("Two-Factor Auth", "shield-check-outline", "#F59E0B", twoFactorEnabled, setTwoFactorEnabled, "Add an extra layer of security")}
+              {renderSwitchItem("Two-Factor Auth", "shield-check-outline", "#F59E0B", twoFactorEnabled, (val) => handleToggleSecurity('isTwoFactorEnabled', val), "Add an extra layer of security")}
           </View>
 
           {/* Data Privacy */}
           {renderSectionHeader('Data & Privacy')}
           <View className="bg-white border-y border-gray-100">
                {renderActionItem("Manage Data", "database-cog-outline", "#8B5CF6", () => navigation.navigate('ManageData' as never), "Download or view your data")}
-               {renderSwitchItem("Share Analytics", "chart-bar", "#6366F1", dataSharing, setDataSharing, "Help us improve ZimCart")}
+               {renderSwitchItem("Share Analytics", "chart-bar", "#6366F1", dataSharing, (val) => handleToggleSecurity('dataSharingConsent', val), "Help us improve ZimCart")}
                {renderActionItem("Terms & Policies", "file-document-outline", "#6B7280", () => navigation.navigate('PrivacyPolicy' as never))}
           </View>
 
@@ -112,9 +151,10 @@ export default function PrivacySecurityScreen() {
                <TouchableOpacity 
                   className="flex-row items-center bg-white px-5 py-4 border-b border-gray-50 active:bg-red-50"
                   onPress={handleDeleteAccount}
+                  disabled={isDeleting}
                 >
                   <View className="w-9 h-9 rounded-lg items-center justify-center mr-3 bg-red-50">
-                      <MaterialCommunityIcons name="delete-forever-outline" size={20} color="#EF4444" />
+                      {isDeleting ? <ActivityIndicator size="small" color="#EF4444" /> : <MaterialCommunityIcons name="delete-forever-outline" size={20} color="#EF4444" />}
                   </View>
                   <View className="flex-1">
                       <Text className="text-base font-bold text-red-500">Delete Account</Text>

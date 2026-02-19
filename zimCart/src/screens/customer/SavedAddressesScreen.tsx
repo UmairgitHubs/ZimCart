@@ -1,37 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Modal, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Modal, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, RefreshControl } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
-
-interface Address {
-  id: string;
-  type: 'Home' | 'Work' | 'Other';
-  label: string; 
-  address: string; 
-  details?: string;
-  instructions?: string;
-  isDefault?: boolean;
-}
-
-const MOCK_ADDRESSES: Address[] = [
-  { 
-      id: '1', 
-      type: 'Home', 
-      label: 'Home', 
-      address: 'Sector F-10/4, Islamabad', 
-      details: 'House 107, Street 65',
-      instructions: 'Leave at main gate',
-      isDefault: true 
-  },
-];
+import { useAddresses } from '@/hooks/useCustomer';
+import { parseApiError } from '@/utils/errorUtils';
 
 export default function SavedAddressesScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const [addresses, setAddresses] = useState<Address[]>(MOCK_ADDRESSES);
+  
+  // Data Fetching
+  const { data: addresses, isLoading, error, refetch, add, update, remove, isMutating } = useAddresses();
   
   // Modal State
   const [modalVisible, setModalVisible] = useState(false);
@@ -45,12 +27,12 @@ export default function SavedAddressesScreen() {
   const [formInstructions, setFormInstructions] = useState('');
   const [formIsDefault, setFormIsDefault] = useState(false);
 
-  const getIcon = (type: string) => {
-      switch(type) {
-          case 'Home': return 'home-outline';
-          case 'Work': return 'briefcase-outline';
-          default: return 'map-marker-outline';
-      }
+  const getIcon = (label: string) => {
+      // Logic based on label commonly used
+      const type = label || 'Home';
+      if (type.includes('Home')) return 'home-outline';
+      if (type.includes('Work')) return 'briefcase-outline';
+      return 'map-marker-outline';
   };
 
   const resetForm = () => {
@@ -67,11 +49,11 @@ export default function SavedAddressesScreen() {
       setModalVisible(true);
   };
 
-  const handleEdit = (item: Address) => {
+  const handleEdit = (item: any) => {
       setEditingId(item.id);
-      setFormType(item.type);
+      setFormType(item.label || 'Home');
       setFormAddress(item.address);
-      setFormDetails(item.details || '');
+      setFormDetails(item.detail || '');
       setFormInstructions(item.instructions || '');
       setFormIsDefault(item.isDefault || false);
       setModalVisible(true);
@@ -83,51 +65,41 @@ export default function SavedAddressesScreen() {
           "Are you sure you want to delete this address?",
           [
               { text: "Cancel", style: "cancel" },
-              { text: "Delete", style: "destructive", onPress: () => {
-                  setAddresses(prev => prev.filter(a => a.id !== id));
+              { text: "Delete", style: "destructive", onPress: async () => {
+                  try {
+                      await remove(id);
+                  } catch (err) {
+                      Alert.alert("Error", parseApiError(err));
+                  }
               }}
           ]
       );
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
       if (!formAddress.trim()) {
           Alert.alert("Error", "Please enter an address");
           return;
       }
 
-      if (editingId) {
-          // Update existing
-          setAddresses(prev => prev.map(item => 
-              item.id === editingId ? {
-                  ...item,
-                  type: formType,
-                  label: formType, // Simplify label logic for now
-                  address: formAddress,
-                  details: formDetails,
-                  instructions: formInstructions,
-                  isDefault: formIsDefault
-              } : (formIsDefault ? { ...item, isDefault: false } : item)
-          ));
-      } else {
-          // Add new
-          const newAddress: Address = {
-              id: Date.now().toString(),
-              type: formType,
+      try {
+          const payload = {
               label: formType,
               address: formAddress,
-              details: formDetails,
+              detail: formDetails,
               instructions: formInstructions,
               isDefault: formIsDefault
           };
-          
-          if (formIsDefault) {
-              setAddresses(prev => prev.map(a => ({ ...a, isDefault: false } as Address)).concat(newAddress));
+
+          if (editingId) {
+              await update({ id: editingId, data: payload });
           } else {
-              setAddresses(prev => [...prev, newAddress]);
+              await add(payload);
           }
+          setModalVisible(false);
+      } catch (err) {
+          Alert.alert("Error", parseApiError(err));
       }
-      setModalVisible(false);
   };
 
   const handleUseCurrentLocation = async () => {
@@ -147,7 +119,7 @@ export default function SavedAddressesScreen() {
               const addr = address[0];
               const formattedAddress = `${addr.street ? addr.street + ', ' : ''}${addr.district || addr.city || ''}, ${addr.region || ''}`;
               setFormAddress(formattedAddress);
-              setFormDetails(`${addr.name || ''}`); // Sometimes name has house number
+              setFormDetails(`${addr.name || ''}`); 
               setModalVisible(true);
           }
       } catch (error) {
@@ -175,6 +147,9 @@ export default function SavedAddressesScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
         className="flex-1"
+        refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+        }
       >
           
           {/* Current Location Action */}
@@ -202,62 +177,73 @@ export default function SavedAddressesScreen() {
           <Text className="px-5 py-4 text-gray-500 font-bold text-xs uppercase tracking-wider">Saved Locations</Text>
 
           {/* Address List */}
-          <View className="px-4">
-              {addresses.map((item) => (
-                  <View 
-                    key={item.id} 
-                    className={`bg-white rounded-2xl p-4 mb-4 border ${item.isDefault ? 'border-primary bg-green-50/20' : 'border-gray-100'} shadow-sm`}
-                  >
-                      <View className="flex-row items-start">
-                          <View className={`w-10 h-10 rounded-full items-center justify-center mr-3 mt-1 ${item.isDefault ? 'bg-green-100' : 'bg-gray-100'}`}>
-                              <MaterialCommunityIcons 
-                                  name={getIcon(item.type) as any} 
-                                  size={20} 
-                                  color={item.isDefault ? '#2e7d32' : '#4B5563'} 
-                              />
-                          </View>
-                          
-                          <View className="flex-1">
-                              <View className="flex-row items-center justify-between mb-1">
-                                  <Text className="text-base font-bold text-gray-900">{item.label}</Text>
-                                  {item.isDefault && (
-                                     <View className="bg-green-100 px-2 py-0.5 rounded text-xs">
-                                         <Text className="text-[10px] font-bold text-primary uppercase">Default</Text>
-                                     </View>
-                                  )}
-                              </View>
-                              
-                              <Text className="text-gray-800 font-medium text-sm mb-0.5">{item.details}</Text>
-                              <Text className="text-gray-500 text-sm leading-5 mb-2">{item.address}</Text>
-                              
-                              {item.instructions && (
-                                  <View className="flex-row items-center bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-100 mt-1 self-start">
-                                      <MaterialCommunityIcons name="message-text-outline" size={14} color="#6B7280" />
-                                      <Text className="text-gray-600 text-xs ml-1.5 italic">"{item.instructions}"</Text>
-                                  </View>
-                              )}
-                          </View>
-                      </View>
+          {isLoading && !addresses ? (
+              <ActivityIndicator size="large" color="#2e7d32" className="mt-10" />
+          ) : (
+            <View className="px-4">
+                {addresses?.map((item: any) => (
+                    <View 
+                        key={item.id} 
+                        className={`bg-white rounded-2xl p-4 mb-4 border ${item.isDefault ? 'border-primary bg-green-50/20' : 'border-gray-100'} shadow-sm`}
+                    >
+                        <View className="flex-row items-start">
+                            <View className={`w-10 h-10 rounded-full items-center justify-center mr-3 mt-1 ${item.isDefault ? 'bg-green-100' : 'bg-gray-100'}`}>
+                                <MaterialCommunityIcons 
+                                    name={getIcon(item.label) as any} 
+                                    size={20} 
+                                    color={item.isDefault ? '#2e7d32' : '#4B5563'} 
+                                />
+                            </View>
+                            
+                            <View className="flex-1">
+                                <View className="flex-row items-center justify-between mb-1">
+                                    <Text className="text-base font-bold text-gray-900">{item.label}</Text>
+                                    {item.isDefault && (
+                                        <View className="bg-green-100 px-2 py-0.5 rounded text-xs">
+                                            <Text className="text-[10px] font-bold text-primary uppercase">Default</Text>
+                                        </View>
+                                    )}
+                                </View>
+                                
+                                <Text className="text-gray-800 font-medium text-sm mb-0.5">{item.detail}</Text>
+                                <Text className="text-gray-500 text-sm leading-5 mb-2">{item.address}</Text>
+                                
+                                {item.instructions && (
+                                    <View className="flex-row items-center bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-100 mt-1 self-start">
+                                        <MaterialCommunityIcons name="message-text-outline" size={14} color="#6B7280" />
+                                        <Text className="text-gray-600 text-xs ml-1.5 italic">"{item.instructions}"</Text>
+                                    </View>
+                                )}
+                            </View>
+                        </View>
 
-                      {/* Action Buttons */}
-                      <View className="flex-row justify-end items-center mt-4 pt-3 border-t border-gray-50 space-x-3">
-                          <TouchableOpacity className="p-2" onPress={() => handleEdit(item)}>
-                              <MaterialCommunityIcons name="pencil-outline" size={20} color="#6B7280" />
-                          </TouchableOpacity>
-                          <TouchableOpacity className="p-2" onPress={() => handleDelete(item.id)}>
-                              <MaterialCommunityIcons name="trash-can-outline" size={20} color="#EF4444" />
-                          </TouchableOpacity>
-                      </View>
-                  </View>
-              ))}
-          </View>
+                        {/* Action Buttons */}
+                        <View className="flex-row justify-end items-center mt-4 pt-3 border-t border-gray-50 space-x-3">
+                            <TouchableOpacity className="p-2" onPress={() => handleEdit(item)}>
+                                <MaterialCommunityIcons name="pencil-outline" size={20} color="#6B7280" />
+                            </TouchableOpacity>
+                            <TouchableOpacity className="p-2" onPress={() => handleDelete(item.id)}>
+                                <MaterialCommunityIcons name="trash-can-outline" size={20} color="#EF4444" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ))}
+                
+                {addresses?.length === 0 && (
+                     <View className="items-center justify-center py-10">
+                         <MaterialCommunityIcons name="map-marker-off-outline" size={48} color="#D1D5DB" />
+                         <Text className="text-gray-400 mt-2 font-medium">No saved addresses</Text>
+                     </View>
+                )}
+            </View>
+          )}
 
           {/* Add New Button */}
           <TouchableOpacity 
             className="mx-4 mt-2 bg-white border border-dashed border-primary/50 rounded-2xl p-4 flex-row items-center justify-center active:bg-gray-50 mb-10 shadow-sm"
             onPress={handleAddNew}
           >
-              <MaterialCommunityIcons name="plus" size={24} color="#2e7d32" />
+              {isMutating ? <ActivityIndicator size="small" color="#2e7d32" /> : <MaterialCommunityIcons name="plus" size={24} color="#2e7d32" />}
               <Text className="text-primary font-bold ml-2">Add New Address</Text>
           </TouchableOpacity>
 

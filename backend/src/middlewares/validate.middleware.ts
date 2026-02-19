@@ -14,11 +14,19 @@ export const validateRequest = (schema: ZodSchema) => {
       return next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const errorMessages = (error as any).errors.map((err: any) => ({
-          field: err.path.join('.'),
+        // ZodError usually has .errors (or .issues in strictly newer/older versions compatibility)
+        // We safely check for existence before mapping to prevent crashes
+        const zodErrors = (error as any).errors || (error as any).issues || [];
+        
+        if (!Array.isArray(zodErrors)) {
+            return next(new ApiError(400, "Validation Error"));
+        }
+
+        const errorMessages = zodErrors.map((err: any) => ({
+          field: err.path ? err.path.join('.') : 'unknown',
           message: err.message,
         }));
-        // We throw a 400 Bad Request
+        
         const message = errorMessages.map((e: any) => `${e.field}: ${e.message}`).join(', ');
         return next(new ApiError(400, `Validation Error: ${message}`));
       }

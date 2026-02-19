@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Image, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import { loginSchema, LoginFormData } from '@/schemas/auth.schema';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { parseApiError } from '@/utils/errorUtils';
 
 // Simplified type for navigation prop
 type AuthStackParamList = {
@@ -23,6 +24,7 @@ export default function CustomerLoginScreen() {
     const navigation = useNavigation<StackNavigationProp<AuthStackParamList>>();
     const { login, isLoggingIn } = useAuth();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [apiError, setApiError] = useState<string | null>(null);
 
     // RHF Setup
     const { control, handleSubmit, reset, formState: { errors } } = useForm<LoginFormData>({
@@ -34,9 +36,9 @@ export default function CustomerLoginScreen() {
     });
 
     const onSubmit = async (data: LoginFormData) => {
+        setApiError(null); // Clear previous errors
         try {
             await login(data);
-            Alert.alert('Success', 'Logged in successfully!');
             reset(); // Clear form fields
             
             // Navigate to Main Application (Profile/Home)
@@ -47,8 +49,8 @@ export default function CustomerLoginScreen() {
             });
 
         } catch (error) {
-            console.error(error);
-            Alert.alert('Login Failed', 'Invalid credentials or network error.');
+            const message = parseApiError(error);
+            setApiError(message);
         }
     };
 
@@ -57,13 +59,21 @@ export default function CustomerLoginScreen() {
             <StatusBar style="dark" />
             
             {/* Header / Logo Area */}
-            <View className="items-center mb-10">
+            <View className="items-center mb-8">
                 <View className="w-20 h-20 bg-green-100 rounded-full items-center justify-center mb-4">
                     <MaterialCommunityIcons name="shopping" size={40} color="#2e7d32" />
                 </View>
                 <Text className="text-3xl font-bold text-gray-900">Welcome Back</Text>
                 <Text className="text-gray-500 mt-2 text-center">Sign in to continue your shopping journey</Text>
             </View>
+
+            {/* API Error Display */}
+            {apiError && (
+                <View className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4 flex-row items-center">
+                    <MaterialCommunityIcons name="alert-circle-outline" size={20} color="#EF4444" />
+                    <Text className="text-red-600 ml-2 flex-1 text-sm font-medium">{apiError}</Text>
+                </View>
+            )}
 
             {/* Login Form */}
             <View className="space-y-4">

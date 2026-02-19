@@ -9,6 +9,7 @@ import { registerSchema, RegisterFormData } from '@/schemas/auth.schema';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { parseApiError } from '@/utils/errorUtils';
 
 // Simplified type for navigation prop
 type AuthStackParamList = {
@@ -23,6 +24,7 @@ export default function CustomerRegisterScreen() {
     // UI State for password visibility
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+    const [apiError, setApiError] = useState<string | null>(null);
 
     // RHF Setup
     const { control, handleSubmit, reset, formState: { errors } } = useForm<RegisterFormData>({
@@ -36,6 +38,7 @@ export default function CustomerRegisterScreen() {
     });
 
     const onSubmit = async (data: RegisterFormData) => {
+        setApiError(null);
         try {
             await registerUser(data);
             Alert.alert(
@@ -52,9 +55,8 @@ export default function CustomerRegisterScreen() {
                 ]
             );
         } catch (error: any) {
-            console.error(error);
-            const message = error.response?.data?.message || 'Registration failed. Please try again.';
-            Alert.alert('Registration Failed', message);
+            const message = parseApiError(error);
+            setApiError(message);
         }
     };
 
@@ -71,6 +73,14 @@ export default function CustomerRegisterScreen() {
                     <Text className="text-3xl font-bold text-gray-900">Create Account</Text>
                     <Text className="text-gray-500 mt-2 text-center">Join ZimCart for exclusive deals</Text>
                 </View>
+
+                {/* API Error Display */}
+                {apiError && (
+                    <View className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4 flex-row items-center">
+                        <MaterialCommunityIcons name="alert-circle-outline" size={20} color="#EF4444" />
+                        <Text className="text-red-600 ml-2 flex-1 text-sm font-medium">{apiError}</Text>
+                    </View>
+                )}
 
                 {/* Register Form */}
                 <View className="space-y-4">

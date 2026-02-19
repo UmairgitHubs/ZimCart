@@ -11,7 +11,8 @@ import "../global.css";
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider as ReduxProvider } from 'react-redux';
-import { store } from '@/store';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from '@/store';
 
 const queryClient = new QueryClient();
 
@@ -19,12 +20,14 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ReduxProvider store={store}>
-        <QueryClientProvider client={queryClient}>
-          <SafeAreaProvider>
-            <StatusBar style="dark" />
-            <AppNavigator />
-          </SafeAreaProvider>
-        </QueryClientProvider>
+        <PersistGate loading={null} persistor={persistor}>
+          <QueryClientProvider client={queryClient}>
+            <SafeAreaProvider>
+              <StatusBar style="dark" />
+              <AppNavigator />
+            </SafeAreaProvider>
+          </QueryClientProvider>
+        </PersistGate>
       </ReduxProvider>
     </GestureHandlerRootView>
   );

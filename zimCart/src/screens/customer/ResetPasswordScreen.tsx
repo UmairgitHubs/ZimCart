@@ -8,10 +8,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { resetPasswordSchema, ResetPasswordData } from '@/schemas/auth.schema';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
+import { parseApiError } from '@/utils/errorUtils';
 
 export default function ResetPasswordScreen() {
     const navigation = useNavigation();
     const { resetPassword, isResetPasswordLoading } = useAuth();
+    const [apiError, setApiError] = useState<string | null>(null);
     
     // RHF Setup
     const { control, handleSubmit, formState: { errors } } = useForm<ResetPasswordData>({
@@ -24,6 +26,7 @@ export default function ResetPasswordScreen() {
     });
 
     const onSubmit = async (data: ResetPasswordData) => {
+        setApiError(null);
         try {
             await resetPassword(data);
             Alert.alert(
@@ -32,9 +35,8 @@ export default function ResetPasswordScreen() {
                 [{ text: 'Go to Login', onPress: () => navigation.navigate('CustomerLogin' as never) }]
             );
         } catch (error: any) {
-            console.error(error);
-            const message = error.response?.data?.message || 'Failed to reset password. Please try again.';
-            Alert.alert('Error', message);
+            const message = parseApiError(error);
+            setApiError(message);
         }
     };
 
@@ -49,10 +51,18 @@ export default function ResetPasswordScreen() {
                 </TouchableOpacity>
 
                 {/* Header */}
-                <View className="mb-8">
+                <View className="mb-6">
                     <Text className="text-3xl font-bold text-gray-900 mb-2">Reset Password</Text>
                     <Text className="text-gray-500 text-lg">Enter the token from your email and set a new password.</Text>
                 </View>
+
+                {/* API Error Display */}
+                {apiError && (
+                    <View className="bg-red-50 border border-red-200 rounded-xl p-3 mb-6 flex-row items-center">
+                        <MaterialCommunityIcons name="alert-circle-outline" size={20} color="#EF4444" />
+                        <Text className="text-red-600 ml-2 flex-1 text-sm font-medium">{apiError}</Text>
+                    </View>
+                )}
 
                 {/* Form */}
                 <View className="space-y-6">

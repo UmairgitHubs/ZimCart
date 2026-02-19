@@ -103,6 +103,80 @@ export class CustomerController {
       new ApiResponse(200, result, message)
     );
   });
+
+  /*
+   * Addresses
+   */
+  getAddresses = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+    
+    const addresses = await customerService.getAddresses(userId);
+    
+    return res.status(200).json(
+      new ApiResponse(200, addresses, 'Addresses fetched successfully')
+    );
+  });
+
+  addAddress = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+    
+    const address = await customerService.addAddress(userId, req.body);
+    
+    return res.status(201).json(
+      new ApiResponse(201, address, 'Address added successfully')
+    );
+  });
+
+  updateAddress = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+    
+    const address = await customerService.updateAddress(userId, id as string, req.body);
+    
+    return res.status(200).json(
+      new ApiResponse(200, address, 'Address updated successfully')
+    );
+  });
+
+  deleteAddress = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+    
+    await customerService.deleteAddress(userId, id as string);
+    
+    return res.status(200).json(
+      new ApiResponse(200, {}, 'Address deleted successfully')
+    );
+  });
+
+  /*
+   * Security
+   */
+  updateSecuritySettings = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+    
+    const settings = await customerService.updateSecuritySettings(userId, req.body);
+    
+    return res.status(200).json(
+      new ApiResponse(200, settings, 'Security settings updated successfully')
+    );
+  });
+
+  deleteAccount = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+    
+    await customerService.deleteAccount(userId);
+    
+    return res.status(200).json(
+      new ApiResponse(200, {}, 'Account deleted successfully')
+    );
+  });
 }
 
 export const customerController = new CustomerController();

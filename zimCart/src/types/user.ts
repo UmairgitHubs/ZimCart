@@ -24,12 +24,16 @@ export interface User {
         vouchers: number;
         favourites: number;
     };
+    isTwoFactorEnabled?: boolean;
+    dataSharingConsent?: boolean;
 }
 
 export interface Address {
     id: string;
     label: string; // e.g. "Home", "Work"
+    address: string; // Formatted address
     detail: string;
+    instructions?: string;
     isDefault: boolean;
     coordinates?: {
         latitude: number;

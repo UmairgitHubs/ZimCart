@@ -34,5 +34,36 @@ export const customerApi = {
   toggleFavourite: async (productId: string): Promise<{ isFavourited: boolean }> => {
     const { data } = await api.post(`/customer/favourites/${productId}`);
     return data.data;
+  },
+
+  // Addresses
+  getAddresses: async (): Promise<any[]> => {
+    const { data } = await api.get('/customer/addresses');
+    return data.data;
+  },
+
+  addAddress: async (address: any): Promise<any> => {
+    const { data } = await api.post('/customer/addresses', address);
+    return data.data;
+  },
+
+  updateAddress: async (id: string, address: any): Promise<any> => {
+    const { data } = await api.put(`/customer/addresses/${id}`, address);
+    return data.data;
+  },
+
+  deleteAddress: async (id: string): Promise<any> => {
+    const { data } = await api.delete(`/customer/addresses/${id}`);
+    return data.data;
+  },
+
+  // Security
+  updateSecurity: async (settings: { isTwoFactorEnabled?: boolean, dataSharingConsent?: boolean }): Promise<any> => {
+    const { data } = await api.patch('/customer/security', settings);
+    return data.data;
+  },
+
+  deleteAccount: async (): Promise<void> => {
+    await api.delete('/customer/account');
   }
 };
