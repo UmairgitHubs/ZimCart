@@ -1,0 +1,19 @@
+2026-02-08 05:48:30:4830 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-08 05:48:30:4830 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-08 05:48:30:4830 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-08 05:49:07:497 [35mhttp[39m: [35mGET /health 304 - - 6.329 ms[39m
+2026-02-08 05:49:07:497 [35mhttp[39m: [35mGET /health 304 - - 1.284 ms[39m
+2026-02-08 05:49:07:497 [35mhttp[39m: [35mGET /health 304 - - 0.705 ms[39m
+2026-02-08 05:49:13:4913 [35mhttp[39m: [35mGET /health 304 - - 0.542 ms[39m
+2026-02-08 05:49:14:4914 [35mhttp[39m: [35mGET /health 304 - - 0.633 ms[39m
+2026-02-08 05:49:28:4928 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-08 05:49:28:4928 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-08 05:49:28:4928 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-08 05:49:57:4957 [35mhttp[39m: [35mGET /health 304 - - 5.377 ms[39m
+2026-02-08 05:50:01:501 [35mhttp[39m: [35mGET /health 304 - - 0.902 ms[39m
+2026-02-08 06:22:03:223 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-08 06:22:03:223 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-08 06:22:03:223 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 01:07:07:77 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 01:07:07:77 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 01:07:07:77 [32minfo[39m: [32mEnvironment: development[39m
