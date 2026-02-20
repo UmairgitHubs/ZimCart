@@ -3,6 +3,7 @@ import { customerService } from '../services/customer.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
+import { getDeviceInfo } from '../utils/device.utils.js';
 
 // const customerService is already exported as instance, imported above.
 // But wait, the file exported class CustomerService and const customerService.
@@ -169,12 +170,72 @@ export class CustomerController {
 
   deleteAccount = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user?.id;
+    const { password } = req.body;
     if (!userId) throw new ApiError(401, 'Unauthorized');
     
-    await customerService.deleteAccount(userId);
+    await customerService.deleteAccount(userId, password);
     
     return res.status(200).json(
       new ApiResponse(200, {}, 'Account deleted successfully')
+    );
+  });
+
+  requestDataExport = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+    
+    const result = await customerService.exportUserData(userId);
+    
+    return res.status(200).json(
+      new ApiResponse(200, result, 'Data export requested successfully')
+    );
+  });
+
+  clearHistory = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+    
+    const { type } = req.body;
+    const result = await customerService.clearHistory(userId, type || 'all');
+    
+    return res.status(200).json(
+      new ApiResponse(200, result, 'History cleared successfully')
+    );
+  });
+
+  getSessions = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+    
+    const { ipAddress } = getDeviceInfo(req);
+    const sessions = await customerService.getSessions(userId, ipAddress);
+
+    return res.status(200).json(
+        new ApiResponse(200, sessions, 'User sessions fetched successfully')
+    );
+  });
+
+  revokeSession = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+
+    await customerService.revokeSession(userId, id as string);
+
+    return res.status(200).json(
+        new ApiResponse(200, {}, 'Session revoked successfully')
+    );
+  });
+
+  revokeAllOtherSessions = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    const sessionId = req.user?.sessionId;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+
+    await customerService.revokeAllOtherSessions(userId, sessionId);
+
+    return res.status(200).json(
+        new ApiResponse(200, {}, 'All other sessions revoked successfully')
     );
   });
 }

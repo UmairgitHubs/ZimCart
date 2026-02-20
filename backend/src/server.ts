@@ -15,4 +15,4 @@ server.listen(PORT, () => {
     logger.info(`Server is running on port ${PORT}`);
     logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
-// Trigger restart for environment update
+// Trigger restart for environment update and prisma client refresh - forcing reload at 2026-02-20T05:48:00

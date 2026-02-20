@@ -2,22 +2,24 @@ import nodemailer from 'nodemailer';
 import { ApiError } from '../utils/ApiError.js';
 import { render } from '@react-email/render';
 import React from 'react';
-import ResetPasswordEmail from '../emails/templates/ResetPasswordEmail.js'; // Ensure extension matches or is handled by resolver
+import ResetPasswordEmail from '../emails/templates/ResetPasswordEmail.js';
+import TwoFactorEmail from '../emails/templates/TwoFactorEmail.js';
+import DataExportEmail from '../emails/templates/DataExportEmail.js';
 
 const createTransporter = () => {
     // Check if configuration exists
-    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
         console.warn("⚠️ SMTP Configuration missing. Emails will not be sent.");
         return null;
     }
 
     return nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT) || 587,
-        secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+        host: process.env.EMAIL_HOST,
+        port: Number(process.env.EMAIL_PORT) || 587,
+        secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
         auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD,
         },
     });
 };
@@ -33,7 +35,7 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
 
     try {
         const info = await transporter.sendMail({
-            from: `"${process.env.FROM_NAME || 'ZimCart Team'}" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
+            from: `"${process.env.FROM_NAME || 'ZimCart Team'}" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
             to,
             subject,
             html,
@@ -45,6 +47,34 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
         console.error("Error sending email: ", error);
         throw new ApiError(500, "Failed to send email. Please try again later.");
     }
+};
+
+export const sendTwoFactorEmail = async (to: string, otpCode: string) => {
+    const subject = "Your ZimCart Verification Code";
+
+    const Component = (TwoFactorEmail as any).default || TwoFactorEmail;
+
+    const emailHtml = await render(
+        React.createElement(Component, {
+            otpCode,
+        })
+    );
+
+    return sendEmail(to, subject, emailHtml);
+};
+
+export const sendDataExportEmail = async (to: string, userData: any) => {
+    const subject = "Your ZimCart Personal Data Export";
+
+    const Component = (DataExportEmail as any).default || DataExportEmail;
+
+    const emailHtml = await render(
+        React.createElement(Component, {
+            userData,
+        })
+    );
+
+    return sendEmail(to, subject, emailHtml);
 };
 
 export const sendPasswordResetEmail = async (to: string, resetToken: string) => {

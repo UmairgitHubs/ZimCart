@@ -35,8 +35,15 @@ router.post('/addresses', validateRequest(schemas.addAddressSchema), customerCon
 router.put('/addresses/:id', validateRequest(schemas.updateAddressSchema), customerController.updateAddress);
 router.delete('/addresses/:id', customerController.deleteAddress);
 
-// Security
+// Security & Data
 router.patch('/security', validateRequest(schemas.updateSecuritySchema), customerController.updateSecuritySettings);
-router.delete('/account', customerController.deleteAccount);
+router.post('/account/delete', validateRequest(schemas.deleteAccountSchema), customerController.deleteAccount);
+router.post('/data/export', customerController.requestDataExport);
+router.post('/data/clear-history', customerController.clearHistory);
+
+// Sessions
+router.get('/sessions', customerController.getSessions);
+router.delete('/sessions/:id', customerController.revokeSession);
+router.delete('/sessions', customerController.revokeAllOtherSessions);
 
 export default router;

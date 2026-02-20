@@ -187,3 +187,427 @@
 2026-02-20 02:43:56:4356 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 4.015 ms[39m
 2026-02-20 02:43:58:4358 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 3.693 ms[39m
 2026-02-20 02:43:59:4359 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 4.040 ms[39m
+2026-02-20 04:50:03:503 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 04:50:03:503 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 04:50:03:503 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 04:54:00:540 [31merror[39m: [31mToken expired[39m
+2026-02-20 04:54:00:540 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 938 - 106.973 ms[39m
+2026-02-20 04:54:02:542 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 554 - 1417.827 ms[39m
+2026-02-20 04:54:03:543 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 970 - 327.047 ms[39m
+2026-02-20 04:54:05:545 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 36.284 ms[39m
+2026-02-20 04:54:09:549 [35mhttp[39m: [35mGET /api/v1/customer/orders?status=active 304 - - 154.110 ms[39m
+2026-02-20 04:54:12:5412 [35mhttp[39m: [35mGET /api/v1/customer/addresses 304 - - 16.790 ms[39m
+2026-02-20 04:54:14:5414 [35mhttp[39m: [35mGET /api/v1/customer/addresses 304 - - 13.600 ms[39m
+2026-02-20 04:54:20:5420 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 26.865 ms[39m
+2026-02-20 04:54:41:5441 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 04:54:41:5441 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 307 - 299.092 ms[39m
+2026-02-20 04:54:46:5446 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 04:54:46:5446 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 307 - 148.058 ms[39m
+2026-02-20 04:55:11:5511 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 905 - 160.141 ms[39m
+2026-02-20 04:55:14:5514 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 970 - 165.038 ms[39m
+2026-02-20 04:55:18:5518 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 33.557 ms[39m
+2026-02-20 04:59:41:5941 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 04:59:41:5941 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 04:59:41:5941 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 04:59:56:5956 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 04:59:56:5956 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 04:59:56:5956 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:00:10:010 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:00:10:010 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:00:10:010 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:03:41:341 [35mhttp[39m: [35mPOST /api/v1/auth/change-password 200 126 - 1653.846 ms[39m
+2026-02-20 05:03:55:355 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 905 - 322.062 ms[39m
+2026-02-20 05:03:58:358 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 970 - 304.073 ms[39m
+2026-02-20 05:03:59:359 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 83.956 ms[39m
+2026-02-20 05:07:47:747 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:07:47:747 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:07:47:747 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:07:58:758 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:07:58:758 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:07:58:758 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:08:11:811 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:08:11:811 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:08:11:811 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:08:19:819 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:08:19:819 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:08:19:819 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:08:29:829 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:08:29:829 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:08:29:829 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:08:43:843 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:08:43:843 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:08:43:843 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:09:34:934 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 190 - 1359.553 ms[39m
+2026-02-20 05:09:35:935 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 191 - 56.496 ms[39m
+2026-02-20 05:09:46:946 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 970 - 286.593 ms[39m
+2026-02-20 05:09:59:959 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 190 - 19.413 ms[39m
+2026-02-20 05:09:59:959 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 969 - 48.980 ms[39m
+2026-02-20 05:10:00:100 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 191 - 17.586 ms[39m
+2026-02-20 05:10:00:100 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 970 - 34.673 ms[39m
+2026-02-20 05:10:07:107 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 190 - 23.383 ms[39m
+2026-02-20 05:10:07:107 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 969 - 61.618 ms[39m
+2026-02-20 05:10:08:108 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 191 - 15.080 ms[39m
+2026-02-20 05:10:08:108 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 970 - 28.410 ms[39m
+2026-02-20 05:10:09:109 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 190 - 19.156 ms[39m
+2026-02-20 05:10:09:109 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 969 - 35.165 ms[39m
+2026-02-20 05:10:25:1025 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 191 - 25.585 ms[39m
+2026-02-20 05:10:25:1025 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 970 - 15.648 ms[39m
+2026-02-20 05:10:27:1027 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 190 - 18.386 ms[39m
+2026-02-20 05:10:27:1027 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 969 - 37.577 ms[39m
+2026-02-20 05:10:29:1029 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 191 - 69.368 ms[39m
+2026-02-20 05:10:29:1029 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 970 - 27.212 ms[39m
+2026-02-20 05:10:30:1030 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 190 - 5.953 ms[39m
+2026-02-20 05:10:30:1030 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 969 - 32.542 ms[39m
+2026-02-20 05:10:30:1030 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 191 - 26.732 ms[39m
+2026-02-20 05:10:30:1030 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 970 - 35.479 ms[39m
+2026-02-20 05:10:52:1052 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:10:52:1052 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:10:52:1052 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:11:00:110 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 1898.891 ms[39m
+2026-02-20 05:11:24:1124 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:11:24:1124 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:11:24:1124 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:11:43:1143 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 190 - 1143.370 ms[39m
+2026-02-20 05:11:44:1144 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 969 - 323.757 ms[39m
+2026-02-20 05:11:46:1146 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 191 - 29.454 ms[39m
+2026-02-20 05:11:46:1146 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 970 - 54.968 ms[39m
+2026-02-20 05:13:34:1334 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:13:34:1334 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:13:34:1334 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:14:15:1415 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:14:15:1415 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:14:15:1415 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:15:59:1559 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 190 - 1264.321 ms[39m
+2026-02-20 05:16:00:160 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 969 - 297.926 ms[39m
+2026-02-20 05:16:04:164 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 191 - 25.066 ms[39m
+2026-02-20 05:16:04:164 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 970 - 61.965 ms[39m
+2026-02-20 05:16:11:1611 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 190 - 22.893 ms[39m
+2026-02-20 05:16:11:1611 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 969 - 38.547 ms[39m
+2026-02-20 05:16:24:1624 [31merror[39m: [31m[39m
+[31mInvalid `prisma.user.update()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\auth.service.ts:71:25[39m
+
+[31m  68 const otpCode = Math.floor(100000 + Math.random() * 900000).toString();[39m
+[31m  69 const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes[39m
+[31m  70 [39m
+[31m→ 71 await prisma.user.update({[39m
+[31m       where: {[39m
+[31m         id: "e1ed1411-9479-45ef-b5d5-dd3a0c909098"[39m
+[31m       },[39m
+[31m       data: {[39m
+[31m         twoFactorCode: "504965",[39m
+[31m         ~~~~~~~~~~~~~[39m
+[31m         twoFactorExpires: new Date("2026-02-20T00:26:24.037Z"),[39m
+[31m     ?   id?: String | StringFieldUpdateOperationsInput,[39m
+[31m     ?   email?: String | StringFieldUpdateOperationsInput,[39m
+[31m     ?   password?: String | StringFieldUpdateOperationsInput,[39m
+[31m     ?   name?: String | StringFieldUpdateOperationsInput,[39m
+[31m     ?   phone?: String | NullableStringFieldUpdateOperationsInput | Null,[39m
+[31m     ?   avatar?: String | NullableStringFieldUpdateOperationsInput | Null,[39m
+[31m     ?   role?: Role | EnumRoleFieldUpdateOperationsInput,[39m
+[31m     ?   createdAt?: DateTime | DateTimeFieldUpdateOperationsInput,[39m
+[31m     ?   updatedAt?: DateTime | DateTimeFieldUpdateOperationsInput,[39m
+[31m     ?   isPremium?: Boolean | BoolFieldUpdateOperationsInput,[39m
+[31m     ?   isTwoFactorEnabled?: Boolean | BoolFieldUpdateOperationsInput,[39m
+[31m     ?   dataSharingConsent?: Boolean | BoolFieldUpdateOperationsInput,[39m
+[31m     ?   refreshToken?: String | NullableStringFieldUpdateOperationsInput | Null,[39m
+[31m     ?   resetPasswordToken?: String | NullableStringFieldUpdateOperationsInput | Null,[39m
+[31m     ?   resetPasswordExpires?: DateTime | NullableDateTimeFieldUpdateOperationsInput | Null,[39m
+[31m     ?   addresses?: AddressUpdateManyWithoutUserNestedInput,[39m
+[31m     ?   orders?: OrderUpdateManyWithoutUserNestedInput,[39m
+[31m     ?   favourites?: FavouriteUpdateManyWithoutUserNestedInput,[39m
+[31m     ?   paymentMethods?: PaymentMethodUpdateManyWithoutUserNestedInput,[39m
+[31m     ?   notifications?: NotificationPreferenceUpdateOneWithoutUserNestedInput,[39m
+[31m     ?   vouchers?: UserVoucherUpdateManyWithoutUserNestedInput,[39m
+[31m     ?   supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput[39m
+[31m       }[39m
+[31m     })[39m
+
+[31mUnknown argument `twoFactorCode`. Available options are marked with ?.[39m
+2026-02-20 05:16:24:1624 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 5288 - 479.389 ms[39m
+2026-02-20 05:18:07:187 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:18:07:187 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:18:07:187 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:19:12:1912 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 348 - 1108.117 ms[39m
+2026-02-20 05:19:15:1915 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:19:15:1915 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 11.024 ms[39m
+2026-02-20 05:19:19:1919 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:19:19:1919 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 4.438 ms[39m
+2026-02-20 05:19:21:1921 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:19:21:1921 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 3.356 ms[39m
+2026-02-20 05:19:25:1925 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:19:25:1925 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 7.061 ms[39m
+2026-02-20 05:21:00:210 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:21:00:210 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:21:00:210 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:21:49:2149 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:21:49:2149 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:21:49:2149 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:23:33:2333 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:23:33:2333 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 18.711 ms[39m
+2026-02-20 05:23:34:2334 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:23:34:2334 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 5.171 ms[39m
+2026-02-20 05:23:36:2336 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:23:36:2336 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 4.902 ms[39m
+2026-02-20 05:23:40:2340 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:23:40:2340 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 3.586 ms[39m
+2026-02-20 05:23:48:2348 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 348 - 1537.039 ms[39m
+2026-02-20 05:24:40:2440 [35mhttp[39m: [35mPOST /api/v1/auth/verify-2fa 200 1706 - 175.101 ms[39m
+2026-02-20 05:24:45:2445 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1014 - 304.500 ms[39m
+2026-02-20 05:24:47:2447 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 47.094 ms[39m
+2026-02-20 05:24:49:2449 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 191 - 21.067 ms[39m
+2026-02-20 05:24:49:2449 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1015 - 23.267 ms[39m
+2026-02-20 05:27:04:274 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 352.379 ms[39m
+2026-02-20 05:28:56:2856 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:28:56:2856 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:28:56:2856 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:29:11:2911 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:29:11:2911 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:29:11:2911 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:29:18:2918 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:29:18:2918 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:29:18:2918 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:29:29:2929 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:29:29:2929 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:29:29:2929 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:29:44:2944 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:29:44:2944 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:29:44:2944 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:30:03:303 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 3308.828 ms[39m
+2026-02-20 05:30:45:3045 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 986.985 ms[39m
+2026-02-20 05:31:52:3152 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 332.668 ms[39m
+2026-02-20 05:31:53:3153 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 50.922 ms[39m
+2026-02-20 05:31:58:3158 [31merror[39m: [31mCannot read properties of undefined (reading 'deleteMany')[39m
+2026-02-20 05:31:58:3158 [35mhttp[39m: [35mPOST /api/v1/customer/data/clear-history 400 1069 - 44.516 ms[39m
+2026-02-20 05:32:01:321 [31merror[39m: [31m[39m
+[31mInvalid `prisma.user.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:219:36[39m
+
+[31m  216 }[39m
+[31m  217 [39m
+[31m  218 async exportUserData(userId: string) {[39m
+[31m→ 219   const user = await prisma.user.findUnique({[39m
+[31m          where: {[39m
+[31m            id: "e1ed1411-9479-45ef-b5d5-dd3a0c909098"[39m
+[31m          },[39m
+[31m          include: {[39m
+[31m            addresses: true,[39m
+[31m            orders: {[39m
+[31m              include: {[39m
+[31m                items: {[39m
+[31m                  include: {[39m
+[31m                    product: true[39m
+[31m                  }[39m
+[31m                }[39m
+[31m              }[39m
+[31m            },[39m
+[31m            notifications: true,[39m
+[31m            searchHistory: true,[39m
+[31m            ~~~~~~~~~~~~~[39m
+[31m            viewHistory: true,[39m
+[31m        ?   favourites?: true,[39m
+[31m        ?   paymentMethods?: true,[39m
+[31m        ?   vouchers?: true,[39m
+[31m        ?   supportTickets?: true[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown field `searchHistory` for include statement on model `User`. Available options are marked with ?.[39m
+2026-02-20 05:32:01:321 [35mhttp[39m: [35mPOST /api/v1/customer/data/export 400 3010 - 214.551 ms[39m
+2026-02-20 05:33:40:3340 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:33:40:3340 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:33:40:3340 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:34:06:346 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:34:06:346 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:34:06:346 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:36:21:3621 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 1195.727 ms[39m
+2026-02-20 05:36:22:3622 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 60.892 ms[39m
+2026-02-20 05:36:25:3625 [35mhttp[39m: [35mPOST /api/v1/customer/data/clear-history 200 128 - 49.748 ms[39m
+2026-02-20 05:36:28:3628 [35mhttp[39m: [35mPOST /api/v1/customer/data/export 200 159 - 319.709 ms[39m
+2026-02-20 05:37:48:3748 [35mhttp[39m: [35mPOST /api/v1/customer/data/clear-history 200 128 - 129.174 ms[39m
+2026-02-20 05:41:16:4116 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:41:16:4116 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:41:16:4116 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:41:43:4143 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:41:43:4143 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:41:43:4143 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:42:08:428 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:42:08:428 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:42:08:428 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:42:37:4237 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:42:37:4237 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:42:37:4237 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:42:48:4248 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:42:48:4248 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:42:48:4248 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:43:42:4342 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:43:42:4342 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:43:42:4342 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:43:49:4349 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:43:49:4349 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:43:49:4349 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:43:58:4358 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:43:58:4358 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:43:58:4358 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:44:07:447 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:44:07:447 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:44:07:447 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:46:09:469 [31merror[39m: [31mToken expired[39m
+2026-02-20 05:46:09:469 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 938 - 95.018 ms[39m
+2026-02-20 05:46:10:4610 [31merror[39m: [31mToken expired[39m
+2026-02-20 05:46:10:4610 [35mhttp[39m: [35mGET /api/v1/customer/sessions 401 938 - 9.363 ms[39m
+2026-02-20 05:46:10:4610 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1322 - 330.833 ms[39m
+2026-02-20 05:46:10:4610 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1322 - 1058.743 ms[39m
+2026-02-20 05:46:11:4611 [31merror[39m: [31mCannot destructure property 'deviceInfo' of 'req.body' as it is undefined.[39m
+2026-02-20 05:46:11:4611 [35mhttp[39m: [35mGET /api/v1/customer/sessions 400 1078 - 18.716 ms[39m
+2026-02-20 05:46:11:4611 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1015 - 91.948 ms[39m
+2026-02-20 05:46:12:4612 [31merror[39m: [31mCannot destructure property 'deviceInfo' of 'req.body' as it is undefined.[39m
+2026-02-20 05:46:12:4612 [35mhttp[39m: [35mGET /api/v1/customer/sessions 400 1078 - 11.984 ms[39m
+2026-02-20 05:46:14:4614 [31merror[39m: [31mCannot destructure property 'deviceInfo' of 'req.body' as it is undefined.[39m
+2026-02-20 05:46:14:4614 [35mhttp[39m: [35mGET /api/v1/customer/sessions 400 1078 - 12.951 ms[39m
+2026-02-20 05:46:18:4618 [31merror[39m: [31mCannot destructure property 'deviceInfo' of 'req.body' as it is undefined.[39m
+2026-02-20 05:46:18:4618 [35mhttp[39m: [35mGET /api/v1/customer/sessions 400 1078 - 44.734 ms[39m
+2026-02-20 05:46:53:4653 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:46:53:4653 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:46:53:4653 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:47:12:4712 [31merror[39m: [31mCannot read properties of undefined (reading 'findMany')[39m
+2026-02-20 05:47:12:4712 [35mhttp[39m: [35mGET /api/v1/customer/sessions 400 1064 - 644.494 ms[39m
+2026-02-20 05:47:13:4713 [31merror[39m: [31mCannot read properties of undefined (reading 'findMany')[39m
+2026-02-20 05:47:13:4713 [35mhttp[39m: [35mGET /api/v1/customer/sessions 400 1064 - 18.970 ms[39m
+2026-02-20 05:47:15:4715 [31merror[39m: [31mCannot read properties of undefined (reading 'findMany')[39m
+2026-02-20 05:47:15:4715 [35mhttp[39m: [35mGET /api/v1/customer/sessions 400 1064 - 15.079 ms[39m
+2026-02-20 05:47:19:4719 [31merror[39m: [31mCannot read properties of undefined (reading 'findMany')[39m
+2026-02-20 05:47:19:4719 [35mhttp[39m: [35mGET /api/v1/customer/sessions 400 1064 - 16.947 ms[39m
+2026-02-20 05:48:59:4859 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:48:59:4859 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:48:59:4859 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:49:08:498 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 1760.876 ms[39m
+2026-02-20 05:49:08:498 [35mhttp[39m: [35mGET /api/v1/customer/sessions 200 90 - 564.616 ms[39m
+2026-02-20 05:52:45:5245 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:52:45:5245 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:52:45:5245 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:53:09:539 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:53:09:539 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:53:09:539 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:53:16:5316 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 05:53:16:5316 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 05:53:16:5316 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 05:55:04:554 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 977.761 ms[39m
+2026-02-20 05:55:05:555 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 36.051 ms[39m
+2026-02-20 05:55:06:556 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 113.992 ms[39m
+2026-02-20 05:57:57:5757 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 1192.136 ms[39m
+2026-02-20 05:57:58:5758 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 32.636 ms[39m
+2026-02-20 05:57:59:5759 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 25.891 ms[39m
+2026-02-20 05:59:57:5957 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 647.131 ms[39m
+2026-02-20 05:59:59:5959 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 53.788 ms[39m
+2026-02-20 06:00:00:00 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 100.854 ms[39m
+2026-02-20 06:12:31:1231 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1673 - 865.931 ms[39m
+2026-02-20 06:12:34:1234 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1015 - 157.521 ms[39m
+2026-02-20 06:12:49:1249 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 51.780 ms[39m
+2026-02-20 06:12:50:1250 [35mhttp[39m: [35mGET /api/v1/customer/sessions 200 384 - 21.670 ms[39m
+2026-02-20 06:13:10:1310 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:13:10:1310 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 307 - 315.287 ms[39m
+2026-02-20 06:13:24:1324 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1673 - 242.957 ms[39m
+2026-02-20 06:13:27:1327 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1015 - 150.952 ms[39m
+2026-02-20 06:13:29:1329 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 43.099 ms[39m
+2026-02-20 06:13:30:1330 [35mhttp[39m: [35mGET /api/v1/customer/sessions 200 679 - 17.918 ms[39m
+2026-02-20 06:14:56:1456 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:14:57:1457 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:14:57:1457 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:15:40:1540 [31merror[39m: [31mValidation Error: body: Unrecognized key: "deviceInfo"[39m
+2026-02-20 06:15:41:1541 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 376 - 27.683 ms[39m
+2026-02-20 06:15:48:1548 [31merror[39m: [31mValidation Error: body: Unrecognized key: "deviceInfo"[39m
+2026-02-20 06:15:48:1548 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 376 - 6.322 ms[39m
+2026-02-20 06:16:14:1614 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:16:14:1614 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 4.497 ms[39m
+2026-02-20 06:16:16:1616 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:16:16:1616 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 4.516 ms[39m
+2026-02-20 06:16:18:1618 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:16:18:1618 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 2.588 ms[39m
+2026-02-20 06:16:22:1622 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:16:22:1622 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 3.726 ms[39m
+2026-02-20 06:16:23:1623 [31merror[39m: [31mValidation Error: body: Unrecognized key: "deviceInfo"[39m
+2026-02-20 06:16:23:1623 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 376 - 3.751 ms[39m
+2026-02-20 06:20:19:2019 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:20:19:2019 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:20:19:2019 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:20:46:2046 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:20:46:2046 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 13.640 ms[39m
+2026-02-20 06:20:47:2047 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:20:47:2047 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 5.720 ms[39m
+2026-02-20 06:20:50:2050 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:20:50:2050 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 7.587 ms[39m
+2026-02-20 06:20:54:2054 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:20:54:2054 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 3.356 ms[39m
+2026-02-20 06:21:00:210 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1673 - 1292.815 ms[39m
+2026-02-20 06:21:03:213 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1015 - 292.929 ms[39m
+2026-02-20 06:21:04:214 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 45.358 ms[39m
+2026-02-20 06:21:05:215 [35mhttp[39m: [35mGET /api/v1/customer/sessions 200 967 - 84.513 ms[39m
+2026-02-20 06:21:14:2114 [35mhttp[39m: [35mDELETE /api/v1/customer/sessions 200 95 - 19.626 ms[39m
+2026-02-20 06:21:14:2114 [35mhttp[39m: [35mGET /api/v1/customer/sessions 200 967 - 13.057 ms[39m
+2026-02-20 06:21:16:2116 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 13.761 ms[39m
+2026-02-20 06:21:17:2117 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 12.221 ms[39m
+2026-02-20 06:23:18:2318 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:23:18:2318 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:23:18:2318 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:23:32:2332 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:23:32:2332 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:23:32:2332 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:24:59:2459 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:24:59:2459 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:24:59:2459 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:25:17:2517 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:25:17:2517 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:25:17:2517 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:25:27:2527 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:25:27:2527 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:25:27:2527 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:25:59:2559 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:25:59:2559 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:25:59:2559 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:26:22:2622 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:26:22:2622 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:26:22:2622 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:26:41:2641 [35mhttp[39m: [35mDELETE /api/v1/customer/sessions 200 95 - 1058.049 ms[39m
+2026-02-20 06:26:41:2641 [35mhttp[39m: [35mGET /api/v1/customer/sessions 200 90 - 35.924 ms[39m
+2026-02-20 06:26:52:2652 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 29.263 ms[39m
+2026-02-20 06:27:08:278 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1809 - 363.374 ms[39m
+2026-02-20 06:27:10:2710 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1083 - 382.325 ms[39m
+2026-02-20 06:27:12:2712 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 76.843 ms[39m
+2026-02-20 06:27:13:2713 [35mhttp[39m: [35mGET /api/v1/customer/sessions 200 377 - 22.270 ms[39m
+2026-02-20 06:27:16:2716 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 23.450 ms[39m
+2026-02-20 06:27:24:2724 [31merror[39m: [31m[39m
+[31mInvalid `prisma.user.delete()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:287:24[39m
+
+[31m  284 }[39m
+[31m  285 [39m
+[31m  286 async deleteAccount(userId: string) {[39m
+[31m→ 287   return prisma.user.delete([39m
+[31mForeign key constraint violated on the constraint: `Address_userId_fkey`[39m
+2026-02-20 06:27:24:2724 [35mhttp[39m: [35mDELETE /api/v1/customer/account 400 1346 - 254.849 ms[39m
+2026-02-20 06:29:12:2912 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 240.529 ms[39m
+2026-02-20 06:29:17:2917 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 6.149 ms[39m
+2026-02-20 06:29:18:2918 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 10.747 ms[39m
+2026-02-20 06:29:19:2919 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 7.064 ms[39m
+2026-02-20 06:29:27:2927 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 7.532 ms[39m
+2026-02-20 06:29:28:2928 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 6.410 ms[39m
+2026-02-20 06:29:31:2931 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 181.563 ms[39m
+2026-02-20 06:29:39:2939 [35mhttp[39m: [35mGET /api/v1/customer/orders?status=active 304 - - 134.546 ms[39m
+2026-02-20 06:30:01:301 [35mhttp[39m: [35mGET /api/v1/customer/favourites 304 - - 16.430 ms[39m
+2026-02-20 06:30:05:305 [35mhttp[39m: [35mGET /api/v1/customer/vouchers 304 - - 29.283 ms[39m
+2026-02-20 06:30:23:3023 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:30:24:3024 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:30:24:3024 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:30:30:3030 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:30:30:3030 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:30:30:3030 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:30:40:3040 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:30:40:3040 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:30:40:3040 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:32:24:3224 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:32:24:3224 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:32:24:3224 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:32:37:3237 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:32:37:3237 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:32:37:3237 [32minfo[39m: [32mEnvironment: development[39m

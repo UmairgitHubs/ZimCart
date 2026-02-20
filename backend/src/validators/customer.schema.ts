@@ -69,3 +69,9 @@ export const updateSecuritySchema = z.object({
     dataSharingConsent: z.boolean().optional(),
   }).strict()
 });
+
+export const deleteAccountSchema = z.object({
+  body: z.object({
+    password: z.string().min(1, "Password is required for account deletion confirmation"),
+  }).strict()
+});

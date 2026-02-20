@@ -32,3 +32,121 @@
 2026-02-20 02:09:11:911 [31merror[39m: [31mUnauthorized request[39m
 2026-02-20 02:09:15:915 [31merror[39m: [31mUnauthorized request[39m
 2026-02-20 02:41:02:412 [31merror[39m: [31mToken expired[39m
+2026-02-20 04:54:00:540 [31merror[39m: [31mToken expired[39m
+2026-02-20 04:54:41:5441 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 04:54:46:5446 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 05:16:24:1624 [31merror[39m: [31m[39m
+[31mInvalid `prisma.user.update()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\auth.service.ts:71:25[39m
+
+[31m  68 const otpCode = Math.floor(100000 + Math.random() * 900000).toString();[39m
+[31m  69 const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes[39m
+[31m  70 [39m
+[31m→ 71 await prisma.user.update({[39m
+[31m       where: {[39m
+[31m         id: "e1ed1411-9479-45ef-b5d5-dd3a0c909098"[39m
+[31m       },[39m
+[31m       data: {[39m
+[31m         twoFactorCode: "504965",[39m
+[31m         ~~~~~~~~~~~~~[39m
+[31m         twoFactorExpires: new Date("2026-02-20T00:26:24.037Z"),[39m
+[31m     ?   id?: String | StringFieldUpdateOperationsInput,[39m
+[31m     ?   email?: String | StringFieldUpdateOperationsInput,[39m
+[31m     ?   password?: String | StringFieldUpdateOperationsInput,[39m
+[31m     ?   name?: String | StringFieldUpdateOperationsInput,[39m
+[31m     ?   phone?: String | NullableStringFieldUpdateOperationsInput | Null,[39m
+[31m     ?   avatar?: String | NullableStringFieldUpdateOperationsInput | Null,[39m
+[31m     ?   role?: Role | EnumRoleFieldUpdateOperationsInput,[39m
+[31m     ?   createdAt?: DateTime | DateTimeFieldUpdateOperationsInput,[39m
+[31m     ?   updatedAt?: DateTime | DateTimeFieldUpdateOperationsInput,[39m
+[31m     ?   isPremium?: Boolean | BoolFieldUpdateOperationsInput,[39m
+[31m     ?   isTwoFactorEnabled?: Boolean | BoolFieldUpdateOperationsInput,[39m
+[31m     ?   dataSharingConsent?: Boolean | BoolFieldUpdateOperationsInput,[39m
+[31m     ?   refreshToken?: String | NullableStringFieldUpdateOperationsInput | Null,[39m
+[31m     ?   resetPasswordToken?: String | NullableStringFieldUpdateOperationsInput | Null,[39m
+[31m     ?   resetPasswordExpires?: DateTime | NullableDateTimeFieldUpdateOperationsInput | Null,[39m
+[31m     ?   addresses?: AddressUpdateManyWithoutUserNestedInput,[39m
+[31m     ?   orders?: OrderUpdateManyWithoutUserNestedInput,[39m
+[31m     ?   favourites?: FavouriteUpdateManyWithoutUserNestedInput,[39m
+[31m     ?   paymentMethods?: PaymentMethodUpdateManyWithoutUserNestedInput,[39m
+[31m     ?   notifications?: NotificationPreferenceUpdateOneWithoutUserNestedInput,[39m
+[31m     ?   vouchers?: UserVoucherUpdateManyWithoutUserNestedInput,[39m
+[31m     ?   supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput[39m
+[31m       }[39m
+[31m     })[39m
+
+[31mUnknown argument `twoFactorCode`. Available options are marked with ?.[39m
+2026-02-20 05:19:15:1915 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:19:19:1919 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:19:21:1921 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:19:25:1925 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:23:33:2333 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:23:34:2334 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:23:36:2336 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:23:40:2340 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 05:31:58:3158 [31merror[39m: [31mCannot read properties of undefined (reading 'deleteMany')[39m
+2026-02-20 05:32:01:321 [31merror[39m: [31m[39m
+[31mInvalid `prisma.user.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:219:36[39m
+
+[31m  216 }[39m
+[31m  217 [39m
+[31m  218 async exportUserData(userId: string) {[39m
+[31m→ 219   const user = await prisma.user.findUnique({[39m
+[31m          where: {[39m
+[31m            id: "e1ed1411-9479-45ef-b5d5-dd3a0c909098"[39m
+[31m          },[39m
+[31m          include: {[39m
+[31m            addresses: true,[39m
+[31m            orders: {[39m
+[31m              include: {[39m
+[31m                items: {[39m
+[31m                  include: {[39m
+[31m                    product: true[39m
+[31m                  }[39m
+[31m                }[39m
+[31m              }[39m
+[31m            },[39m
+[31m            notifications: true,[39m
+[31m            searchHistory: true,[39m
+[31m            ~~~~~~~~~~~~~[39m
+[31m            viewHistory: true,[39m
+[31m        ?   favourites?: true,[39m
+[31m        ?   paymentMethods?: true,[39m
+[31m        ?   vouchers?: true,[39m
+[31m        ?   supportTickets?: true[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown field `searchHistory` for include statement on model `User`. Available options are marked with ?.[39m
+2026-02-20 05:46:09:469 [31merror[39m: [31mToken expired[39m
+2026-02-20 05:46:10:4610 [31merror[39m: [31mToken expired[39m
+2026-02-20 05:46:11:4611 [31merror[39m: [31mCannot destructure property 'deviceInfo' of 'req.body' as it is undefined.[39m
+2026-02-20 05:46:12:4612 [31merror[39m: [31mCannot destructure property 'deviceInfo' of 'req.body' as it is undefined.[39m
+2026-02-20 05:46:14:4614 [31merror[39m: [31mCannot destructure property 'deviceInfo' of 'req.body' as it is undefined.[39m
+2026-02-20 05:46:18:4618 [31merror[39m: [31mCannot destructure property 'deviceInfo' of 'req.body' as it is undefined.[39m
+2026-02-20 05:47:12:4712 [31merror[39m: [31mCannot read properties of undefined (reading 'findMany')[39m
+2026-02-20 05:47:13:4713 [31merror[39m: [31mCannot read properties of undefined (reading 'findMany')[39m
+2026-02-20 05:47:15:4715 [31merror[39m: [31mCannot read properties of undefined (reading 'findMany')[39m
+2026-02-20 05:47:19:4719 [31merror[39m: [31mCannot read properties of undefined (reading 'findMany')[39m
+2026-02-20 06:13:10:1310 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:15:40:1540 [31merror[39m: [31mValidation Error: body: Unrecognized key: "deviceInfo"[39m
+2026-02-20 06:15:48:1548 [31merror[39m: [31mValidation Error: body: Unrecognized key: "deviceInfo"[39m
+2026-02-20 06:16:14:1614 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:16:16:1616 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:16:18:1618 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:16:22:1622 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:16:23:1623 [31merror[39m: [31mValidation Error: body: Unrecognized key: "deviceInfo"[39m
+2026-02-20 06:20:46:2046 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:20:47:2047 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:20:50:2050 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:20:54:2054 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:27:24:2724 [31merror[39m: [31m[39m
+[31mInvalid `prisma.user.delete()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:287:24[39m
+
+[31m  284 }[39m
+[31m  285 [39m
+[31m  286 async deleteAccount(userId: string) {[39m
+[31m→ 287   return prisma.user.delete([39m
+[31mForeign key constraint violated on the constraint: `Address_userId_fkey`[39m

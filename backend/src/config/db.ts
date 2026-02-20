@@ -23,4 +23,5 @@ export const prisma = globalForPrisma.prisma || new PrismaClient({
 
 if (config.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
+// Re-init prisma client for new schema
 export default prisma;

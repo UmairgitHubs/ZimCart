@@ -1,22 +1,26 @@
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
 
-export const generateAccessToken = (user: { id: string, role: string, email: string }) => {
+export const generateAccessToken = (user: any) => {
   return jwt.sign(
-    { id: user.id, role: user.role, email: user.email },
+    { ...user },
     config.JWT_SECRET,
-    { expiresIn: '15m' } // Short-lived access token
+    { expiresIn: '15m' } 
   );
 };
 
-export const generateRefreshToken = (user: { id: string }) => {
+export const generateRefreshToken = (user: any) => {
   return jwt.sign(
-    { id: user.id },
+    { ...user },
     config.REFRESH_TOKEN_SECRET,
-    { expiresIn: config.JWT_EXPIRES_IN as any } // Long-lived refresh token
+    { expiresIn: config.JWT_EXPIRES_IN as any }
   );
 };
 
-export const verifyRefreshToken = (token: string) => {
-    return jwt.verify(token, config.REFRESH_TOKEN_SECRET) as { id: string };
+export const verifyRefreshToken = (token: string): any => {
+    return jwt.verify(token, config.REFRESH_TOKEN_SECRET);
+};
+
+export const verifyAccessToken = (token: string): any => {
+    return jwt.verify(token, config.JWT_SECRET);
 };

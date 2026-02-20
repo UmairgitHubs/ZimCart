@@ -13,8 +13,11 @@ router.post('/login', validateRequest(schemas.loginSchema), authController.login
 router.post('/refresh-token', validateRequest(schemas.refreshTokenSchema), authController.refresh);
 router.post('/forgot-password', validateRequest(schemas.forgotPasswordSchema), authController.forgotPassword);
 router.post('/reset-password', validateRequest(schemas.resetPasswordSchema), authController.resetPassword);
+router.post('/verify-2fa', authController.verify2FA);
+router.post('/resend-2fa', authController.resend2FA);
 
 // Protected routes
 router.post('/logout', verifyJWT, authController.logout);
+router.post('/change-password', verifyJWT, validateRequest(schemas.changePasswordSchema), authController.changePassword);
 
 export default router;

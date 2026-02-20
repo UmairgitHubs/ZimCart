@@ -31,9 +31,44 @@ model User {
   notifications  NotificationPreference?
   vouchers       UserVoucher[]
   supportTickets SupportTicket[]
+  searchHistory  SearchHistory[]
+  viewHistory    ViewHistory[]
+  sessions       UserSession[]
   refreshToken           String?
   resetPasswordToken     String?
   resetPasswordExpires   DateTime?
+  twoFactorCode          String?
+  twoFactorExpires       DateTime?
+}
+
+model UserSession {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceName   String   @default("Unknown Device")
+  deviceType   String   @default("mobile") // mobile, tablet, desktop
+  os           String   @default("Unknown OS")
+  ipAddress    String?
+  lastActive   DateTime @default(now())
+  isCurrent    Boolean  @default(false) // This will be handled dynamically in the API
+  createdAt    DateTime @default(now())
+}
+
+model SearchHistory {
+  id        String   @id @default(uuid())
+  query     String
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ViewHistory {
+  id        String   @id @default(uuid())
+  productId String?
+  storeId   String?
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Role {

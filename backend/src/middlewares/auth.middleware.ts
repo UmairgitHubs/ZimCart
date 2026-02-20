@@ -12,6 +12,7 @@ declare global {
         id: string;
         role: string;
         email: string;
+        sessionId?: string;
       };
     }
   }
@@ -49,7 +50,23 @@ export const verifyJWT = async (req: Request, res: Response, next: NextFunction)
       throw new ApiError(401, 'Invalid Access Token');
     }
 
-    req.user = { id: user.id, role: user.role, email: user.email };
+    // Senior Implementation: Session Validation
+    // If token has a sessionId, ensure that session hasn't been revoked
+    if (decoded.sessionId) {
+      const activeSession = await prisma.userSession.findUnique({
+        where: { id: decoded.sessionId }
+      });
+      if (!activeSession) {
+        throw new ApiError(401, 'Your session has been terminated. Please login again.');
+      }
+    }
+
+    req.user = { 
+      id: user.id, 
+      role: user.role, 
+      email: user.email,
+      sessionId: decoded.sessionId 
+    };
     next();
     
   } catch (error) {
