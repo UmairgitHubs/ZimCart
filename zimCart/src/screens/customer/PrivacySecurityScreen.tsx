@@ -44,22 +44,7 @@ export default function PrivacySecurityScreen() {
   };
 
   const handleDeleteAccount = () => {
-    Alert.alert(
-        "Delete Account",
-        "Are you sure you want to delete your account? This action is irreversible and all your data will be lost.",
-        [
-            { text: "Cancel", style: "cancel" },
-            { text: "Delete", style: "destructive", onPress: async () => {
-                try {
-                    await deleteAccount();
-                    dispatch(logout());
-                    Alert.alert("Account Deleted", "Your account has been successfully deleted.");
-                } catch (error) {
-                    Alert.alert("Error", parseApiError(error));
-                }
-            }}
-        ]
-    );
+    navigation.navigate('ManageData' as never);
   };
 
   const renderSectionHeader = (title: string) => (
@@ -148,19 +133,17 @@ export default function PrivacySecurityScreen() {
           {/* Danger Zone */}
           {renderSectionHeader('Danger Zone')}
           <View className="bg-white border-y border-gray-100 mb-10">
-               <TouchableOpacity 
-                  className="flex-row items-center bg-white px-5 py-4 border-b border-gray-50 active:bg-red-50"
-                  onPress={handleDeleteAccount}
-                  disabled={isDeleting}
-                >
-                  <View className="w-9 h-9 rounded-lg items-center justify-center mr-3 bg-red-50">
-                      {isDeleting ? <ActivityIndicator size="small" color="#EF4444" /> : <MaterialCommunityIcons name="delete-forever-outline" size={20} color="#EF4444" />}
-                  </View>
-                  <View className="flex-1">
-                      <Text className="text-base font-bold text-red-500">Delete Account</Text>
-                      <Text className="text-xs text-red-300 mt-0.5">Permanently remove your account</Text>
-                  </View>
-              </TouchableOpacity>
+                <TouchableOpacity 
+                   className="flex-row items-center bg-white px-5 py-4 border-b border-gray-50 active:bg-red-50"
+                   onPress={handleDeleteAccount}
+                 >
+                   <MaterialCommunityIcons name="account-remove-outline" size={24} color="#EF4444" style={{ marginRight: 12 }} />
+                   <View className="flex-1">
+                       <Text className="text-base font-bold text-red-500">Delete Account</Text>
+                       <Text className="text-xs text-red-300 mt-0.5">Permanently remove your account</Text>
+                   </View>
+                   <MaterialCommunityIcons name="chevron-right" size={20} color="#FECACA" />
+               </TouchableOpacity>
           </View>
 
       </ScrollView>

@@ -12,6 +12,7 @@ import PaymentMethodsScreen from '../screens/customer/PaymentMethodsScreen';
 import NotificationsScreen from '../screens/customer/NotificationsScreen';
 import PrivacySecurityScreen from '@/screens/customer/PrivacySecurityScreen';
 import ChangePasswordScreen from '@/screens/customer/ChangePasswordScreen';
+import Verify2FAScreen from '@/screens/customer/Verify2FAScreen';
 import ManageDataScreen from '@/screens/customer/ManageDataScreen';
 import PrivacyPolicyScreen from '@/screens/customer/PrivacyPolicyScreen';
 import ManageDevicesScreen from '@/screens/customer/ManageDevicesScreen';
@@ -39,6 +40,7 @@ export default function CustomerNavigator() {
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="PrivacySecurity" component={PrivacySecurityScreen} />
       <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+      <Stack.Screen name="Verify2FA" component={Verify2FAScreen} />
       <Stack.Screen name="ManageData" component={ManageDataScreen} />
       <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Stack.Screen name="ManageDevices" component={ManageDevicesScreen} />

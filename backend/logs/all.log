@@ -611,3 +611,75 @@
 2026-02-20 06:32:37:3237 [32minfo[39m: [32mSocket.io initialized successfully[39m
 2026-02-20 06:32:37:3237 [32minfo[39m: [32mServer is running on port 5000[39m
 2026-02-20 06:32:37:3237 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:33:11:3311 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 06:33:11:3311 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 06:33:11:3311 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 06:34:16:3416 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 1246.311 ms[39m
+2026-02-20 06:34:16:3416 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 334.125 ms[39m
+2026-02-20 06:34:18:3418 [35mhttp[39m: [35mDELETE /api/v1/customer/account 404 165 - 35.473 ms[39m
+2026-02-20 06:37:02:372 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 625.174 ms[39m
+2026-02-20 06:37:03:373 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 58.985 ms[39m
+2026-02-20 06:37:11:3711 [35mhttp[39m: [35mPOST /api/v1/customer/data/export 200 159 - 255.829 ms[39m
+2026-02-20 06:37:25:3725 [35mhttp[39m: [35mPOST /api/v1/customer/account/delete 200 84 - 708.253 ms[39m
+2026-02-20 06:37:27:3727 [31merror[39m: [31mInvalid Access Token[39m
+2026-02-20 06:37:27:3727 [35mhttp[39m: [35mPOST /api/v1/auth/logout 401 298 - 16.927 ms[39m
+2026-02-20 06:37:27:3727 [31merror[39m: [31mInvalid or expired refresh token[39m
+2026-02-20 06:37:27:3727 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 403 426 - 37.359 ms[39m
+2026-02-20 06:38:44:3844 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:38:44:3844 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 391 - 127.489 ms[39m
+2026-02-20 06:38:51:3851 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:38:51:3851 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 391 - 27.220 ms[39m
+2026-02-20 06:41:16:4116 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:41:16:4116 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 391 - 449.643 ms[39m
+2026-02-20 06:43:33:4333 [35mhttp[39m: [35mPOST /api/v1/auth/register 201 1021 - 1338.091 ms[39m
+2026-02-20 06:43:33:4333 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 828 - 188.742 ms[39m
+2026-02-20 06:43:46:4346 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1884 - 246.033 ms[39m
+2026-02-20 06:43:48:4348 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 828 - 143.078 ms[39m
+2026-02-20 06:44:23:4423 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 254.560 ms[39m
+2026-02-20 06:44:33:4433 [35mhttp[39m: [35mPATCH /api/v1/customer/profile 200 744 - 36.950 ms[39m
+2026-02-20 06:44:35:4435 [35mhttp[39m: [35mGET /api/v1/customer/addresses 200 86 - 124.856 ms[39m
+2026-02-20 06:44:43:4443 [35mhttp[39m: [35mPOST /api/v1/customer/addresses 201 329 - 43.112 ms[39m
+2026-02-20 06:44:43:4443 [35mhttp[39m: [35mGET /api/v1/customer/addresses 200 335 - 27.874 ms[39m
+2026-02-20 06:44:46:4446 [35mhttp[39m: [35mPUT /api/v1/customer/addresses/c91b973f-dc4c-4cca-9daf-1d0acc02d0f0 200 330 - 90.375 ms[39m
+2026-02-20 06:44:46:4446 [35mhttp[39m: [35mGET /api/v1/customer/addresses 200 334 - 22.701 ms[39m
+2026-02-20 06:45:00:450 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1083 - 287.843 ms[39m
+2026-02-20 06:45:11:4511 [31merror[39m: [31mIncorrect password. Account deletion aborted.[39m
+2026-02-20 06:45:11:4511 [35mhttp[39m: [35mPOST /api/v1/customer/account/delete 401 380 - 202.998 ms[39m
+2026-02-20 06:45:12:4512 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1549 - 17.146 ms[39m
+2026-02-20 06:45:12:4512 [31merror[39m: [31mIncorrect password. Account deletion aborted.[39m
+2026-02-20 06:45:12:4512 [35mhttp[39m: [35mPOST /api/v1/customer/account/delete 401 380 - 127.925 ms[39m
+2026-02-20 06:45:28:4528 [35mhttp[39m: [35mPOST /api/v1/customer/account/delete 200 84 - 506.663 ms[39m
+2026-02-20 06:45:29:4529 [31merror[39m: [31mInvalid Access Token[39m
+2026-02-20 06:45:29:4529 [35mhttp[39m: [35mPOST /api/v1/auth/logout 401 298 - 10.745 ms[39m
+2026-02-20 06:45:29:4529 [31merror[39m: [31mInvalid or expired refresh token[39m
+2026-02-20 06:45:29:4529 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 403 426 - 27.397 ms[39m
+2026-02-20 06:47:55:4755 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:47:55:4755 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 7.743 ms[39m
+2026-02-20 06:47:56:4756 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:47:56:4756 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 2.738 ms[39m
+2026-02-20 06:47:58:4758 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:47:58:4758 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 9.627 ms[39m
+2026-02-20 06:48:02:482 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:48:02:482 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 2.402 ms[39m
+2026-02-20 06:49:08:498 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:49:08:498 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 391 - 343.821 ms[39m
+2026-02-20 06:51:30:5130 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:51:30:5130 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 391 - 457.366 ms[39m
+2026-02-20 06:52:14:5214 [35mhttp[39m: [35mPOST /api/v1/auth/register 201 1019 - 715.930 ms[39m
+2026-02-20 06:52:20:5220 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 827 - 208.248 ms[39m
+2026-02-20 06:53:05:535 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 171.761 ms[39m
+2026-02-20 06:53:13:5313 [35mhttp[39m: [35mPOST /api/v1/customer/account/delete 200 84 - 516.591 ms[39m
+2026-02-20 06:53:43:5343 [35mhttp[39m: [35mPOST /api/v1/auth/register 201 1019 - 305.929 ms[39m
+2026-02-20 06:54:11:5411 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 827 - 206.547 ms[39m
+2026-02-20 06:55:28:5528 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:55:28:5528 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 307 - 347.950 ms[39m
+2026-02-20 06:55:37:5537 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1881 - 280.354 ms[39m
+2026-02-20 06:55:42:5542 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 827 - 137.888 ms[39m
+2026-02-20 06:56:37:5637 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:56:37:5637 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 17.982 ms[39m
+2026-02-20 06:56:39:5639 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:56:39:5639 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 3.008 ms[39m
+2026-02-20 06:56:41:5641 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:56:41:5641 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 3.132 ms[39m
+2026-02-20 06:56:45:5645 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:56:45:5645 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 3.492 ms[39m

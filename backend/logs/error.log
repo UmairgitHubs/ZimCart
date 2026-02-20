@@ -150,3 +150,23 @@
 [31m  286 async deleteAccount(userId: string) {[39m
 [31m→ 287   return prisma.user.delete([39m
 [31mForeign key constraint violated on the constraint: `Address_userId_fkey`[39m
+2026-02-20 06:37:27:3727 [31merror[39m: [31mInvalid Access Token[39m
+2026-02-20 06:37:27:3727 [31merror[39m: [31mInvalid or expired refresh token[39m
+2026-02-20 06:38:44:3844 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:38:51:3851 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:41:16:4116 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:45:11:4511 [31merror[39m: [31mIncorrect password. Account deletion aborted.[39m
+2026-02-20 06:45:12:4512 [31merror[39m: [31mIncorrect password. Account deletion aborted.[39m
+2026-02-20 06:45:29:4529 [31merror[39m: [31mInvalid Access Token[39m
+2026-02-20 06:45:29:4529 [31merror[39m: [31mInvalid or expired refresh token[39m
+2026-02-20 06:47:55:4755 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:47:56:4756 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:47:58:4758 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:48:02:482 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:49:08:498 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:51:30:5130 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:55:28:5528 [31merror[39m: [31mInvalid credentials[39m
+2026-02-20 06:56:37:5637 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:56:39:5639 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:56:41:5641 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 06:56:45:5645 [31merror[39m: [31mUnauthorized request[39m

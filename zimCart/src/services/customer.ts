@@ -63,7 +63,32 @@ export const customerApi = {
     return data.data;
   },
 
-  deleteAccount: async (): Promise<void> => {
-    await api.delete('/customer/account');
+  deleteAccount: async (password: string): Promise<void> => {
+    await api.post('/customer/account/delete', { password });
+  },
+
+  // Data Management
+  exportData: async (): Promise<{ message: string }> => {
+    const { data } = await api.post('/customer/data/export');
+    return data.data;
+  },
+
+  clearHistory: async (type: 'search' | 'view' | 'all'): Promise<{ message: string }> => {
+    const { data } = await api.post('/customer/data/clear-history', { type });
+    return data.data;
+  },
+
+  // Sessions
+  getSessions: async (): Promise<any[]> => {
+    const { data } = await api.get('/customer/sessions');
+    return data.data;
+  },
+
+  revokeSession: async (id: string): Promise<void> => {
+    await api.delete(`/customer/sessions/${id}`);
+  },
+
+  revokeAllOtherSessions: async (): Promise<void> => {
+    await api.delete('/customer/sessions');
   }
 };

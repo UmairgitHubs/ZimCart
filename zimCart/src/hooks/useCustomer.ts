@@ -1,4 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 import { customerApi } from '../services/customer';
 
 /*
@@ -6,10 +8,12 @@ import { customerApi } from '../services/customer';
  */
 export const useProfile = () => {
     const queryClient = useQueryClient();
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
     const query = useQuery({
         queryKey: ['profile'],
         queryFn: customerApi.getProfile,
+        enabled: isAuthenticated,
     });
 
     const updateProfile = useMutation({
@@ -29,10 +33,12 @@ export const useProfile = () => {
  * Use Customer Orders
  */
 export const useOrders = (status?: 'active' | 'history') => {
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
     return useQuery({
         queryKey: ['orders', status],
         queryFn: () => customerApi.getOrders(status),
         staleTime: 5 * 60 * 1000, // 5 minutes fresh
+        enabled: isAuthenticated,
     });
 };
 
@@ -40,9 +46,11 @@ export const useOrders = (status?: 'active' | 'history') => {
  * Use User Vouchers
  */
 export const useVouchers = () => {
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
     return useQuery({
         queryKey: ['vouchers'],
         queryFn: customerApi.getVouchers,
+        enabled: isAuthenticated,
     });
 };
 
@@ -51,10 +59,12 @@ export const useVouchers = () => {
  */
 export const useFavourites = () => {
     const queryClient = useQueryClient();
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
     const query = useQuery({
         queryKey: ['favourites'],
         queryFn: customerApi.getFavourites,
+        enabled: isAuthenticated,
     });
 
     const toggleFavourite = useMutation({
@@ -76,10 +86,12 @@ export const useFavourites = () => {
  */
 export const useAddresses = () => {
     const queryClient = useQueryClient();
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
     const query = useQuery({
         queryKey: ['addresses'],
         queryFn: customerApi.getAddresses,
+        enabled: isAuthenticated,
     });
 
     const addMutation = useMutation({
@@ -134,5 +146,61 @@ export const useSecurity = () => {
         deleteAccount: deleteAccount.mutateAsync,
         isUpdating: updateSecurity.isPending,
         isDeleting: deleteAccount.isPending,
+    };
+};
+
+/*
+ * Use Data Management
+ */
+export const useDataManagement = () => {
+    const exportData = useMutation({
+        mutationFn: customerApi.exportData,
+    });
+
+    const clearHistory = useMutation({
+        mutationFn: customerApi.clearHistory,
+    });
+
+    return {
+        exportData: exportData.mutateAsync,
+        isExporting: exportData.isPending,
+        clearHistory: clearHistory.mutateAsync,
+        isClearing: clearHistory.isPending,
+    };
+};
+
+/*
+ * Use Devices
+ */
+export const useDevices = () => {
+    const queryClient = useQueryClient();
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+    const query = useQuery({
+        queryKey: ['sessions'],
+        queryFn: customerApi.getSessions,
+        enabled: isAuthenticated,
+    });
+
+    const revokeMutation = useMutation({
+        mutationFn: customerApi.revokeSession,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['sessions'] });
+        },
+    });
+
+    const revokeOthersMutation = useMutation({
+        mutationFn: customerApi.revokeAllOtherSessions,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['sessions'] });
+        },
+    });
+
+    return {
+        ...query,
+        revoke: revokeMutation.mutateAsync,
+        revokeOthers: revokeOthersMutation.mutateAsync,
+        isRevoking: revokeMutation.isPending,
+        isRevokingOthers: revokeOthersMutation.isPending,
     };
 };

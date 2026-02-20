@@ -37,44 +37,30 @@ api.interceptors.response.use(
 
       try {
         const state = store.getState();
-        // Assuming we kept refresh token in state (or SecureStore). 
-        // For "fully secure", refresh token should be HttpOnly cookie OR stored in SecureStore.
-        // Here, we'll assume the user object or a separate field in auth slice has it.
-        // Wait, AuthSlice only has `token`. I should add `refreshToken` to AuthSlice or fetch from SecureStore.
-        
-        // Let's assume for now we don't have it in slice yet (I should update slice).
-        // I'll fetch it from the store assuming I added it, OR I will assume the user has it.
-        // Actually, let's update AuthSlice to store `refreshToken` as well.
-        
-        // BUT, since I cannot update slice and api simultaneously without losing context, 
-        // I will assume for this step that I WILL update the slice to include refreshToken.
         const refreshToken = (state.auth as any).refreshToken; 
 
         if (!refreshToken) {
-           throw new Error("No refresh token available");
+           // Silently logout instead of throwing a raw error string
+           store.dispatch(logout());
+           return Promise.reject(error);
         }
 
-        // Call refresh endpoint
-        // Create a new axios instance to avoid infinite loops with interceptors
         const refreshResponse = await axios.post(`${BASE_URL}/auth/refresh-token`, {
             refreshToken
         });
 
         const { accessToken, refreshToken: newRefreshToken } = refreshResponse.data.data;
 
-        // Dispatch update to Redux
         store.dispatch(setCredentials({ 
             user: state.auth.user!, 
             token: accessToken,
             refreshToken: newRefreshToken 
         }));
 
-        // Retry original request with new token
         originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
         return api(originalRequest);
 
       } catch (refreshError) {
-        // Refresh failed (expired or invalid)
         store.dispatch(logout());
         return Promise.reject(refreshError);
       }

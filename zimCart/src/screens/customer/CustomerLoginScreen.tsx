@@ -17,7 +17,8 @@ type AuthStackParamList = {
   CustomerRegister: undefined;
   ForgotPassword: undefined;
   ResetPassword: undefined;
-  Main: undefined; // Added Main screen target
+  Verify2FA: { mfaToken: string, email: string };
+  Main: undefined; 
 };
 
 export default function CustomerLoginScreen() {
@@ -36,13 +37,21 @@ export default function CustomerLoginScreen() {
     });
 
     const onSubmit = async (data: LoginFormData) => {
-        setApiError(null); // Clear previous errors
+        setApiError(null); 
         try {
-            await login(data);
-            reset(); // Clear form fields
+            const result = await login(data);
             
-            // Navigate to Main Application (Profile/Home)
-            // Using reset to prevent going back to login screen on back press
+            // Handle 2FA Requirement
+            if (result && (result as any).mfaRequired) {
+                navigation.navigate('Verify2FA', { 
+                    mfaToken: (result as any).mfaToken, 
+                    email: (result as any).email 
+                });
+                return;
+            }
+
+            reset(); 
+            
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'Main' }],
