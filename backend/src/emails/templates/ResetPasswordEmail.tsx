@@ -33,12 +33,17 @@ export const ResetPasswordEmail: React.FC<ResetPasswordEmailProps> = ({
                 
                 <Text style={text}>
                     We received a request to reset your password for your {appName} account. 
-                    If you didn't make this request, you can safely ignore this email.
+                    Please use the following 6-digit verification code to proceed.
                 </Text>
 
                 <Section style={tokenContainer}>
                     <Text style={tokenText}>{resetToken}</Text>
                 </Section>
+                
+                <Text style={text}>
+                    This code will expire in 10 minutes. If you didn't request a password reset, 
+                    please ignore this email or contact support if you have concerns.
+                </Text>
 
                 <Section style={buttonContainer}>
                     <Button
@@ -48,11 +53,6 @@ export const ResetPasswordEmail: React.FC<ResetPasswordEmailProps> = ({
                         Reset Password
                     </Button>
                 </Section>
-                
-                <Text style={text}>
-                    If the button doesn't work, you can copy the token above into the app manually.
-                    This link will expire in 10 minutes.
-                </Text>
             </Container>
         </EmailLayout>
     );

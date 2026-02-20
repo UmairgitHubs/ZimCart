@@ -77,16 +77,16 @@ export const sendDataExportEmail = async (to: string, userData: any) => {
     return sendEmail(to, subject, emailHtml);
 };
 
-export const sendPasswordResetEmail = async (to: string, resetToken: string) => {
-    const resetUrl = `zimcart://reset-password/${resetToken}`; 
+export const sendPasswordResetEmail = async (to: string, resetCode: string) => {
     const subject = "Reset Your Password - ZimCart";
+    const resetUrl = process.env.FRONTEND_URL || 'http://localhost:3000'; // Fallback for button if they use web
 
     // Use default export if it's an ESM module
     const Component = (ResetPasswordEmail as any).default || ResetPasswordEmail;
 
     const emailHtml = await render(
         React.createElement(Component, {
-            resetToken,
+            resetToken: resetCode,
             resetUrl,
         })
     );

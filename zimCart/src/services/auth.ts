@@ -73,6 +73,11 @@ export const authApi = {
       return response.data.message;
   },
 
+  verifyResetCode: async (email: string, code: string): Promise<string> => {
+      const response = await api.post('/auth/verify-reset-code', { email, code });
+      return response.data.data.token; // Returns the secure token for the next step
+  },
+
   resetPassword: async (data: any): Promise<string> => {
       const { password, token } = data;
       const response = await api.post('/auth/reset-password', { password, token });

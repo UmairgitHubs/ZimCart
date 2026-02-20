@@ -7,38 +7,89 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { resetPasswordSchema, ResetPasswordData } from '@/schemas/auth.schema';
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { parseApiError } from '@/utils/errorUtils';
 
 export default function ResetPasswordScreen() {
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
+    const route = useRoute();
+    const params = route.params as { token?: string } | undefined;
+    const token = params?.token;
     const { resetPassword, isResetPasswordLoading } = useAuth();
     const [apiError, setApiError] = useState<string | null>(null);
+    const [isSuccess, setIsSuccess] = useState(false);
+    
+    // UI State
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     
     // RHF Setup
-    const { control, handleSubmit, formState: { errors } } = useForm<ResetPasswordData>({
+    const { control, handleSubmit, reset, formState: { errors } } = useForm<ResetPasswordData>({
         resolver: zodResolver(resetPasswordSchema),
         defaultValues: {
-            token: '',
+            token: token || '',
             password: '',
             confirmPassword: '',
         }
     });
 
+    // Senior Implementation: Ensure token is synchronized if it arrives late
+    React.useEffect(() => {
+        if (token) {
+            reset({ token, password: '', confirmPassword: '' });
+        }
+    }, [token, reset]);
+
     const onSubmit = async (data: ResetPasswordData) => {
         setApiError(null);
         try {
             await resetPassword(data);
-            Alert.alert(
-                'Success', 
-                'Your password has been reset successfully. Please login.',
-                [{ text: 'Go to Login', onPress: () => navigation.navigate('CustomerLogin' as never) }]
-            );
+            setIsSuccess(true);
         } catch (error: any) {
             const message = parseApiError(error);
             setApiError(message);
         }
     };
+
+    if (isSuccess) {
+        return (
+          <SafeAreaView className="flex-1 bg-white items-center justify-center px-6">
+            <StatusBar style="dark" />
+            <View className="w-24 h-24 bg-green-50 rounded-full items-center justify-center mb-8">
+              <MaterialCommunityIcons name="check-circle" size={60} color="#166534" />
+            </View>
+            <Text className="text-3xl font-bold text-gray-900 mb-3">Success!</Text>
+            <Text className="text-gray-500 text-center text-lg mb-10 leading-6">
+                Your password has been reset successfully. You can now login with your new credentials.
+            </Text>
+            <TouchableOpacity 
+              className="bg-green-700 w-full py-4 rounded-2xl items-center shadow-lg shadow-green-200 active:bg-green-800"
+              onPress={() => navigation.navigate('CustomerLogin' as never)}
+            >
+              <Text className="text-white font-bold text-lg">Back to Login</Text>
+            </TouchableOpacity>
+          </SafeAreaView>
+        );
+      }
+
+    if (!token && !isSuccess) {
+        return (
+          <SafeAreaView className="flex-1 bg-white items-center justify-center px-6">
+            <StatusBar style="dark" />
+            <MaterialCommunityIcons name="alert-decagram" size={60} color="#EF4444" className="mb-6" />
+            <Text className="text-2xl font-bold text-gray-900 mb-2">Invalid Session</Text>
+            <Text className="text-gray-500 text-center mb-8">
+                We couldn't find your verification session. Please go back and request a new code.
+            </Text>
+            <TouchableOpacity 
+              className="bg-gray-900 w-full py-4 rounded-xl items-center"
+              onPress={() => navigation.navigate('ForgotPassword')}
+            >
+              <Text className="text-white font-bold">Try Again</Text>
+            </TouchableOpacity>
+          </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView className="flex-1 bg-white">
@@ -52,8 +103,8 @@ export default function ResetPasswordScreen() {
 
                 {/* Header */}
                 <View className="mb-6">
-                    <Text className="text-3xl font-bold text-gray-900 mb-2">Reset Password</Text>
-                    <Text className="text-gray-500 text-lg">Enter the token from your email and set a new password.</Text>
+                    <Text className="text-3xl font-bold text-gray-900 mb-2">Set New Password</Text>
+                    <Text className="text-gray-500 text-lg">Your code is verified! Please enter your new secure password below.</Text>
                 </View>
 
                 {/* API Error Display */}
@@ -66,28 +117,15 @@ export default function ResetPasswordScreen() {
 
                 {/* Form */}
                 <View className="space-y-6">
-                    {/* Token Input (Usually pre-filled via deep link, but manual entry for now) */}
-                    <View>
-                        <Text className="text-xs font-bold text-gray-500 uppercase ml-1 mb-2">Reset Token</Text>
+                    {/* Hidden Token Input (controlled by RHF but not visible) */}
+                    <View className="hidden">
                         <Controller
                             control={control}
                             name="token"
-                            render={({ field: { onChange, onBlur, value } }) => (
-                                <View className={`flex-row items-center bg-gray-50 border rounded-2xl px-4 py-3.5 ${errors.token ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-green-600 focus:bg-white'}`}>
-                                    <MaterialCommunityIcons name="key-outline" size={20} color={errors.token ? "#EF4444" : "#9CA3AF"} />
-                                    <TextInput
-                                        className="flex-1 ml-3 text-gray-900 font-medium text-base h-full"
-                                        placeholder="Paste token here"
-                                        placeholderTextColor="#9CA3AF"
-                                        onBlur={onBlur}
-                                        onChangeText={onChange}
-                                        value={value}
-                                        autoCapitalize="none"
-                                    />
-                                </View>
+                            render={({ field: { value } }) => (
+                                <TextInput value={value} />
                             )}
                         />
-                        {errors.token && <Text className="text-red-500 text-xs mt-1 ml-1">{errors.token.message}</Text>}
                     </View>
 
                     {/* New Password Input */}
@@ -106,8 +144,15 @@ export default function ResetPasswordScreen() {
                                         onBlur={onBlur}
                                         onChangeText={onChange}
                                         value={value}
-                                        secureTextEntry
+                                        secureTextEntry={!showPassword}
                                     />
+                                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                        <MaterialCommunityIcons 
+                                            name={showPassword ? "eye-off-outline" : "eye-outline"} 
+                                            size={20} 
+                                            color="#9CA3AF" 
+                                        />
+                                    </TouchableOpacity>
                                 </View>
                             )}
                         />
@@ -130,8 +175,15 @@ export default function ResetPasswordScreen() {
                                         onBlur={onBlur}
                                         onChangeText={onChange}
                                         value={value}
-                                        secureTextEntry
+                                        secureTextEntry={!showConfirmPassword}
                                     />
+                                    <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                        <MaterialCommunityIcons 
+                                            name={showConfirmPassword ? "eye-off-outline" : "eye-outline"} 
+                                            size={20} 
+                                            color="#9CA3AF" 
+                                        />
+                                    </TouchableOpacity>
                                 </View>
                             )}
                         />

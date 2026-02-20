@@ -683,3 +683,72 @@
 2026-02-20 06:56:41:5641 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 3.132 ms[39m
 2026-02-20 06:56:45:5645 [31merror[39m: [31mUnauthorized request[39m
 2026-02-20 06:56:45:5645 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 3.492 ms[39m
+2026-02-20 07:04:00:40 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1881 - 814.936 ms[39m
+2026-02-20 07:04:00:40 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 827 - 287.565 ms[39m
+2026-02-20 07:04:03:43 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 91.939 ms[39m
+2026-02-20 07:04:05:45 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 39.248 ms[39m
+2026-02-20 07:07:44:744 [35mhttp[39m: [35mPATCH /api/v1/customer/security 200 191 - 252.067 ms[39m
+2026-02-20 07:07:44:744 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 828 - 215.004 ms[39m
+2026-02-20 07:07:47:747 [35mhttp[39m: [35mGET /api/v1/customer/sessions 200 953 - 110.924 ms[39m
+2026-02-20 07:07:51:751 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 25.941 ms[39m
+2026-02-20 07:07:52:752 [35mhttp[39m: [35mDELETE /api/v1/customer/sessions 200 95 - 149.160 ms[39m
+2026-02-20 07:07:52:752 [35mhttp[39m: [35mGET /api/v1/customer/sessions 200 377 - 30.141 ms[39m
+2026-02-20 07:07:54:754 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 21.076 ms[39m
+2026-02-20 07:07:56:756 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 16.972 ms[39m
+2026-02-20 07:08:03:83 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 27.833 ms[39m
+2026-02-20 07:08:11:811 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 116.305 ms[39m
+2026-02-20 07:08:17:817 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 6.453 ms[39m
+2026-02-20 07:08:21:821 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 7.437 ms[39m
+2026-02-20 07:08:23:823 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 6.572 ms[39m
+2026-02-20 07:08:25:825 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 171.446 ms[39m
+2026-02-20 07:08:30:830 [35mhttp[39m: [35mGET /api/v1/customer/addresses 200 86 - 40.607 ms[39m
+2026-02-20 07:08:31:831 [35mhttp[39m: [35mGET /api/v1/customer/addresses 304 - - 29.378 ms[39m
+2026-02-20 07:08:33:833 [35mhttp[39m: [35mGET /api/v1/customer/addresses 304 - - 13.629 ms[39m
+2026-02-20 07:08:35:835 [35mhttp[39m: [35mPOST /api/v1/customer/addresses 201 328 - 44.061 ms[39m
+2026-02-20 07:08:35:835 [35mhttp[39m: [35mGET /api/v1/customer/addresses 200 334 - 29.619 ms[39m
+2026-02-20 07:08:37:837 [35mhttp[39m: [35mGET /api/v1/customer/addresses 304 - - 32.181 ms[39m
+2026-02-20 07:08:38:838 [35mhttp[39m: [35mGET /api/v1/customer/orders?status=active 304 - - 127.245 ms[39m
+2026-02-20 07:09:12:912 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1076 - 281.361 ms[39m
+2026-02-20 07:09:21:921 [35mhttp[39m: [35mGET /api/v1/help/faqs 200 1505 - 10.014 ms[39m
+2026-02-20 07:09:32:932 [35mhttp[39m: [35mGET /api/v1/customer/orders?status=active 200 83 - 51.183 ms[39m
+2026-02-20 07:09:34:934 [35mhttp[39m: [35mGET /api/v1/customer/vouchers 200 85 - 132.545 ms[39m
+2026-02-20 07:09:36:936 [35mhttp[39m: [35mGET /api/v1/customer/favourites 200 87 - 11.682 ms[39m
+2026-02-20 07:09:41:941 [35mhttp[39m: [35mGET /api/v1/customer/vouchers 304 - - 18.280 ms[39m
+2026-02-20 07:09:44:944 [35mhttp[39m: [35mGET /api/v1/customer/favourites 304 - - 29.965 ms[39m
+2026-02-20 22:49:23:4923 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 22:49:23:4923 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 22:49:23:4923 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 22:54:00:540 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 22:54:00:540 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 22:54:00:540 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 22:57:04:574 [31merror[39m: [31mToken expired[39m
+2026-02-20 22:57:04:574 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 938 - 110.046 ms[39m
+2026-02-20 22:57:07:577 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1540 - 1632.323 ms[39m
+2026-02-20 22:57:07:577 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1076 - 262.750 ms[39m
+2026-02-20 22:57:25:5725 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1884 - 495.803 ms[39m
+2026-02-20 22:57:25:5725 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1076 - 79.077 ms[39m
+2026-02-20 22:57:27:5727 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 42.033 ms[39m
+2026-02-20 22:57:38:5738 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 130.075 ms[39m
+2026-02-20 22:58:45:5845 [35mhttp[39m: [35mPOST /api/v1/auth/forgot-password 200 133 - 29496.083 ms[39m
+2026-02-20 23:03:47:347 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 23:03:47:347 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 23:03:47:347 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 23:03:57:357 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 23:03:57:357 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 23:03:57:357 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 23:10:20:1020 [35mhttp[39m: [35mPOST /api/v1/auth/forgot-password 200 133 - 30980.637 ms[39m
+2026-02-20 23:12:15:1215 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 23:12:15:1215 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 23:12:15:1215 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 23:12:26:1226 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 23:12:26:1226 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 23:12:26:1226 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 23:15:33:1533 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 23:15:33:1533 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 23:15:33:1533 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 23:19:31:1931 [35mhttp[39m: [35mPOST /api/v1/auth/forgot-password 200 133 - 10667.191 ms[39m
+2026-02-20 23:19:50:1950 [35mhttp[39m: [35mPOST /api/v1/auth/verify-reset-code 200 195 - 44.985 ms[39m
+2026-02-20 23:22:59:2259 [35mhttp[39m: [35mPOST /api/v1/auth/forgot-password 200 133 - 28358.811 ms[39m
+2026-02-20 23:23:15:2315 [35mhttp[39m: [35mPOST /api/v1/auth/verify-reset-code 200 195 - 150.416 ms[39m
+2026-02-20 23:24:56:2456 [31merror[39m: [31mValidation Error: body.confirmPassword: Invalid input: expected string, received undefined[39m
+2026-02-20 23:24:56:2456 [35mhttp[39m: [35mPOST /api/v1/auth/reset-password 400 444 - 18.598 ms[39m

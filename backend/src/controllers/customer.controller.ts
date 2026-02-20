@@ -5,16 +5,11 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
 import { getDeviceInfo } from '../utils/device.utils.js';
 
-// const customerService is already exported as instance, imported above.
-// But wait, the file exported class CustomerService and const customerService.
-// Let's check imports.
+
 
 export class CustomerController {
-  /*
-   * Get Current User Profile
-   */
+
   getProfile = asyncHandler(async (req: Request, res: Response) => {
-    // Assuming auth middleware populates req.user
     const userId = req.user?.id;
     if (!userId) throw new ApiError(401, 'Unauthorized');
 
@@ -25,9 +20,7 @@ export class CustomerController {
     );
   });
 
-  /*
-   * Update Profile
-   */
+
   updateProfile = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user?.id;
     if (!userId) throw new ApiError(401, 'Unauthorized');
@@ -39,10 +32,7 @@ export class CustomerController {
     );
   });
 
-  /*
-   * Get Orders (Active vs History logic handled by query param)
-   * GET /api/v1/customer/orders?status=active|history
-   */
+ 
   getOrders = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user?.id;
     if (!userId) throw new ApiError(401, 'Unauthorized');
@@ -55,10 +45,7 @@ export class CustomerController {
     );
   });
 
-  /*
-   * Get Vouchers
-   * GET /api/v1/customer/vouchers
-   */
+
   getVouchers = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user?.id;
     if (!userId) throw new ApiError(401, 'Unauthorized');
@@ -70,10 +57,7 @@ export class CustomerController {
     );
   });
 
-  /*
-   * Get Favourites
-   * GET /api/v1/customer/favourites
-   */
+
   getFavourites = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user?.id;
     if (!userId) throw new ApiError(401, 'Unauthorized');

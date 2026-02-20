@@ -57,6 +57,10 @@ export const useAuth = () => {
         mutationFn: authApi.forgotPassword,
     });
 
+    const verifyResetCodeMutation = useMutation({
+        mutationFn: ({ email, code }: { email: string, code: string }) => authApi.verifyResetCode(email, code),
+    });
+
     const resetPasswordMutation = useMutation({
         mutationFn: authApi.resetPassword,
     });
@@ -88,6 +92,8 @@ export const useAuth = () => {
         logout: logoutMutation.mutate,
         forgotPassword: forgotPasswordMutation.mutateAsync,
         isForgotPasswordLoading: forgotPasswordMutation.isPending,
+        verifyResetCode: verifyResetCodeMutation.mutateAsync,
+        isVerifyResetCodeLoading: verifyResetCodeMutation.isPending,
         resetPassword: resetPasswordMutation.mutateAsync,
         isResetPasswordLoading: resetPasswordMutation.isPending,
         changePassword: changePasswordMutation.mutateAsync,

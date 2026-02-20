@@ -232,11 +232,12 @@ export class AuthService {
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user) {
           // Security: Don't reveal if user exists
-          return { message: "If that email exists, a reset link has been sent." };
+          return { message: "If that email exists, a reset code has been sent." };
       }
 
-      const resetToken = crypto.randomBytes(32).toString('hex');
-      const passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+      // Senior Implementation: Generate a 6-digit OTP code for better mobile flow
+      const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const passwordResetToken = crypto.createHash('sha256').update(resetCode).digest('hex');
       const passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
       await prisma.user.update({
@@ -247,18 +248,35 @@ export class AuthService {
           }
       });
 
-      // Send Actual Email
-      await sendPasswordResetEmail(email, resetToken);
+      // Send Actual Email with Code
+      await sendPasswordResetEmail(email, resetCode);
 
-      return { message: "If that email exists, a reset link has been sent." };
+      return { message: "If that email exists, a reset code has been sent." };
   }
 
-  async resetPassword(token: string, password: string) {
-      const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  async verifyResetCode(email: string, code: string) {
+      const hashedToken = crypto.createHash('sha256').update(code).digest('hex');
 
       const user = await prisma.user.findFirst({
           where: {
+              email,
               resetPasswordToken: hashedToken,
+              resetPasswordExpires: { gt: new Date() }
+          }
+      });
+
+      if (!user) {
+          throw new ApiError(400, "Invalid or expired verification code");
+      }
+
+      return { token: hashedToken, message: "Code verified successfully" };
+  }
+
+  async resetPassword(token: string, password: string) {
+      // The token passed here is now the hashed one returned from verifyResetCode
+      const user = await prisma.user.findFirst({
+          where: {
+              resetPasswordToken: token,
               resetPasswordExpires: { gt: new Date() }
           }
       });

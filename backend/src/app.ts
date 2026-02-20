@@ -7,9 +7,14 @@ import { errorHandler } from "./middlewares/error.middleware.js";
 import healthRoutes from "./routes/health.routes.js";
 import apiRoutes from "./routes/index.js";
 
+import config from "./config/config.js";
+
 const app = express();
 
-app.use(cors({ origin: "*" } ));
+app.use(cors({ 
+    origin: config.FRONTEND_URL,
+    credentials: true
+}));
 app.use(express.json());
 app.use(helmet());
 app.use(morganMiddleware);

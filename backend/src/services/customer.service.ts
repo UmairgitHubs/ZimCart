@@ -279,7 +279,8 @@ export class CustomerService {
     return prisma.userSession.deleteMany({
       where: { 
         userId,
-        NOT: { id: currentSessionId }
+        //NOT: { id: currentSessionId }
+        ...(currentSessionId ? { NOT: { id: currentSessionId } } : {}),
       },
     });
   }

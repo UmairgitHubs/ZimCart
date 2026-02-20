@@ -170,3 +170,5 @@
 2026-02-20 06:56:39:5639 [31merror[39m: [31mUnauthorized request[39m
 2026-02-20 06:56:41:5641 [31merror[39m: [31mUnauthorized request[39m
 2026-02-20 06:56:45:5645 [31merror[39m: [31mUnauthorized request[39m
+2026-02-20 22:57:04:574 [31merror[39m: [31mToken expired[39m
+2026-02-20 23:24:56:2456 [31merror[39m: [31mValidation Error: body.confirmPassword: Invalid input: expected string, received undefined[39m

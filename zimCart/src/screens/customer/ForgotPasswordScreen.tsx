@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
 
 export default function ForgotPasswordScreen() {
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
     const { forgotPassword, isForgotPasswordLoading } = useAuth();
     
     // RHF Setup
@@ -23,21 +23,12 @@ export default function ForgotPasswordScreen() {
 
     const onSubmit = async (data: ForgotPasswordData) => {
         try {
-            const message = await forgotPassword(data.email);
-            Alert.alert(
-                'Check your email',
-                message,
-                [
-                    { 
-                        text: 'Go to Reset Password', 
-                        onPress: () => navigation.navigate('ResetPassword' as never) 
-                    },
-                    { text: 'OK' }
-                ]
-            );
+            await forgotPassword(data.email);
+            // Senior Implementation: Navigate to code entry screen first
+            navigation.navigate('VerifyResetCode', { email: data.email });
         } catch (error: any) {
             console.error(error);
-            const message = error.response?.data?.message || 'Failed to send reset email. Please try again.';
+            const message = error.response?.data?.message || 'Failed to send reset code. Please try again.';
             Alert.alert('Error', message);
         }
     };
@@ -94,7 +85,7 @@ export default function ForgotPasswordScreen() {
                         {isForgotPasswordLoading ? (
                             <ActivityIndicator color="white" />
                         ) : (
-                            <Text className="text-white font-bold text-lg">Send Reset Link</Text>
+                            <Text className="text-white font-bold text-lg">Send Reset Code</Text>
                         )}
                     </TouchableOpacity>
                 </View>

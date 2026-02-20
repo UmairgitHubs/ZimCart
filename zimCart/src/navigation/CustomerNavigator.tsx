@@ -14,6 +14,7 @@ import PrivacySecurityScreen from '@/screens/customer/PrivacySecurityScreen';
 import ChangePasswordScreen from '@/screens/customer/ChangePasswordScreen';
 import Verify2FAScreen from '@/screens/customer/Verify2FAScreen';
 import ManageDataScreen from '@/screens/customer/ManageDataScreen';
+import VerifyResetCodeScreen from '@/screens/customer/VerifyResetCodeScreen';
 import PrivacyPolicyScreen from '@/screens/customer/PrivacyPolicyScreen';
 import ManageDevicesScreen from '@/screens/customer/ManageDevicesScreen';
 import HelpSupportScreen from '@/screens/customer/HelpSupportScreen';
@@ -33,6 +34,7 @@ export default function CustomerNavigator() {
       <Stack.Screen name="CustomerLogin" component={CustomerLoginScreen} />
       <Stack.Screen name="CustomerRegister" component={CustomerRegisterScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <Stack.Screen name="VerifyResetCode" component={VerifyResetCodeScreen} />
       <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{ presentation: 'modal' }} />
       <Stack.Screen name="SavedAddresses" component={SavedAddressesScreen} />

@@ -1,4 +1,4 @@
-import  type { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { authService } from '../services/auth.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
@@ -65,6 +65,14 @@ export class AuthController {
         const { email } = req.body;
         const result = await authService.forgotPassword(email);
         return res.status(200).json(new ApiResponse(200, result, "Reset email sent"));
+    });
+
+    verifyResetCode = asyncHandler(async (req: Request, res: Response) => {
+        const { email, code } = req.body;
+        if (!email || !code) throw new ApiError(400, "Email and code are required");
+        
+        const result = await authService.verifyResetCode(email, code);
+        return res.status(200).json(new ApiResponse(200, result, "Code verified successfully"));
     });
 
     resetPassword = asyncHandler(async (req: Request, res: Response) => {

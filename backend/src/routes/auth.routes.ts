@@ -12,6 +12,7 @@ router.post('/register', validateRequest(schemas.registerSchema), authController
 router.post('/login', validateRequest(schemas.loginSchema), authController.login);
 router.post('/refresh-token', validateRequest(schemas.refreshTokenSchema), authController.refresh);
 router.post('/forgot-password', validateRequest(schemas.forgotPasswordSchema), authController.forgotPassword);
+router.post('/verify-reset-code', authController.verifyResetCode);
 router.post('/reset-password', validateRequest(schemas.resetPasswordSchema), authController.resetPassword);
 router.post('/verify-2fa', authController.verify2FA);
 router.post('/resend-2fa', authController.resend2FA);
