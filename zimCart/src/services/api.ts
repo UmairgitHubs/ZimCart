@@ -3,7 +3,7 @@ import { store } from '@/store'; // Direct import to avoid hooks
 import { setCredentials, logout } from '@/store/slices/auth.slice';
 
 // Base URL configuration
-const BASE_URL = 'http://192.168.100.232:5000/api/v1';
+const BASE_URL = 'http://192.168.0.103:5000/api/v1';
 
 const api = axios.create({
   baseURL: BASE_URL,

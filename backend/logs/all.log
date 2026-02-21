@@ -919,3 +919,6 @@
 2026-02-21 03:17:02:172 [37mdebug[39m: [37mPush skipped for user 4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77: Disabled in preferences[39m
 2026-02-21 03:17:04:174 [35mhttp[39m: [35mPOST /api/v1/customer/test-notification 200 78 - 7.728 ms[39m
 2026-02-21 03:17:04:174 [37mdebug[39m: [37mPush skipped for user 4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77: Disabled in preferences[39m
+2026-02-21 21:34:40:3440 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-21 21:34:40:3440 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-21 21:34:40:3440 [32minfo[39m: [32mEnvironment: development[39m
