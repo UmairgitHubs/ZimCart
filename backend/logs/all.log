@@ -752,3 +752,170 @@
 2026-02-20 23:23:15:2315 [35mhttp[39m: [35mPOST /api/v1/auth/verify-reset-code 200 195 - 150.416 ms[39m
 2026-02-20 23:24:56:2456 [31merror[39m: [31mValidation Error: body.confirmPassword: Invalid input: expected string, received undefined[39m
 2026-02-20 23:24:56:2456 [35mhttp[39m: [35mPOST /api/v1/auth/reset-password 400 444 - 18.598 ms[39m
+2026-02-20 23:25:40:2540 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-20 23:25:40:2540 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-20 23:25:40:2540 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-20 23:25:51:2551 [35mhttp[39m: [35mPOST /api/v1/auth/reset-password 200 160 - 889.100 ms[39m
+2026-02-20 23:26:10:2610 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1884 - 501.157 ms[39m
+2026-02-20 23:26:11:2611 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1076 - 345.350 ms[39m
+2026-02-20 23:26:13:2613 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 101.936 ms[39m
+2026-02-21 02:13:22:1322 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-21 02:13:22:1322 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-21 02:13:22:1322 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-21 02:17:23:1723 [31merror[39m: [31mToken expired[39m
+2026-02-21 02:17:23:1723 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 938 - 52.031 ms[39m
+2026-02-21 02:17:24:1724 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1540 - 990.996 ms[39m
+2026-02-21 02:17:25:1725 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1076 - 355.241 ms[39m
+2026-02-21 02:18:10:1810 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 228.041 ms[39m
+2026-02-21 02:18:11:1811 [35mhttp[39m: [35mGET /api/v1/customer/vouchers 304 - - 88.793 ms[39m
+2026-02-21 02:18:13:1813 [35mhttp[39m: [35mGET /api/v1/customer/favourites 304 - - 40.423 ms[39m
+2026-02-21 02:18:16:1816 [35mhttp[39m: [35mGET /api/v1/customer/addresses 200 334 - 148.532 ms[39m
+2026-02-21 02:20:01:201 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 117.664 ms[39m
+2026-02-21 02:20:03:203 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 37.393 ms[39m
+2026-02-21 02:20:07:207 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 22.917 ms[39m
+2026-02-21 02:20:13:2013 [35mhttp[39m: [35mPATCH /api/v1/customer/profile 200 744 - 30.213 ms[39m
+2026-02-21 02:20:16:2016 [35mhttp[39m: [35mGET /api/v1/customer/orders?status=active 304 - - 61.726 ms[39m
+2026-02-21 02:20:18:2018 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1083 - 18.326 ms[39m
+2026-02-21 02:21:45:2145 [35mhttp[39m: [35mGET /api/v1/customer/favourites 304 - - 177.252 ms[39m
+2026-02-21 02:21:59:2159 [35mhttp[39m: [35mGET /api/v1/customer/addresses 304 - - 19.245 ms[39m
+2026-02-21 02:22:14:2214 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 83.583 ms[39m
+2026-02-21 02:22:22:2222 [35mhttp[39m: [35mGET /api/v1/customer/sessions 200 953 - 19.165 ms[39m
+2026-02-21 02:22:26:2226 [35mhttp[39m: [35mGET /api/v1/customer/sessions 304 - - 15.097 ms[39m
+2026-02-21 02:23:57:2357 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 493.375 ms[39m
+2026-02-21 02:24:43:2443 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 226.665 ms[39m
+2026-02-21 02:24:47:2447 [35mhttp[39m: [35mGET /api/v1/customer/vouchers 304 - - 31.089 ms[39m
+2026-02-21 02:24:49:2449 [35mhttp[39m: [35mGET /api/v1/customer/favourites 304 - - 21.656 ms[39m
+2026-02-21 02:25:19:2519 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 9.184 ms[39m
+2026-02-21 02:25:46:2546 [35mhttp[39m: [35mGET /api/v1/customer/vouchers 304 - - 14.943 ms[39m
+2026-02-21 02:38:14:3814 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-21 02:38:14:3814 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-21 02:38:14:3814 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-21 02:38:28:3828 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-21 02:38:28:3828 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-21 02:38:28:3828 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-21 02:38:36:3836 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-21 02:38:36:3836 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-21 02:38:36:3836 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-21 02:47:47:4747 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-21 02:47:47:4747 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-21 02:47:47:4747 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-21 02:47:53:4753 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-21 02:47:53:4753 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-21 02:47:53:4753 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-21 02:48:04:484 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-21 02:48:04:484 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-21 02:48:04:484 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-21 02:48:13:4813 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-21 02:48:13:4813 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-21 02:48:13:4813 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-21 03:06:47:647 [31merror[39m: [31mToken expired[39m
+2026-02-21 03:06:47:647 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 938 - 65.729 ms[39m
+2026-02-21 03:06:50:650 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1549 - 2452.244 ms[39m
+2026-02-21 03:06:51:651 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:06:51:651 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 1100 - 314.442 ms[39m
+2026-02-21 03:06:52:652 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:06:52:652 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 1100 - 219.653 ms[39m
+2026-02-21 03:06:52:652 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1549 - 186.605 ms[39m
+2026-02-21 03:06:53:653 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:06:53:653 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 1100 - 91.004 ms[39m
+2026-02-21 03:06:55:655 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:06:55:655 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 1100 - 93.492 ms[39m
+2026-02-21 03:06:55:655 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1549 - 311.479 ms[39m
+2026-02-21 03:06:55:655 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:06:55:655 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 1100 - 79.690 ms[39m
+2026-02-21 03:07:18:718 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:07:18:718 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 1100 - 630.988 ms[39m
+2026-02-21 03:07:19:719 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1549 - 190.889 ms[39m
+2026-02-21 03:07:19:719 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:07:19:719 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 1100 - 191.974 ms[39m
+2026-02-21 03:07:23:723 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:07:23:723 [35mhttp[39m: [35mPOST /api/v1/customer/test-notification 401 1100 - 499.606 ms[39m
+2026-02-21 03:07:23:723 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1549 - 154.169 ms[39m
+2026-02-21 03:07:23:723 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:07:24:724 [35mhttp[39m: [35mPOST /api/v1/customer/test-notification 401 1100 - 182.519 ms[39m
+2026-02-21 03:11:36:1136 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-21 03:11:36:1136 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-21 03:11:37:1137 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-21 03:16:47:1647 [31merror[39m: [31mInvalid credentials[39m
+2026-02-21 03:16:47:1647 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 307 - 1137.696 ms[39m
+2026-02-21 03:16:48:1648 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1900 - 299.131 ms[39m
+2026-02-21 03:16:49:1649 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1083 - 394.864 ms[39m
+2026-02-21 03:16:51:1651 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 26.326 ms[39m
+2026-02-21 03:16:54:1654 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 18.582 ms[39m
+2026-02-21 03:16:55:1655 [35mhttp[39m: [35mPOST /api/v1/customer/test-notification 200 78 - 9.885 ms[39m
+2026-02-21 03:17:02:172 [32minfo[39m: [32mFirebase Admin initialized successfully[39m
+2026-02-21 03:17:02:172 [37mdebug[39m: [37mPush skipped for user 4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77: Disabled in preferences[39m
+2026-02-21 03:17:04:174 [35mhttp[39m: [35mPOST /api/v1/customer/test-notification 200 78 - 7.728 ms[39m
+2026-02-21 03:17:04:174 [37mdebug[39m: [37mPush skipped for user 4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77: Disabled in preferences[39m

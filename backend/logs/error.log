@@ -172,3 +172,87 @@
 2026-02-20 06:56:45:5645 [31merror[39m: [31mUnauthorized request[39m
 2026-02-20 22:57:04:574 [31merror[39m: [31mToken expired[39m
 2026-02-20 23:24:56:2456 [31merror[39m: [31mValidation Error: body.confirmPassword: Invalid input: expected string, received undefined[39m
+2026-02-21 02:17:23:1723 [31merror[39m: [31mToken expired[39m
+2026-02-21 03:06:47:647 [31merror[39m: [31mToken expired[39m
+2026-02-21 03:06:51:651 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:06:52:652 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:06:53:653 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:06:55:655 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:06:55:655 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:07:18:718 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:07:19:719 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:07:23:723 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:07:23:723 [31merror[39m: [31m[39m
+[31mInvalid `prisma.userSession.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\middlewares\auth.middleware.ts:56:54[39m
+
+[31m  53 // Senior Implementation: Session Validation[39m
+[31m  54 // If token has a sessionId, ensure that session hasn't been revoked[39m
+[31m  55 if (decoded.sessionId) {[39m
+[31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-21 03:16:47:1647 [31merror[39m: [31mInvalid credentials[39m
