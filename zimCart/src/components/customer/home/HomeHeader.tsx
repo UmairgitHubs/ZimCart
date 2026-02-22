@@ -1,12 +1,15 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 interface HomeHeaderProps {
   onSearchPress?: () => void;
 }
 
 const HomeHeader: React.FC<HomeHeaderProps> = ({ onSearchPress }) => {
+  const navigation = useNavigation<any>();
+
   return (
       <View className="bg-[#2e7d32] pt-2 pb-6 px-4">
            {/* Address Row */}
@@ -18,9 +21,9 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({ onSearchPress }) => {
                      <Text className="text-white font-bold text-lg leading-5">107 Street 65</Text>
                      <Text className="text-white/80 text-xs">Islamabad</Text>
                  </View>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
                      <MaterialCommunityIcons name="bell-outline" size={24} color="white" />
-                 </TouchableOpacity>
+                  </TouchableOpacity>
            </View>
            
            {/* Search Bar */}

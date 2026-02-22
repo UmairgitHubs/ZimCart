@@ -922,3 +922,60 @@
 2026-02-21 21:34:40:3440 [32minfo[39m: [32mSocket.io initialized successfully[39m
 2026-02-21 21:34:40:3440 [32minfo[39m: [32mServer is running on port 5000[39m
 2026-02-21 21:34:40:3440 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-21 21:43:58:4358 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1900 - 2125.199 ms[39m
+2026-02-21 21:43:59:4359 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1083 - 316.534 ms[39m
+2026-02-21 21:44:08:448 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 64.777 ms[39m
+2026-02-21 21:44:23:4423 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1900 - 254.106 ms[39m
+2026-02-21 21:44:23:4423 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1083 - 31.695 ms[39m
+2026-02-21 21:44:25:4425 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 26.406 ms[39m
+2026-02-21 21:49:48:4948 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1900 - 659.036 ms[39m
+2026-02-21 21:49:49:4949 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1083 - 222.824 ms[39m
+2026-02-21 21:49:54:4954 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 59.233 ms[39m
+2026-02-21 21:49:57:4957 [35mhttp[39m: [35mGET /api/v1/help/faqs 200 1505 - 79.816 ms[39m
+2026-02-22 03:58:51:5851 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1900 - 644.366 ms[39m
+2026-02-22 03:58:52:5852 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1083 - 350.923 ms[39m
+2026-02-22 03:59:32:5932 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 266.019 ms[39m
+2026-02-22 04:28:35:2835 [31merror[39m: [31mToken expired[39m
+2026-02-22 04:28:35:2835 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 938 - 180.223 ms[39m
+2026-02-22 04:28:35:2835 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1549 - 451.688 ms[39m
+2026-02-22 04:28:36:2836 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1083 - 111.774 ms[39m
+2026-02-22 04:28:38:2838 [35mhttp[39m: [35mGET /api/v1/customer/vouchers 304 - - 114.150 ms[39m
+2026-02-22 04:28:42:2842 [35mhttp[39m: [35mGET /api/v1/customer/favourites 304 - - 101.363 ms[39m
+2026-02-22 04:36:16:3616 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 134.314 ms[39m
+2026-02-23 00:44:38:4438 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 00:44:38:4438 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 00:44:38:4438 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 00:50:35:5035 [31merror[39m: [31mToken expired[39m
+2026-02-23 00:50:35:5035 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 938 - 138.201 ms[39m
+2026-02-23 00:50:37:5037 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1549 - 1082.043 ms[39m
+2026-02-23 00:50:37:5037 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1083 - 133.503 ms[39m
+2026-02-23 00:50:56:5056 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 74.549 ms[39m
+2026-02-23 00:50:59:5059 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 73.685 ms[39m
+2026-02-23 00:51:00:510 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 6.554 ms[39m
+2026-02-23 00:51:22:5122 [35mhttp[39m: [35mGET /api/v1/customer/favourites 304 - - 32.085 ms[39m
+2026-02-23 00:52:13:5213 [35mhttp[39m: [35mGET /api/v1/customer/favourites 304 - - 129.418 ms[39m
+2026-02-23 00:52:15:5215 [35mhttp[39m: [35mGET /api/v1/customer/vouchers 304 - - 34.541 ms[39m
+2026-02-23 00:52:17:5217 [35mhttp[39m: [35mGET /api/v1/customer/vouchers 304 - - 21.486 ms[39m
+2026-02-23 00:52:27:5227 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 9.033 ms[39m
+2026-02-23 00:52:29:5229 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 5.165 ms[39m
+2026-02-23 00:52:30:5230 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 6.355 ms[39m
+2026-02-23 00:52:32:5232 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 146.057 ms[39m
+2026-02-23 00:52:50:5250 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 60.629 ms[39m
+2026-02-23 00:52:53:5253 [35mhttp[39m: [35mGET /api/v1/customer/orders?status=active 304 - - 46.651 ms[39m
+2026-02-23 00:53:02:532 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 33.405 ms[39m
+2026-02-23 00:53:04:534 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 9.271 ms[39m
+2026-02-23 00:53:05:535 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 5.448 ms[39m
+2026-02-23 00:54:24:5424 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 253.955 ms[39m
+2026-02-23 00:55:24:5524 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 362.683 ms[39m
+2026-02-23 01:15:56:1556 [31merror[39m: [31mToken expired[39m
+2026-02-23 01:15:56:1556 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 938 - 103.489 ms[39m
+2026-02-23 01:15:57:1557 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1549 - 444.362 ms[39m
+2026-02-23 01:15:57:1557 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1083 - 214.778 ms[39m
+2026-02-23 01:21:00:210 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 245.060 ms[39m
+2026-02-23 01:22:46:2246 [35mhttp[39m: [35mGET /api/v1/customer/favourites 304 - - 238.661 ms[39m
+2026-02-23 01:23:00:230 [35mhttp[39m: [35mGET /api/v1/customer/addresses 304 - - 122.724 ms[39m
+2026-02-23 01:23:07:237 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 208.580 ms[39m
+2026-02-23 01:23:09:239 [35mhttp[39m: [35mGET /api/v1/customer/orders?status=active 304 - - 93.888 ms[39m
+2026-02-23 01:23:11:2311 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 37.763 ms[39m
+2026-02-23 01:27:04:274 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 336.652 ms[39m
+2026-02-23 01:27:11:2711 [35mhttp[39m: [35mGET /api/v1/customer/addresses 304 - - 30.026 ms[39m

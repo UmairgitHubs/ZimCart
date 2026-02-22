@@ -3,6 +3,7 @@ import { View, Text, ScrollView, Image, TouchableOpacity, TextInput, Dimensions,
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { Mart } from '@/types/customer';
 
 const { width } = Dimensions.get('window');
@@ -170,6 +171,7 @@ const DailyEssentialCard = ({ item }: { item: Mart }) => (
 
 export default function GroceryScreen() {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation<any>();
 
   const renderHeader = () => (
       <View className="bg-[#2e7d32] pb-6 rounded-b-[24px] shadow-lg z-10" style={{ paddingTop: insets.top }}>
@@ -187,7 +189,10 @@ export default function GroceryScreen() {
                          <MaterialCommunityIcons name="chevron-down" size={18} color="white" />
                      </View>
                  </View>
-                 <TouchableOpacity className="bg-white/20 p-2 rounded-full relative">
+                 <TouchableOpacity 
+                    onPress={() => navigation.navigate('CartTab')}
+                    className="bg-white/20 p-2 rounded-full relative active:bg-white/30"
+                 >
                       <MaterialCommunityIcons name="cart-outline" size={22} color="white" />
                       <View className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-[#2e7d32]" />
                  </TouchableOpacity>

@@ -10,6 +10,7 @@ import EditProfileScreen from '@/screens/customer/EditProfileScreen';
 import SavedAddressesScreen from '@/screens/customer/SavedAddressesScreen';
 import PaymentMethodsScreen from '../screens/customer/PaymentMethodsScreen';
 import NotificationsScreen from '../screens/customer/NotificationsScreen';
+import NotificationSettingsScreen from '../screens/customer/NotificationSettingsScreen';
 import PrivacySecurityScreen from '@/screens/customer/PrivacySecurityScreen';
 import ChangePasswordScreen from '@/screens/customer/ChangePasswordScreen';
 import Verify2FAScreen from '@/screens/customer/Verify2FAScreen';
@@ -40,6 +41,7 @@ export default function CustomerNavigator() {
       <Stack.Screen name="SavedAddresses" component={SavedAddressesScreen} />
       <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
+      <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
       <Stack.Screen name="PrivacySecurity" component={PrivacySecurityScreen} />
       <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       <Stack.Screen name="Verify2FA" component={Verify2FAScreen} />

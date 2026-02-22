@@ -1,120 +1,243 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, { useState, useMemo } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 
-interface NotificationSetting {
+interface NotificationItem {
   id: string;
-  label: string;
-  description?: string;
+  type: 'order' | 'promo' | 'system' | 'account';
+  title: string;
+  message: string;
+  time: string;
+  isRead: boolean;
   icon: string;
-  value: boolean;
-  type: 'general' | 'order' | 'promo' | 'account';
+  color: string;
+  bg: string;
 }
 
-const MOCK_SETTINGS: NotificationSetting[] = [
-  // General
-  { id: '1', type: 'general', label: 'Allow Push Notifications', description: 'Receive push notifications on this device', icon: 'bell-ring-outline', value: true },
-  { id: '2', type: 'general', label: 'Sound', description: 'Play sound for incoming notifications', icon: 'volume-high', value: true },
-  { id: '3', type: 'general', label: 'Vibration', description: 'Vibrate for incoming notifications', icon: 'vibrate', value: true },
-
-  // Orders
-  { id: '4', type: 'order', label: 'Order Status Updates', description: 'Get notified when your order is packed or shipped', icon: 'package-variant-closed', value: true },
-  { id: '5', type: 'order', label: 'Delivery Updates', description: 'Get notified when your order is out for delivery', icon: 'truck-delivery-outline', value: true },
-  
-  // Promos
-  { id: '6', type: 'promo', label: 'Discounts & Sales', description: 'Be the first to know about flash sales', icon: 'ticket-percent-outline', value: false },
-  { id: '7', type: 'promo', label: 'New Arrivals', description: 'Updates on new products in store', icon: 'new-box', value: false },
-
-  // Channels (Account)
-  { id: '8', type: 'account', label: 'Email Notifications', description: 'Receive order receipts and newsletters via email', icon: 'email-outline', value: true },
-  { id: '9', type: 'account', label: 'SMS Notifications', description: 'Receive critical updates via text message', icon: 'message-text-outline', value: false },
+const NOTIFICATIONS_DATA: { day: string; data: NotificationItem[] }[] = [
+  {
+    day: 'Today',
+    data: [
+      {
+        id: '1',
+        type: 'order',
+        title: 'Order Delivered!',
+        message: 'Your order #ZM-8821 has been delivered. Enjoy your shopping!',
+        time: '2h ago',
+        isRead: false,
+        icon: 'package-variant-closed',
+        color: '#16A34A',
+        bg: '#F0FDF4',
+      },
+      {
+        id: '2',
+        type: 'promo',
+        title: 'Flash Sale Live! ⚡️',
+        message: 'Up to 70% off on electronics for the next 4 hours. Don\'t miss out!',
+        time: '5h ago',
+        isRead: false,
+        icon: 'lightning-bolt',
+        color: '#EA580C',
+        bg: '#FFF7ED',
+      },
+    ]
+  },
+  {
+    day: 'Yesterday',
+    data: [
+      {
+        id: '3',
+        type: 'system',
+        title: 'Security Alert',
+        message: 'A new login was detected from a Chrome browser on Windows 11.',
+        time: 'Yesterday, 4:20 PM',
+        isRead: true,
+        icon: 'shield-alert-outline',
+        color: '#DC2626',
+        bg: '#FEF2F2',
+      },
+      {
+        id: '4',
+        type: 'order',
+        title: 'Refund Processed',
+        message: 'Refund for order #ZM-8815 has been credited to your wallet.',
+        time: 'Yesterday, 10:15 AM',
+        isRead: true,
+        icon: 'cash-backwards',
+        color: '#2563EB',
+        bg: '#EFF6FF',
+      },
+    ]
+  },
+  {
+    day: 'Earlier',
+    data: [
+      {
+        id: '5',
+        type: 'account',
+        title: 'Welcome to ZimCart!',
+        message: 'Thanks for joining us! Start exploring the best products in town.',
+        time: 'Feb 18, 2026',
+        isRead: true,
+        icon: 'party-popper',
+        color: '#8B5CF6',
+        bg: '#F5F3FF',
+      },
+    ]
+  }
 ];
 
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
-  const [settings, setSettings] = useState<NotificationSetting[]>(MOCK_SETTINGS);
+  const navigation = useNavigation<any>();
+  const [activeFilter, setActiveFilter] = useState('All');
+  const [notifications, setNotifications] = useState(NOTIFICATIONS_DATA);
 
-  const toggleSwitch = (id: string) => {
-      setSettings(prev => prev.map(item => 
-          item.id === id ? { ...item, value: !item.value } : item
-      ));
+  const filters = ['All', 'Orders', 'Offers', 'System'];
+
+  const markAllRead = () => {
+    setNotifications(prev => prev.map(section => ({
+      ...section,
+      data: section.data.map(item => ({ ...item, isRead: true }))
+    })));
   };
 
-  const renderSectionHeader = (title: string, color: string) => (
-      <View className="flex-row items-center px-4 py-3 bg-gray-50 border-y border-gray-100 mt-4 first:mt-0">
-          <View className={`w-1 h-4 rounded-full mr-3`} style={{ backgroundColor: color }} />
-          <Text className="text-xs font-bold text-gray-500 uppercase tracking-widest">{title}</Text>
-      </View>
-  );
-
-  const renderItem = (item: NotificationSetting) => (
-      <View key={item.id} className="bg-white px-4 py-4 flex-row items-center justify-between border-b border-gray-50">
-          <View className="flex-row items-center flex-1 mr-4">
-              <View className="w-10 h-10 rounded-full bg-gray-50 items-center justify-center mr-3">
-                  <MaterialCommunityIcons name={item.icon as any} size={20} color="#4B5563" />
-              </View>
-              <View className="flex-1">
-                  <Text className="text-base font-bold text-gray-900 mb-0.5">{item.label}</Text>
-                  {item.description && (
-                      <Text className="text-xs text-gray-500 leading-4">{item.description}</Text>
-                  )}
-              </View>
-          </View>
-          <Switch
-              trackColor={{ false: "#E5E7EB", true: "#86efac" }}
-              thumbColor={item.value ? "#2e7d32" : "#f4f3f4"}
-              ios_backgroundColor="#E5E7EB"
-              onValueChange={() => toggleSwitch(item.id)}
-              value={item.value}
-          />
-      </View>
-  );
+  const filteredNotifications = useMemo(() => {
+    return notifications.map(section => {
+      const filteredData = section.data.filter(item => {
+        if (activeFilter === 'All') return true;
+        if (activeFilter === 'Orders') return item.type === 'order';
+        if (activeFilter === 'Offers') return item.type === 'promo';
+        if (activeFilter === 'System') return item.type === 'system' || item.type === 'account';
+        return true;
+      });
+      return { ...section, data: filteredData };
+    }).filter(section => section.data.length > 0);
+  }, [activeFilter, notifications]);
 
   return (
     <View className="flex-1 bg-white">
       <StatusBar style="dark" />
       
-      {/* Header */}
-      <View style={{ paddingTop: insets.top }} className="bg-white px-4 pb-4 border-b border-gray-200 z-10 flex-row items-center justify-between shadow-sm">
-          <TouchableOpacity onPress={() => navigation.goBack()} className="p-2 bg-gray-100 rounded-full active:bg-gray-200">
-              <MaterialCommunityIcons name="arrow-left" size={24} color="#1F2937" />
-          </TouchableOpacity>
-          <Text className="text-xl font-bold text-gray-900">Notifications</Text>
-          <View className="w-10" /> 
+      {/* Sticky Header */}
+      <View 
+        className="bg-white border-b border-gray-100 z-20"
+        style={{ paddingTop: insets.top }}
+      >
+        <View className="px-5 pb-2 flex-row items-center justify-between">
+            <TouchableOpacity 
+              onPress={() => navigation.goBack()} 
+              className="w-10 h-10 rounded-full bg-gray-50 items-center justify-center"
+            >
+                <MaterialCommunityIcons name="chevron-left" size={28} color="#1F2937" />
+            </TouchableOpacity>
+            
+            <Text className="text-xl font-black text-gray-900">Notifications</Text>
+            
+            <TouchableOpacity 
+              onPress={() => navigation.navigate('NotificationSettings')}
+              className="w-10 h-10 rounded-full bg-gray-50 items-center justify-center"
+            >
+                <MaterialCommunityIcons name="cog-outline" size={24} color="#4B5563" />
+            </TouchableOpacity>
+        </View>
+
+        {/* Chip Filter bar */}
+        <View className="px-5 pb-4 pt-2">
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-5 px-5">
+                {filters.map((filter) => {
+                    const isActive = activeFilter === filter;
+                    return (
+                        <TouchableOpacity 
+                            key={filter}
+                            onPress={() => setActiveFilter(filter)}
+                            className={`mr-3 px-6 py-2 rounded-2xl border ${isActive ? 'bg-green-700 border-green-700' : 'bg-white border-gray-100'}`}
+                        >
+                            <Text className={`text-sm font-bold ${isActive ? 'text-white' : 'text-gray-500'}`}>
+                                {filter}
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                })}
+            </ScrollView>
+        </View>
       </View>
 
       <ScrollView 
-        contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 50 }}
         className="flex-1"
       >
-          
-          {renderSectionHeader('General', '#3B82F6')}
-          {settings.filter(s => s.type === 'general').map(renderItem)}
-
-          {renderSectionHeader('Order Updates', '#10B981')}
-          {settings.filter(s => s.type === 'order').map(renderItem)}
-
-          {renderSectionHeader('Promotions & Deals', '#F59E0B')}
-          {settings.filter(s => s.type === 'promo').map(renderItem)}
-
-          {renderSectionHeader('Communnication Channels', '#8B5CF6')}
-          {settings.filter(s => s.type === 'account').map(renderItem)}
-
-          {/* Info Footer */}
-          <View className="p-6 items-center">
-              <Text className="text-center text-xs text-gray-400 leading-5">
-                  Control how and when you receive notifications.{'\n'}
-                  Note: Critical security alerts typically cannot be disabled.
-              </Text>
+          {/* Action Row */}
+          <View className="flex-row justify-between items-center px-5 py-4 mt-2">
+              <View className="flex-row items-center">
+                <Text className="text-gray-400 font-bold text-xs uppercase tracking-widest leading-none">{activeFilter} Activity</Text>
+                {activeFilter !== 'All' && (
+                    <View className="ml-2 px-2 py-0.5 bg-gray-100 rounded-md">
+                        <Text className="text-[10px] text-gray-500 font-bold">
+                            {filteredNotifications.reduce((acc, curr) => acc + curr.data.length, 0)}
+                        </Text>
+                    </View>
+                )}
+              </View>
+              <TouchableOpacity onPress={markAllRead}>
+                  <Text className="text-green-700 font-bold text-sm">Mark all as read</Text>
+              </TouchableOpacity>
           </View>
 
-      </ScrollView>
+          {filteredNotifications.length > 0 ? (
+            filteredNotifications.map((section) => (
+              <View key={section.day} className="mb-6">
+                  <View className="px-5 mb-3">
+                      <Text className="text-lg font-black text-gray-900">{section.day}</Text>
+                  </View>
+                  
+                  {section.data.map((item) => (
+                      <Pressable 
+                        key={item.id}
+                        className={`flex-row px-5 py-5 border-b border-gray-50 ${!item.isRead ? 'bg-green-50/20' : 'bg-white'}`}
+                      >
+                          <View 
+                            style={{ backgroundColor: item.bg }}
+                            className="w-12 h-12 rounded-2xl items-center justify-center mr-4"
+                          >
+                              <MaterialCommunityIcons name={item.icon as any} size={24} color={item.color} />
+                              {!item.isRead && (
+                                  <View className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-600 rounded-full border-2 border-white" />
+                              )}
+                          </View>
 
+                          <View className="flex-1">
+                              <View className="flex-row justify-between items-start mb-1">
+                                  <Text className={`text-[15px] flex-1 mr-2 ${!item.isRead ? 'font-black text-gray-900' : 'font-bold text-gray-700'}`}>
+                                      {item.title}
+                                  </Text>
+                                  <Text className="text-[11px] text-gray-400 font-medium">{item.time}</Text>
+                              </View>
+                              <Text className="text-[13px] text-gray-500 leading-5" numberOfLines={2}>
+                                  {item.message}
+                              </Text>
+                          </View>
+                      </Pressable>
+                  ))}
+              </View>
+            ))
+          ) : (
+            <View className="flex-1 items-center justify-center pt-20 px-10">
+                <View className="w-24 h-24 bg-gray-50 rounded-full items-center justify-center mb-6">
+                    <MaterialCommunityIcons name="bell-off-outline" size={40} color="#D1D5DB" />
+                </View>
+                <Text className="text-xl font-bold text-gray-900 mb-2">No {activeFilter !== 'All' ? activeFilter.toLowerCase() : ''} notifications</Text>
+                <Text className="text-center text-gray-400 leading-5">
+                    We'll notify you when something important happens. Stay tuned!
+                </Text>
+            </View>
+          )}
+
+      </ScrollView>
     </View>
   );
 }

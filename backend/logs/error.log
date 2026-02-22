@@ -256,3 +256,6 @@
 [31m→ 56   const activeSession = await prisma.userSession.findUnique([39m
 [31mThe column `(not available)` does not exist in the current database.[39m
 2026-02-21 03:16:47:1647 [31merror[39m: [31mInvalid credentials[39m
+2026-02-22 04:28:35:2835 [31merror[39m: [31mToken expired[39m
+2026-02-23 00:50:35:5035 [31merror[39m: [31mToken expired[39m
+2026-02-23 01:15:56:1556 [31merror[39m: [31mToken expired[39m
