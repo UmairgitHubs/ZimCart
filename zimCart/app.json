@@ -19,6 +19,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "package": "com.zimcart.zimcart",
+      "googleServicesFile": "./google-services.json",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
@@ -40,11 +41,18 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4425a17b-8429-4b39-867a-d6bef87464b1"
+      }
     }
   }
 }

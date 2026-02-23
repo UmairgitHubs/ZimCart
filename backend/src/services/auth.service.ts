@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken, verifyAccessToken } from '../utils/token.utils.js';
 import { sendPasswordResetEmail, sendTwoFactorEmail } from './email.service.js';
+import { notificationService } from './notification.service.js';
 
 export class AuthService {
 
@@ -24,6 +25,19 @@ export class AuthService {
         name,
         phone,
         role: 'CUSTOMER', // Default
+        notifications: {
+            create: {
+                pushEnabled: true,
+                emailEnabled: true,
+                smsEnabled: !!phone,
+                soundEnabled: true,
+                vibrationEnabled: true,
+                orderUpdatesEnabled: true,
+                deliveryUpdatesEnabled: true,
+                promotionalEnabled: true,
+                newArrivalsEnabled: true,
+            }
+        }
       },
       select: {
           id: true,
@@ -108,6 +122,14 @@ export class AuthService {
         data: { refreshToken }
     });
 
+    // Send Login Notification (Don't wait)
+    notificationService.sendNotification(
+        [user.id],
+        'New Login Detected 🔐',
+        `A new login was successful on your ZimCart account from ${deviceInfo?.os || 'a new device'} (${deviceInfo?.ipAddress || 'unknown IP'}). If this wasn't you, please change your password immediately.`,
+        { type: 'SECURITY' }
+    ).catch(console.error);
+
     const { password: _, refreshToken: __, twoFactorCode: ___, twoFactorExpires: ____, ...userResponse } = user;
 
     return { user: userResponse, accessToken, refreshToken };
@@ -140,6 +162,14 @@ export class AuthService {
 
       const accessToken = generateAccessToken({ ...user, sessionId: session.id });
       const refreshToken = generateRefreshToken({ id: user.id, sessionId: session.id });
+
+      // Send Login Notification (Don't wait)
+      notificationService.sendNotification(
+          [user.id],
+          'New Login Detected 🔐',
+          `A new login was successful on your ZimCart account via 2FA from ${deviceInfo?.os || 'a new device'}.`,
+          { type: 'SECURITY' }
+      ).catch(console.error);
 
       const { password: _, refreshToken: __, twoFactorCode: ___, twoFactorExpires: ____, ...userResponse } = user;
       return { user: userResponse, accessToken, refreshToken };

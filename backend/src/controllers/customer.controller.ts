@@ -4,6 +4,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
 import { getDeviceInfo } from '../utils/device.utils.js';
+import { notificationService } from '../services/notification.service.js';
 
 
 
@@ -42,6 +43,17 @@ export class CustomerController {
 
     return res.status(200).json(
       new ApiResponse(200, orders, 'Orders fetched successfully')
+    );
+  });
+
+  placeOrder = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+
+    const order = await customerService.placeOrder(userId, req.body);
+
+    return res.status(201).json(
+      new ApiResponse(201, order, 'Order placed successfully')
     );
   });
 
@@ -220,6 +232,64 @@ export class CustomerController {
 
     return res.status(200).json(
         new ApiResponse(200, {}, 'All other sessions revoked successfully')
+    );
+  });
+
+  updatePushToken = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    const { pushToken } = req.body;
+
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+    if (!pushToken) throw new ApiError(400, 'Push token is required');
+
+    const result = await notificationService.updatePushToken(userId, pushToken);
+
+    return res.status(200).json(
+        new ApiResponse(200, result, 'Push token updated successfully')
+    );
+  });
+
+  updateNotificationPreferences = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+
+    const result = await customerService.updateNotificationPreferences(userId, req.body);
+
+    return res.status(200).json(
+        new ApiResponse(200, result, 'Notification preferences updated successfully')
+    );
+  });
+
+  getNotifications = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+
+    const result = await customerService.getNotifications(userId);
+
+    return res.status(200).json(
+        new ApiResponse(200, result, 'Notifications retrieved successfully')
+    );
+  });
+
+  markNotificationRead = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+
+    const result = await customerService.markNotificationRead(userId, req.params.id as string);
+
+    return res.status(200).json(
+        new ApiResponse(200, result, 'Notification marked as read')
+    );
+  });
+
+  markAllNotificationsRead = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'Unauthorized');
+
+    const result = await customerService.markAllNotificationsRead(userId);
+
+    return res.status(200).json(
+        new ApiResponse(200, result, 'All notifications marked as read')
     );
   });
 }

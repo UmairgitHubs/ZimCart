@@ -18,6 +18,11 @@ export const customerApi = {
     const { data } = await api.get('/customer/orders', { params: { status } });
     return data.data;
   },
+  
+  placeOrder: async (orderData: any): Promise<Order> => {
+    const { data } = await api.post('/customer/orders', orderData);
+    return data.data;
+  },
 
   // Vouchers
   getVouchers: async (): Promise<Voucher[]> => {
@@ -90,5 +95,30 @@ export const customerApi = {
 
   revokeAllOtherSessions: async (): Promise<void> => {
     await api.delete('/customer/sessions');
+  },
+
+  updatePushToken: async (pushToken: string): Promise<any> => {
+    const { data } = await api.post('/customer/push-token', { pushToken });
+    return data.data;
+  },
+
+  updateNotificationPreferences: async (preferences: any): Promise<any> => {
+    const { data } = await api.patch('/customer/notifications/preferences', preferences);
+    return data.data;
+  },
+
+  getNotifications: async (): Promise<any[]> => {
+    const { data } = await api.get('/customer/notifications');
+    return data.data;
+  },
+
+  markNotificationRead: async (id: string): Promise<any> => {
+    const { data } = await api.patch(`/customer/notifications/${id}/read`);
+    return data.data;
+  },
+
+  markAllNotificationsRead: async (): Promise<any> => {
+    const { data } = await api.post('/customer/notifications/read-all');
+    return data.data;
   }
 };

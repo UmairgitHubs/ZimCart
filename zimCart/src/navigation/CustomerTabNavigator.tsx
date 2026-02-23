@@ -8,15 +8,19 @@ import CartScreen from '@/screens/customer/CartScreen';
 import GroceryScreen from '@/screens/customer/GroceryScreen';
 import ProfileScreen from '@/screens/customer/ProfileScreen';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 const Tab = createBottomTabNavigator();
 
 const COLORS = {
   primary: '#2e7d32',
-  inactive: '#9CA3AF',
+  inactive: '#94a3b8',
   background: '#ffffff',
 };
 
 export default function CustomerTabNavigator() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -27,15 +31,18 @@ export default function CustomerTabNavigator() {
         tabBarStyle: {
           backgroundColor: COLORS.background,
           borderTopWidth: 1,
-          borderTopColor: '#f3f4f6', 
-          elevation: 0, 
-          paddingTop: 8,
-          // Removed manual height/paddingBottom to fix safe area glitch
+          borderTopColor: '#f1f5f9',
+          height: Platform.OS === 'ios' ? 88 + insets.bottom / 2 : 68 + insets.bottom,
+          paddingBottom: Platform.OS === 'ios' ? insets.bottom : insets.bottom + 8,
+          paddingTop: 12,
+          elevation: 0,
+          shadowOpacity: 0,
         },
         tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: '600',
-          marginBottom: 4, 
+          fontSize: 11,
+          fontWeight: '700',
+          marginTop: -4,
+          paddingBottom: 4,
         },
       }}
     >

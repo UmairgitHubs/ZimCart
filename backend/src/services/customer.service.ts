@@ -81,6 +81,57 @@ export class CustomerService {
   }
 
   /*
+   * Place Order
+   */
+  async placeOrder(userId: string, data: any) {
+    const { storeId, items, total, subtotal, deliveryFee, discount, address, paymentMethod } = data;
+
+    // 1. Create the order in a transaction
+    const order = await prisma.$transaction(async (tx) => {
+      const newOrder = await tx.order.create({
+        data: {
+          orderNumber: `#ZM-${Math.floor(10000 + Math.random() * 90000)}`,
+          userId,
+          storeId,
+          total,
+          subtotal,
+          deliveryFee,
+          discount: discount || 0,
+          address,
+          paymentMethod,
+          items: {
+            create: items.map((item: any) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              price: item.price,
+              total: item.quantity * item.price,
+            })),
+          },
+        },
+        include: {
+          store: true,
+          items: {
+            include: { product: true }
+          }
+        }
+      });
+      return newOrder;
+    });
+
+    // 2. Trigger Notification (Don't wait)
+    import('./notification.service.js').then(m => {
+        m.notificationService.sendNotification(
+            [userId],
+            'Order Placed Successfully! 🍛',
+            `Your order ${order.orderNumber} from ${order.store.name} has been received and is being processed.`,
+            { type: 'ORDER', orderId: order.id }
+        ).catch(err => console.error("Notification failed inside order flow:", err));
+    }).catch(console.error);
+
+    return order;
+  }
+
+  /*
    * Vouchers
    */
   async getVouchers(userId: string, status: string = 'active') {
@@ -213,6 +264,39 @@ export class CustomerService {
       where: { id: userId },
       data,
       select: { id: true, isTwoFactorEnabled: true, dataSharingConsent: true }, 
+    });
+  }
+
+  async updateNotificationPreferences(userId: string, data: any) {
+    return prisma.notificationPreference.upsert({
+      where: { userId },
+      update: data,
+      create: {
+        ...data,
+        userId
+      }
+    });
+  }
+
+  async getNotifications(userId: string) {
+    return prisma.notification.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: 50, // Get last 50 for now
+    });
+  }
+
+  async markNotificationRead(userId: string, notificationId: string) {
+    return prisma.notification.update({
+      where: { id: notificationId, userId },
+      data: { isRead: true }
+    });
+  }
+
+  async markAllNotificationsRead(userId: string) {
+    return prisma.notification.updateMany({
+      where: { userId, isRead: false },
+      data: { isRead: true }
     });
   }
 

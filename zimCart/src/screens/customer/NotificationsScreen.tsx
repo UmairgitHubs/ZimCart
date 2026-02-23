@@ -90,33 +90,62 @@ const NOTIFICATIONS_DATA: { day: string; data: NotificationItem[] }[] = [
   }
 ];
 
+import { useNotificationsInbox } from '@/hooks/useCustomer';
+
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<any>();
   const [activeFilter, setActiveFilter] = useState('All');
-  const [notifications, setNotifications] = useState(NOTIFICATIONS_DATA);
+  
+  const { data: serverNotifications = [], markRead, markAllRead, isLoading } = useNotificationsInbox();
 
   const filters = ['All', 'Orders', 'Offers', 'System'];
 
-  const markAllRead = () => {
-    setNotifications(prev => prev.map(section => ({
-      ...section,
-      data: section.data.map(item => ({ ...item, isRead: true }))
-    })));
+  const groupNotificationsByDay = (data: any[]) => {
+      const groups: Record<string, any[]> = { Today: [], Yesterday: [], Earlier: [] };
+      const now = new Date();
+      const todayString = now.toLocaleDateString();
+      const yesterday = new Date(now);
+      yesterday.setDate(now.getDate() - 1);
+      const yesterdayString = yesterday.toLocaleDateString();
+
+      data.forEach(item => {
+          const date = new Date(item.createdAt);
+          const dateString = date.toLocaleDateString();
+          
+          if (dateString === todayString) groups.Today.push(item);
+          else if (dateString === yesterdayString) groups.Yesterday.push(item);
+          else groups.Earlier.push(item);
+      });
+
+      return Object.keys(groups)
+          .map(day => ({ 
+              day, 
+              data: groups[day] 
+          }))
+          .filter(g => g.data.length > 0);
+  };
+
+  const getIconConfig = (type: string) => {
+    switch(type) {
+      case 'order': return { icon: 'package-variant-closed', color: '#16A34A', bg: '#F0FDF4' };
+      case 'promo': return { icon: 'lightning-bolt', color: '#EA580C', bg: '#FFF7ED' };
+      case 'account': 
+      case 'welcome_onboarding': return { icon: 'party-popper', color: '#8B5CF6', bg: '#F5F3FF' };
+      default: return { icon: 'bell-outline', color: '#4B5563', bg: '#F3F4F6' };
+    }
   };
 
   const filteredNotifications = useMemo(() => {
-    return notifications.map(section => {
-      const filteredData = section.data.filter(item => {
+    const base = serverNotifications.filter((item: any) => {
         if (activeFilter === 'All') return true;
         if (activeFilter === 'Orders') return item.type === 'order';
         if (activeFilter === 'Offers') return item.type === 'promo';
         if (activeFilter === 'System') return item.type === 'system' || item.type === 'account';
         return true;
-      });
-      return { ...section, data: filteredData };
-    }).filter(section => section.data.length > 0);
-  }, [activeFilter, notifications]);
+    });
+    return groupNotificationsByDay(base);
+  }, [activeFilter, serverNotifications]);
 
   return (
     <View className="flex-1 bg-white">
@@ -183,46 +212,56 @@ export default function NotificationsScreen() {
                     </View>
                 )}
               </View>
-              <TouchableOpacity onPress={markAllRead}>
+              <TouchableOpacity onPress={() => markAllRead()}>
                   <Text className="text-green-700 font-bold text-sm">Mark all as read</Text>
               </TouchableOpacity>
           </View>
 
-          {filteredNotifications.length > 0 ? (
+          {isLoading ? (
+             <View className="flex-1 items-center justify-center pt-20">
+                 <Text className="text-gray-400 font-bold">Loading activity...</Text>
+             </View>
+          ) : filteredNotifications.length > 0 ? (
             filteredNotifications.map((section) => (
               <View key={section.day} className="mb-6">
                   <View className="px-5 mb-3">
                       <Text className="text-lg font-black text-gray-900">{section.day}</Text>
                   </View>
                   
-                  {section.data.map((item) => (
-                      <Pressable 
-                        key={item.id}
-                        className={`flex-row px-5 py-5 border-b border-gray-50 ${!item.isRead ? 'bg-green-50/20' : 'bg-white'}`}
-                      >
-                          <View 
-                            style={{ backgroundColor: item.bg }}
-                            className="w-12 h-12 rounded-2xl items-center justify-center mr-4"
-                          >
-                              <MaterialCommunityIcons name={item.icon as any} size={24} color={item.color} />
-                              {!item.isRead && (
-                                  <View className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-600 rounded-full border-2 border-white" />
-                              )}
-                          </View>
+                  {section.data.map((item: any) => {
+                      const { icon, color, bg } = getIconConfig(item.type);
+                      return (
+                        <Pressable 
+                            key={item.id}
+                            onPress={() => !item.isRead && markRead(item.id)}
+                            className={`flex-row px-5 py-5 border-b border-gray-50 ${!item.isRead ? 'bg-green-50/20' : 'bg-white'}`}
+                        >
+                            <View 
+                                style={{ backgroundColor: bg }}
+                                className="w-12 h-12 rounded-2xl items-center justify-center mr-4"
+                            >
+                                <MaterialCommunityIcons name={icon as any} size={24} color={color} />
+                                {!item.isRead && (
+                                    <View className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-600 rounded-full border-2 border-white" />
+                                )}
+                            </View>
 
-                          <View className="flex-1">
-                              <View className="flex-row justify-between items-start mb-1">
-                                  <Text className={`text-[15px] flex-1 mr-2 ${!item.isRead ? 'font-black text-gray-900' : 'font-bold text-gray-700'}`}>
-                                      {item.title}
-                                  </Text>
-                                  <Text className="text-[11px] text-gray-400 font-medium">{item.time}</Text>
-                              </View>
-                              <Text className="text-[13px] text-gray-500 leading-5" numberOfLines={2}>
-                                  {item.message}
-                              </Text>
-                          </View>
-                      </Pressable>
-                  ))}
+                            <View className="flex-1">
+                                <View className="flex-row justify-between items-start mb-1">
+                                    <Text className={`text-[15px] flex-1 mr-2 ${!item.isRead ? 'font-black text-gray-900' : 'font-bold text-gray-700'}`}>
+                                        {item.title}
+                                    </Text>
+                                    <Text className="text-[11px] text-gray-400 font-medium">
+                                        {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </Text>
+                                </View>
+                                <Text className="text-[13px] text-gray-500 leading-5" numberOfLines={2}>
+                                    {item.body || item.message}
+                                </Text>
+                            </View>
+                        </Pressable>
+                      );
+                  })}
               </View>
             ))
           ) : (

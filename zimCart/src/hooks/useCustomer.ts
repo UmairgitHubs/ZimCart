@@ -204,3 +204,74 @@ export const useDevices = () => {
         isRevokingOthers: revokeOthersMutation.isPending,
     };
 };
+
+/*
+ * Use Notification Settings
+ */
+export const useNotificationSettings = () => {
+    const queryClient = useQueryClient();
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+    const query = useQuery({
+        queryKey: ['profile'], // Notifications are included in profile
+        queryFn: customerApi.getProfile,
+        enabled: isAuthenticated,
+        select: (data) => data.notifications,
+    });
+
+    const updateNotifications = useMutation({
+        mutationFn: customerApi.updateNotificationPreferences,
+        onSuccess: (updatedPrefs) => {
+            // Update the profile query data with new notifications
+            queryClient.setQueryData(['profile'], (old: any) => {
+                if (!old) return old;
+                return {
+                    ...old,
+                    notifications: updatedPrefs
+                };
+            });
+        },
+    });
+
+    return {
+        ...query,
+        update: updateNotifications.mutateAsync,
+        isUpdating: updateNotifications.isPending,
+    };
+};
+
+/*
+ * Use Notifications (Inbox)
+ */
+export const useNotificationsInbox = () => {
+    const queryClient = useQueryClient();
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+    const query = useQuery({
+        queryKey: ['notifications'],
+        queryFn: customerApi.getNotifications,
+        enabled: isAuthenticated,
+        refetchInterval: 60000, // Refresh every minute
+    });
+
+    const markRead = useMutation({
+        mutationFn: customerApi.markNotificationRead,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['notifications'] });
+        },
+    });
+
+    const markAllRead = useMutation({
+        mutationFn: customerApi.markAllNotificationsRead,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['notifications'] });
+        },
+    });
+
+    return {
+        ...query,
+        markRead: markRead.mutateAsync,
+        markAllRead: markAllRead.mutateAsync,
+        isReading: markRead.isPending || markAllRead.isPending,
+    };
+};

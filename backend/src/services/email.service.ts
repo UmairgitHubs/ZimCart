@@ -5,6 +5,7 @@ import React from 'react';
 import ResetPasswordEmail from '../emails/templates/ResetPasswordEmail.js';
 import TwoFactorEmail from '../emails/templates/TwoFactorEmail.js';
 import DataExportEmail from '../emails/templates/DataExportEmail.js';
+import GeneralNotificationEmail from '../emails/templates/GeneralNotificationEmail.js';
 
 const createTransporter = () => {
     // Check if configuration exists
@@ -88,6 +89,22 @@ export const sendPasswordResetEmail = async (to: string, resetCode: string) => {
         React.createElement(Component, {
             resetToken: resetCode,
             resetUrl,
+        })
+    );
+
+    return sendEmail(to, subject, emailHtml);
+};
+
+export const sendGeneralNotificationEmail = async (to: string, title: string, message: string, actionUrl?: string) => {
+    const subject = title;
+
+    const Component = (GeneralNotificationEmail as any).default || GeneralNotificationEmail;
+
+    const emailHtml = await render(
+        React.createElement(Component, {
+            title,
+            message,
+            actionUrl,
         })
     );
 

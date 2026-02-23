@@ -979,3 +979,582 @@
 2026-02-23 01:23:11:2311 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 37.763 ms[39m
 2026-02-23 01:27:04:274 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 336.652 ms[39m
 2026-02-23 01:27:11:2711 [35mhttp[39m: [35mGET /api/v1/customer/addresses 304 - - 30.026 ms[39m
+2026-02-23 03:43:23:4323 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 03:43:23:4323 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 03:43:23:4323 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 03:53:18:5318 [31merror[39m: [31mUnauthorized request[39m
+2026-02-23 03:53:18:5318 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 401 952 - 41.636 ms[39m
+2026-02-23 05:23:24:2324 [31merror[39m: [31mInvalid credentials[39m
+2026-02-23 05:23:24:2324 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 307 - 2300.039 ms[39m
+2026-02-23 05:23:45:2345 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1940 - 425.427 ms[39m
+2026-02-23 05:23:45:2345 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1100 - 314.515 ms[39m
+2026-02-23 05:23:46:2346 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 65.891 ms[39m
+2026-02-23 05:23:46:2346 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 82.110 ms[39m
+2026-02-23 05:23:50:2350 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 36.984 ms[39m
+2026-02-23 05:24:01:241 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1139 - 51.278 ms[39m
+2026-02-23 05:25:55:2555 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 1120.781 ms[39m
+2026-02-23 05:26:10:2610 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 275.643 ms[39m
+2026-02-23 05:29:42:2942 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 05:29:42:2942 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 05:29:42:2942 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 05:29:53:2953 [31merror[39m: [31mConnection terminated due to connection timeout[39m
+2026-02-23 05:29:53:2953 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 352 - 3597.875 ms[39m
+2026-02-23 05:29:54:2954 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 1603.521 ms[39m
+2026-02-23 05:29:54:2954 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 1741.619 ms[39m
+2026-02-23 05:29:54:2954 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1624 - 1353.063 ms[39m
+2026-02-23 05:29:55:2955 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1139 - 216.744 ms[39m
+2026-02-23 05:29:55:2955 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 57.667 ms[39m
+2026-02-23 05:29:55:2955 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 65.642 ms[39m
+2026-02-23 05:30:10:3010 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1139 - 101.038 ms[39m
+2026-02-23 05:30:47:3047 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 347.054 ms[39m
+2026-02-23 05:31:00:310 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1139 - 199.464 ms[39m
+2026-02-23 05:31:04:314 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 61.726 ms[39m
+2026-02-23 05:31:17:3117 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 122.346 ms[39m
+2026-02-23 05:35:30:3530 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 05:35:30:3530 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 05:35:30:3530 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 05:36:35:3635 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 05:36:35:3635 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 05:36:35:3635 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 05:36:44:3644 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 1853.766 ms[39m
+2026-02-23 05:36:44:3644 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 4309.575 ms[39m
+2026-02-23 05:36:53:3653 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1139 - 292.643 ms[39m
+2026-02-23 05:37:05:375 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 235.343 ms[39m
+2026-02-23 05:37:21:3721 [35mhttp[39m: [35mGET /api/v1/customer/notifications 200 92 - 171.539 ms[39m
+2026-02-23 05:37:41:3741 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 38.361 ms[39m
+2026-02-23 05:38:17:3817 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 724.305 ms[39m
+2026-02-23 05:38:33:3833 [35mhttp[39m: [35mPOST /api/v1/customer/notifications/read-all 200 97 - 661.511 ms[39m
+2026-02-23 05:38:34:3834 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 19.187 ms[39m
+2026-02-23 05:38:35:3835 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 883.140 ms[39m
+2026-02-23 05:38:44:3844 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 224.881 ms[39m
+2026-02-23 05:38:55:3855 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 14.850 ms[39m
+2026-02-23 05:38:59:3859 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1139 - 47.289 ms[39m
+2026-02-23 05:39:56:3956 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 420.455 ms[39m
+2026-02-23 05:40:56:4056 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 159.275 ms[39m
+2026-02-23 05:41:57:4157 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 221.236 ms[39m
+2026-02-23 05:42:57:4257 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 174.813 ms[39m
+2026-02-23 05:44:29:4429 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 05:44:29:4429 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 05:44:29:4429 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 05:44:49:4449 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 1306.438 ms[39m
+2026-02-23 05:44:49:4449 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 398.286 ms[39m
+2026-02-23 05:44:51:4451 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 277 - 103.017 ms[39m
+2026-02-23 05:44:54:4454 [31merror[39m: [31mToken expired[39m
+2026-02-23 05:44:54:4454 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 401 938 - 14.116 ms[39m
+2026-02-23 05:44:54:4454 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1624 - 75.151 ms[39m
+2026-02-23 05:44:54:4454 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 278 - 25.411 ms[39m
+2026-02-23 05:44:54:4454 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 46.041 ms[39m
+2026-02-23 05:44:54:4454 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 33.973 ms[39m
+2026-02-23 05:44:54:4454 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 277 - 25.785 ms[39m
+2026-02-23 05:44:55:4455 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 278 - 34.462 ms[39m
+2026-02-23 05:44:57:4457 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 279 - 45.174 ms[39m
+2026-02-23 05:45:14:4514 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            orderUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            orderUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `orderUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:14:4514 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2697 - 148.348 ms[39m
+2026-02-23 05:45:16:4516 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            deliveryUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            deliveryUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `deliveryUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:16:4516 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2721 - 44.455 ms[39m
+2026-02-23 05:45:30:4530 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 05:45:30:4530 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 05:45:30:4530 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 05:45:34:4534 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            deliveryUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            deliveryUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `deliveryUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:34:4534 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2721 - 478.727 ms[39m
+2026-02-23 05:45:35:4535 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            orderUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            orderUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `orderUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:35:4535 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2697 - 44.485 ms[39m
+2026-02-23 05:45:40:4540 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 278 - 67.871 ms[39m
+2026-02-23 05:45:42:4542 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            newArrivalsEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            newArrivalsEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `newArrivalsEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:42:4542 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2689 - 35.619 ms[39m
+2026-02-23 05:45:44:4544 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 279 - 23.820 ms[39m
+2026-02-23 05:45:44:4544 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            deliveryUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            deliveryUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `deliveryUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:44:4544 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2721 - 54.645 ms[39m
+2026-02-23 05:45:45:4545 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            orderUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            orderUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `orderUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:45:4545 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2697 - 25.603 ms[39m
+2026-02-23 05:45:49:4549 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 278 - 22.041 ms[39m
+2026-02-23 05:45:49:4549 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 33.891 ms[39m
+2026-02-23 05:45:51:4551 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 279 - 20.043 ms[39m
+2026-02-23 05:45:59:4559 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            orderUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            orderUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `orderUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:59:4559 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2697 - 41.943 ms[39m
+2026-02-23 05:46:31:4631 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            deliveryUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            deliveryUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `deliveryUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:46:31:4631 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2721 - 161.810 ms[39m
+2026-02-23 05:46:32:4632 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            deliveryUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            deliveryUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `deliveryUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:46:32:4632 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2721 - 99.727 ms[39m
+2026-02-23 05:46:33:4633 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 278 - 22.760 ms[39m
+2026-02-23 05:46:34:4634 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 279 - 31.555 ms[39m
+2026-02-23 05:46:36:4636 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            newArrivalsEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            newArrivalsEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `newArrivalsEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:46:36:4636 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2689 - 61.104 ms[39m
+2026-02-23 05:46:37:4637 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            newArrivalsEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            newArrivalsEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `newArrivalsEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:46:37:4637 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 400 2689 - 87.783 ms[39m
+2026-02-23 05:46:40:4640 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 278 - 45.909 ms[39m
+2026-02-23 05:46:41:4641 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 279 - 73.553 ms[39m
+2026-02-23 05:46:43:4643 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 278 - 54.777 ms[39m
+2026-02-23 05:46:44:4644 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 279 - 34.836 ms[39m
+2026-02-23 05:46:50:4650 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 20.068 ms[39m
+2026-02-23 05:47:48:4748 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 05:47:48:4748 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 05:47:48:4748 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 05:47:51:4751 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 836.744 ms[39m
+2026-02-23 05:47:57:4757 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 361 - 41.405 ms[39m
+2026-02-23 05:47:59:4759 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 362 - 21.752 ms[39m
+2026-02-23 05:48:01:481 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 363 - 28.832 ms[39m
+2026-02-23 05:48:03:483 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 362 - 60.148 ms[39m
+2026-02-23 05:48:04:484 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 363 - 40.881 ms[39m
+2026-02-23 05:48:06:486 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 364 - 38.083 ms[39m
+2026-02-23 05:48:07:487 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 365 - 21.703 ms[39m
+2026-02-23 05:48:08:488 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 364 - 29.748 ms[39m
+2026-02-23 05:48:09:489 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 365 - 24.843 ms[39m
+2026-02-23 05:48:51:4851 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 135.627 ms[39m
+2026-02-23 05:49:51:4951 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 234.101 ms[39m
+2026-02-23 05:50:52:5052 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 124.000 ms[39m
+2026-02-23 05:51:52:5152 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 134.885 ms[39m
+2026-02-23 05:52:52:5252 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 132.239 ms[39m
+2026-02-23 05:53:52:5352 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 153.940 ms[39m
+2026-02-23 05:54:53:5453 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 139.767 ms[39m
+2026-02-23 05:55:53:5553 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 185.615 ms[39m
+2026-02-23 05:57:09:579 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 2031 - 493.826 ms[39m
+2026-02-23 05:57:10:5710 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1401 - 176.611 ms[39m
+2026-02-23 05:57:11:5711 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 49.383 ms[39m
+2026-02-23 05:57:11:5711 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 21.488 ms[39m
+2026-02-23 05:57:16:5716 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 31.650 ms[39m
+2026-02-23 05:57:24:5724 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1401 - 46.635 ms[39m
+2026-02-23 05:57:30:5730 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 19.519 ms[39m
+2026-02-23 05:57:32:5732 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 30.455 ms[39m
+2026-02-23 05:57:35:5735 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 364 - 34.278 ms[39m
+2026-02-23 23:13:40:1340 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 23:13:40:1340 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 23:13:40:1340 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 23:34:56:3456 [31merror[39m: [31mToken expired[39m
+2026-02-23 23:34:56:3456 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 401 938 - 96.087 ms[39m
+2026-02-23 23:34:57:3457 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1624 - 1024.009 ms[39m
+2026-02-23 23:34:58:3458 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 22.108 ms[39m
+2026-02-23 23:34:58:3458 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 24.572 ms[39m
+2026-02-23 23:35:00:350 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1400 - 238.948 ms[39m
+2026-02-23 23:35:02:352 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 22.449 ms[39m
+2026-02-23 23:35:07:357 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 108.117 ms[39m
+2026-02-23 23:35:08:358 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1400 - 32.262 ms[39m
+2026-02-23 23:35:11:3511 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 365 - 107.890 ms[39m
+2026-02-23 23:35:21:3521 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 364 - 12.105 ms[39m
+2026-02-23 23:35:55:3555 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 64.257 ms[39m
+2026-02-23 23:35:56:3556 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1400 - 167.888 ms[39m
+2026-02-23 23:38:35:3835 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 66.602 ms[39m
+2026-02-23 23:41:01:411 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 23:41:01:411 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 23:41:01:411 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 23:41:13:4113 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 23:41:13:4113 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 23:41:13:4113 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 23:44:53:4453 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 23:44:53:4453 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 23:44:53:4453 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 23:45:02:452 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 23:45:02:452 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 23:45:02:452 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 23:45:14:4514 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 23:45:14:4514 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 23:45:14:4514 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 23:50:28:5028 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 23:50:28:5028 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 23:50:28:5028 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 23:50:48:5048 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 23:50:48:5048 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 23:50:48:5048 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 23:58:12:5812 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 23:58:12:5812 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 23:58:12:5812 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-23 23:58:40:5840 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-23 23:58:40:5840 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-23 23:58:40:5840 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-24 00:00:04:04 [31merror[39m: [31mToken expired[39m
+2026-02-24 00:00:04:04 [35mhttp[39m: [35mGET /api/v1/customer/notifications 401 938 - 290.657 ms[39m
+2026-02-24 00:00:06:06 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1624 - 2157.374 ms[39m
+2026-02-24 00:00:07:07 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 96.140 ms[39m
+2026-02-24 00:00:07:07 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 17.957 ms[39m
+2026-02-24 00:00:07:07 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 19.663 ms[39m
+2026-02-24 00:00:55:055 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 2031 - 367.653 ms[39m
+2026-02-24 00:00:55:055 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1444 - 288.163 ms[39m
+2026-02-24 00:00:58:058 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 16.157 ms[39m
+2026-02-24 00:00:58:058 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 11.960 ms[39m
+2026-02-24 00:00:59:059 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 13.425 ms[39m
+2026-02-24 00:01:09:19 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1444 - 22.646 ms[39m
+2026-02-24 00:01:41:141 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 185.476 ms[39m
+2026-02-24 00:01:56:156 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 18.082 ms[39m
+2026-02-24 00:02:02:22 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 14.003 ms[39m
+2026-02-24 00:02:03:23 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1444 - 168.902 ms[39m
+2026-02-24 00:02:05:25 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 20.905 ms[39m
+2026-02-24 00:02:07:27 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 22.420 ms[39m
+2026-02-24 00:02:10:210 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 407 - 106.722 ms[39m
+2026-02-24 00:02:18:218 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 408 - 13.420 ms[39m
+2026-02-24 00:02:20:220 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 409 - 69.273 ms[39m
+2026-02-24 00:02:21:221 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 408 - 20.662 ms[39m
+2026-02-24 00:02:23:223 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 407 - 78.563 ms[39m
+2026-02-24 00:02:25:225 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 406 - 16.813 ms[39m
+2026-02-24 00:02:30:230 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 405 - 60.494 ms[39m
+2026-02-24 00:02:31:231 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 404 - 33.157 ms[39m
+2026-02-24 00:02:33:233 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 403 - 13.609 ms[39m
+2026-02-24 00:02:53:253 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 11.905 ms[39m
+2026-02-24 00:02:55:255 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1439 - 89.198 ms[39m
+2026-02-24 00:03:54:354 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 65.353 ms[39m
+2026-02-24 00:04:07:47 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-24 00:04:07:47 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-24 00:04:07:47 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-24 00:04:29:429 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-24 00:04:29:429 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-24 00:04:29:429 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-24 00:04:55:455 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 1095.375 ms[39m
+2026-02-24 00:05:01:51 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 404 - 55.695 ms[39m
+2026-02-24 00:05:03:53 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 403 - 21.508 ms[39m
+2026-02-24 00:05:04:54 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/preferences 200 402 - 15.496 ms[39m
+2026-02-24 00:05:55:555 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 72.263 ms[39m
+2026-02-24 00:06:29:629 [35mhttp[39m: [35mPOST /api/v1/customer/notifications/read-all 200 97 - 190.602 ms[39m
+2026-02-24 00:06:29:629 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 8.142 ms[39m
+2026-02-24 00:06:51:651 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 104.622 ms[39m
+2026-02-24 00:06:55:655 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1438 - 296.084 ms[39m
+2026-02-24 00:06:56:656 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 22.726 ms[39m
+2026-02-24 00:08:18:818 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-24 00:08:18:818 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-24 00:08:18:818 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-24 00:08:36:836 [35mhttp[39m: [35mGET / 404 139 - 10.296 ms[39m
+2026-02-24 00:08:50:850 [35mhttp[39m: [35mGET /health 304 - - 6.014 ms[39m
+2026-02-24 00:08:50:850 [35mhttp[39m: [35mGET /favicon.ico 404 150 - 3.609 ms[39m
+2026-02-24 00:10:50:1050 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 536.094 ms[39m
+2026-02-24 00:10:54:1054 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 25.892 ms[39m
+2026-02-24 00:13:01:131 [35mhttp[39m: [35mGET /api/v1/customer/notifications 304 - - 121.915 ms[39m
+2026-02-24 00:13:02:132 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1438 - 105.813 ms[39m
+2026-02-24 00:13:26:1326 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 24.543 ms[39m
+2026-02-24 00:13:35:1335 [35mhttp[39m: [35mGET /api/v1/customer/favourites 200 87 - 282.036 ms[39m
+2026-02-24 00:13:35:1335 [35mhttp[39m: [35mGET /api/v1/customer/vouchers 200 85 - 287.311 ms[39m
+2026-02-24 00:13:36:1336 [35mhttp[39m: [35mGET /api/v1/customer/orders?status=active 200 83 - 85.730 ms[39m
+2026-02-24 00:15:29:1529 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-24 00:15:29:1529 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-24 00:15:29:1529 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-24 00:15:38:1538 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-24 00:15:38:1538 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-24 00:15:38:1538 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-24 00:16:35:1635 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-24 00:16:35:1635 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-24 00:16:35:1635 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-24 00:16:55:1655 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-24 00:16:55:1655 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-24 00:16:55:1655 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-24 00:17:06:176 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-24 00:17:06:176 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-24 00:17:06:176 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-24 00:23:52:2352 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 2031 - 1076.332 ms[39m
+2026-02-24 00:23:57:2357 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 864.644 ms[39m
+2026-02-24 00:23:57:2357 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 862.094 ms[39m
+2026-02-24 00:23:57:2357 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1438 - 972.217 ms[39m
+2026-02-24 00:26:38:2638 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1438 - 219.595 ms[39m
+2026-02-24 00:26:39:2639 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 200 186 - 24.061 ms[39m
+2026-02-24 00:26:56:2656 [35mhttp[39m: [35mGET /api/v1/customer/notifications 200 478 - 66.552 ms[39m
+2026-02-24 00:26:58:2658 [35mhttp[39m: [35mPATCH /api/v1/customer/notifications/38304851-1009-45a3-ae28-c62f32d4aa55/read 200 466 - 13.351 ms[39m
+2026-02-24 00:26:58:2658 [35mhttp[39m: [35mGET /api/v1/customer/notifications 200 477 - 10.051 ms[39m
+2026-02-24 00:27:03:273 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1438 - 22.429 ms[39m

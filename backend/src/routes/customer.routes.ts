@@ -18,9 +18,11 @@ import * as schemas from '../validators/customer.schema.js';
 // Profile
 router.get('/profile', customerController.getProfile);
 router.patch('/profile', validateRequest(schemas.updateProfileSchema), customerController.updateProfile);
+router.post('/push-token', customerController.updatePushToken);
 
 // Orders
 router.get('/orders', validateRequest(schemas.getOrdersSchema), customerController.getOrders);
+router.post('/orders', customerController.placeOrder);
 
 // Vouchers
 router.get('/vouchers', validateRequest(schemas.getVouchersSchema), customerController.getVouchers);
@@ -36,6 +38,10 @@ router.put('/addresses/:id', validateRequest(schemas.updateAddressSchema), custo
 router.delete('/addresses/:id', customerController.deleteAddress);
 
 // Security & Data
+router.get('/notifications', customerController.getNotifications);
+router.patch('/notifications/preferences', customerController.updateNotificationPreferences);
+router.patch('/notifications/:id/read', customerController.markNotificationRead);
+router.post('/notifications/read-all', customerController.markAllNotificationsRead);
 router.patch('/security', validateRequest(schemas.updateSecuritySchema), customerController.updateSecuritySettings);
 router.post('/account/delete', validateRequest(schemas.deleteAccountSchema), customerController.deleteAccount);
 router.post('/data/export', customerController.requestDataExport);

@@ -39,6 +39,25 @@ model User {
   resetPasswordExpires   DateTime?
   twoFactorCode          String?
   twoFactorExpires       DateTime?
+  
+  // Notification Tokens
+  pushToken              String?  @unique // Primary push token
+  
+  // Notification History
+  notificationHistory    Notification[]
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  type      String   @default("system") // 'order' | 'promo' | 'system' | 'account'
+  title     String
+  body      String
+  data      Json?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserSession {
@@ -49,8 +68,9 @@ model UserSession {
   deviceType   String   @default("mobile") // mobile, tablet, desktop
   os           String   @default("Unknown OS")
   ipAddress    String?
+  pushToken    String?  // Device-specific push token
   lastActive   DateTime @default(now())
-  isCurrent    Boolean  @default(false) // This will be handled dynamically in the API
+  isCurrent    Boolean  @default(false) 
   createdAt    DateTime @default(now())
 }
 
@@ -116,7 +136,17 @@ model NotificationPreference {
   emailEnabled      Boolean @default(true)
   smsEnabled        Boolean @default(false)
   pushEnabled       Boolean @default(true)
-  promotionalEnabled Boolean @default(true)
+  
+  // General Controls
+  soundEnabled      Boolean @default(true)
+  vibrationEnabled  Boolean @default(true)
+  
+  // Granular Controls
+  orderUpdatesEnabled    Boolean @default(true)
+  deliveryUpdatesEnabled Boolean @default(true)
+  promotionalEnabled     Boolean @default(true)
+  newArrivalsEnabled     Boolean @default(true)
+
   userId            String  @unique
   user              User    @relation(fields: [userId], references: [id])
 }

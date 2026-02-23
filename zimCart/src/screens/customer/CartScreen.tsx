@@ -4,6 +4,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
+import { useNotifications } from '@/hooks/useNotifications';
+import { sendPushNotification } from '@/services/notificationService';
+import { customerApi } from '@/services/customer';
 
 const { width, height } = Dimensions.get('window');
 
@@ -54,6 +57,7 @@ const FREE_DELIVERY_THRESHOLD = 1000;
 export default function CartScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<any>();
+  const { expoPushToken } = useNotifications();
   const [cart, setCart] = useState<CartItem[]>(INITIAL_CART);
   const [instructions, setInstructions] = useState('');
   
@@ -78,13 +82,45 @@ export default function CartScreen() {
   const progressToFree = Math.min(subtotal / FREE_DELIVERY_THRESHOLD, 1);
   const amountNeeded = FREE_DELIVERY_THRESHOLD - subtotal;
 
-  const handlePlaceOrder = () => {
-      setIsProcessing(true);
-      // Simulate API call
-      setTimeout(() => {
-          setIsProcessing(false);
-          setIsSuccess(true);
-      }, 2500);
+  const handlePlaceOrder = async () => {
+    setIsProcessing(true);
+    
+    const orderData = {
+        storeId: 'f8d7b3a9-1c9d-4e2b-8a1d-9c3f4e5d6a7b', // Mock Store ID for now
+        total,
+        subtotal,
+        deliveryFee: deliveryFee + platformFee + taxes,
+        discount: 0,
+        address: '123 Pine Street, Islamabad, Pakistan', // Mock Address for now
+        paymentMethod: selectedPayment,
+        items: cart.map(item => ({
+            productId: item.id === '1' ? 'e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b' : // Mock Product IDs to avoid foreign key issues
+                       item.id === '2' ? 'd2e3f4a5-b6c7-4d8e-9a0b-1c2d3e4f5g6h' :
+                       'c3d4e5f6-g7h8-4i9j-0k1l-2m3n4o5p6q7r',
+            quantity: item.qty,
+            price: item.price
+        }))
+    };
+
+    try {
+        await customerApi.placeOrder(orderData);
+        setIsProcessing(false);
+        setIsSuccess(true);
+        
+        // Local push notification as an extra flourish
+        if (expoPushToken) {
+            sendPushNotification(
+                expoPushToken, 
+                "Order Confirmed! 🍛", 
+                `Order #ZM-${Math.floor(10000 + Math.random() * 90000)} for Rs. ${total} has been placed successfully.`,
+                { type: 'ORDER_SUCCESS' }
+            ).catch(err => console.error("Local push failed:", err));
+        }
+    } catch (error) {
+        setIsProcessing(false);
+        alert("Failed to place order. Please try again.");
+        console.error("Order placement error:", error);
+    }
   };
 
   const resetCart = () => {

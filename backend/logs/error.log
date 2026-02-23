@@ -259,3 +259,333 @@
 2026-02-22 04:28:35:2835 [31merror[39m: [31mToken expired[39m
 2026-02-23 00:50:35:5035 [31merror[39m: [31mToken expired[39m
 2026-02-23 01:15:56:1556 [31merror[39m: [31mToken expired[39m
+2026-02-23 03:53:18:5318 [31merror[39m: [31mUnauthorized request[39m
+2026-02-23 05:23:24:2324 [31merror[39m: [31mInvalid credentials[39m
+2026-02-23 05:29:53:2953 [31merror[39m: [31mConnection terminated due to connection timeout[39m
+2026-02-23 05:44:54:4454 [31merror[39m: [31mToken expired[39m
+2026-02-23 05:45:14:4514 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            orderUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            orderUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `orderUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:16:4516 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            deliveryUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            deliveryUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `deliveryUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:34:4534 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            deliveryUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            deliveryUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `deliveryUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:35:4535 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            orderUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            orderUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `orderUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:42:4542 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            newArrivalsEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            newArrivalsEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `newArrivalsEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:44:4544 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            deliveryUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            deliveryUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `deliveryUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:45:4545 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            orderUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            orderUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `orderUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:45:59:4559 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            orderUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            orderUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `orderUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:46:31:4631 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            deliveryUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            deliveryUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `deliveryUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:46:32:4632 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            deliveryUpdatesEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            deliveryUpdatesEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `deliveryUpdatesEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:46:36:4636 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            newArrivalsEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            newArrivalsEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `newArrivalsEnabled`. Available options are marked with ?.[39m
+2026-02-23 05:46:37:4637 [31merror[39m: [31m[39m
+[31mInvalid `prisma.notificationPreference.upsert()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\customer.service.ts:220:42[39m
+
+[31m  217 }[39m
+[31m  218 [39m
+[31m  219 async updateNotificationPreferences(userId: string, data: any) {[39m
+[31m→ 220   return prisma.notificationPreference.upsert({[39m
+[31m          where: {[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77"[39m
+[31m          },[39m
+[31m          update: {[39m
+[31m            newArrivalsEnabled: true[39m
+[31m          },[39m
+[31m          create: {[39m
+[31m            newArrivalsEnabled: true,[39m
+[31m            ~~~~~~~~~~~~~~~~~~[39m
+[31m            userId: "4ee779f1-1f4d-4b0d-8a4d-840eeec9ea77",[39m
+[31m        ?   id?: String,[39m
+[31m        ?   emailEnabled?: Boolean,[39m
+[31m        ?   smsEnabled?: Boolean,[39m
+[31m        ?   pushEnabled?: Boolean,[39m
+[31m        ?   promotionalEnabled?: Boolean[39m
+[31m          }[39m
+[31m        })[39m
+
+[31mUnknown argument `newArrivalsEnabled`. Available options are marked with ?.[39m
+2026-02-23 23:34:56:3456 [31merror[39m: [31mToken expired[39m
+2026-02-24 00:00:04:04 [31merror[39m: [31mToken expired[39m
