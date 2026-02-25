@@ -9,8 +9,9 @@ import { notificationService } from './notification.service.js';
 export class AuthService {
 
   async register(data: any, deviceInfo?: any) {
-    const { email, password, name, phone } = data;
+    const { email, password, name, phone, role } = data;
 
+    const finalRole = role || 'CUSTOMER';
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       throw new ApiError(409, 'User with this email already exists');
@@ -24,18 +25,18 @@ export class AuthService {
         password: hashedPassword,
         name,
         phone,
-        role: 'CUSTOMER', // Default
+        role: finalRole,
         notifications: {
             create: {
                 pushEnabled: true,
-                emailEnabled: true,
-                smsEnabled: !!phone,
+                emailEnabled: finalRole === 'CUSTOMER', // Only customers get emails by default
+                smsEnabled: finalRole === 'CUSTOMER' && !!phone, // Only customers get SMS by default
                 soundEnabled: true,
                 vibrationEnabled: true,
                 orderUpdatesEnabled: true,
                 deliveryUpdatesEnabled: true,
-                promotionalEnabled: true,
-                newArrivalsEnabled: true,
+                promotionalEnabled: finalRole === 'CUSTOMER',
+                newArrivalsEnabled: finalRole === 'CUSTOMER',
             }
         }
       },
@@ -109,8 +110,12 @@ export class AuthService {
       };
     }
 
+    return await this.loginWithTokens(user, deviceInfo || {});
+  }
+
+  async loginWithTokens(user: any, deviceInfo: any) {
     // Create session
-    const session = await this.createSession(user.id, deviceInfo || {});
+    const session = await this.createSession(user.id, deviceInfo);
 
     // Create tokens including sessionId
     const accessToken = generateAccessToken({ ...user, sessionId: session.id });
@@ -125,7 +130,7 @@ export class AuthService {
     // Send Login Notification (Don't wait)
     notificationService.sendNotification(
         [user.id],
-        'New Login Detected 🔐',
+        'New Login Detected',
         `A new login was successful on your ZimCart account from ${deviceInfo?.os || 'a new device'} (${deviceInfo?.ipAddress || 'unknown IP'}). If this wasn't you, please change your password immediately.`,
         { type: 'SECURITY' }
     ).catch(console.error);
@@ -166,7 +171,7 @@ export class AuthService {
       // Send Login Notification (Don't wait)
       notificationService.sendNotification(
           [user.id],
-          'New Login Detected 🔐',
+          'New Login Detected ',
           `A new login was successful on your ZimCart account via 2FA from ${deviceInfo?.os || 'a new device'}.`,
           { type: 'SECURITY' }
       ).catch(console.error);

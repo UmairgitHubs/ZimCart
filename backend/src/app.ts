@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 import { morganMiddleware } from "./middlewares/morgan.middleware.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 
@@ -16,6 +17,7 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser());
 app.use(helmet());
 app.use(morganMiddleware);
 

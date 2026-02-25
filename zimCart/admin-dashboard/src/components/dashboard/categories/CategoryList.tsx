@@ -1,0 +1,134 @@
+import React from "react";
+import Image from "next/image";
+import { Eye, Edit2, Trash2, MoreHorizontal, ChevronRight, Tags, Search, ArrowUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Category } from "@/types/categories";
+
+interface CategoryListProps {
+  categories: Category[];
+  onEdit: (cat: Category) => void;
+  onDelete: (cat: Category) => void;
+  onView: (cat: Category) => void;
+}
+
+export function CategoryList({ categories, onEdit, onDelete, onView }: CategoryListProps) {
+  return (
+    <div className="w-full">
+      {/* Desktop Table View */}
+      <div className="hidden lg:block overflow-x-auto no-scrollbar">
+        <table className="w-full text-left border-collapse min-w-full">
+          <thead>
+            <tr className="border-b border-slate-50 bg-slate-50/30 font-bold">
+              <th className="px-6 py-4 text-[11px] text-slate-400 uppercase tracking-wider">Category</th>
+              <th className="px-6 py-4 text-[11px] text-slate-400 uppercase tracking-wider">Description</th>
+              <th className="px-6 py-4 text-[11px] text-slate-400 uppercase tracking-wider text-center">Products</th>
+              <th className="px-6 py-4 text-[11px] text-slate-400 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 text-[11px] text-slate-400 uppercase tracking-wider text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {categories.map((cat) => (
+              <tr key={cat.id} className="group hover:bg-slate-50/50 transition-all border-b border-slate-50 last:border-0">
+                <td className="px-6 py-5">
+                  <div className="flex items-center gap-4 text-left">
+                    <div className="w-14 h-14 rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 relative shrink-0 shadow-sm group-hover:scale-105 transition-transform duration-300">
+                      {cat.image ? (
+                        <Image src={cat.image} alt={cat.name} fill className="object-cover" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-slate-200">
+                           <Tags className="w-6 h-6" />
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-sm font-extrabold text-slate-800 leading-tight group-hover:text-emerald-600 transition-colors uppercase tracking-tight">{cat.name}</h4>
+                        {cat.isFeatured && (
+                          <span className="bg-amber-100/50 text-amber-600 text-[8px] font-black px-1.5 py-0.5 rounded-md border border-amber-200 uppercase tracking-tighter">Featured</span>
+                        )}
+                      </div>
+                      <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-tight">ID: {cat.id} • Order: {cat.displayOrder}</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-5">
+                   <p className="text-xs font-bold text-slate-500 max-w-[250px] truncate">{cat.description}</p>
+                </td>
+                <td className="px-6 py-5 text-center">
+                   <span className="text-sm font-black text-slate-700 bg-slate-100/50 px-3 py-1 rounded-lg">{cat.productCount} Items</span>
+                </td>
+                <td className="px-6 py-5">
+                   <div className="flex flex-col gap-1.5">
+                    <span className={cn(
+                      "px-3 py-1 rounded-full text-[10px] font-black border uppercase tracking-widest inline-flex items-center gap-1.5 w-fit",
+                      cat.status === 'Published' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                      cat.status === 'Draft' ? "bg-amber-50 text-amber-600 border-amber-100" :
+                      "bg-slate-50 text-slate-400 border-slate-100"
+                    )}>
+                      <span className={cn("w-1.5 h-1.5 rounded-full",
+                        cat.status === 'Published' ? "bg-emerald-500" :
+                        cat.status === 'Draft' ? "bg-amber-500" : "bg-slate-300"
+                      )}></span>
+                      {cat.status}
+                    </span>
+                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-tight">Updated {new Date(cat.lastUpdated).toLocaleDateString()}</span>
+                   </div>
+                </td>
+                <td className="px-6 py-5 text-right">
+                   <div className="flex items-center justify-end gap-2">
+                      <button onClick={() => onView(cat)} className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95">
+                        <Eye className="w-5 h-5" />
+                      </button>
+                      <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
+                        <MoreHorizontal className="w-5 h-5" />
+                      </button>
+                   </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="lg:hidden p-4 space-y-4">
+        {categories.map((cat) => (
+          <div 
+            key={cat.id}
+            onClick={() => onView(cat)}
+            className="group bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm active:scale-[0.98] transition-all relative overflow-hidden"
+          >
+            <div className="flex items-center gap-4 text-left">
+              <div className="w-16 h-16 rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 relative shrink-0">
+                {cat.image ? (
+                  <Image src={cat.image} alt={cat.name} fill className="object-cover" />
+                ) : <Tags className="w-6 h-6 text-slate-200 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
+              </div>
+              <div className="flex-1">
+                <div className="flex justify-between items-start mb-1">
+                  <h4 className="text-sm font-black text-slate-800 uppercase tracking-tighter group-hover:text-emerald-600 transition-colors leading-none">{cat.name}</h4>
+                  <span className={cn(
+                    "px-2 py-0.5 rounded-full text-[8px] font-black border uppercase tracking-tighter",
+                    cat.status === 'Published' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                    cat.status === 'Draft' ? "bg-amber-50 text-amber-600 border-amber-100" :
+                    "bg-slate-50 text-slate-400 border-slate-100"
+                  )}>{cat.status}</span>
+                </div>
+                <p className="text-[11px] font-bold text-slate-400 line-clamp-2 leading-relaxed mt-1.5">{cat.description}</p>
+                <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-50">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">In Stock</span>
+                    <span className="text-[13px] font-black text-slate-700">{cat.productCount} Items</span>
+                  </div>
+                  <button className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-all">
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

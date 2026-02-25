@@ -20,5 +20,6 @@ router.post('/resend-2fa', authController.resend2FA);
 // Protected routes
 router.post('/logout', verifyJWT, authController.logout);
 router.post('/change-password', verifyJWT, validateRequest(schemas.changePasswordSchema), authController.changePassword);
+router.get('/me', verifyJWT, authController.getMe);
 
 export default router;

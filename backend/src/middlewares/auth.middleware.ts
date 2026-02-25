@@ -22,7 +22,8 @@ import config from '../config/config.js';
 
 export const verifyJWT = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    // Senior: Prioritize Cookies for higher security (HTTP-Only)
+    const token = req.cookies?.accessToken || req.header('Authorization')?.replace('Bearer ', '');
     
     if (!token) {
       throw new ApiError(401, 'Unauthorized request');
@@ -78,4 +79,22 @@ export const verifyJWT = async (req: Request, res: Response, next: NextFunction)
     }
     throw new ApiError(401, (error as any)?.message || 'Invalid access token');
   }
+};
+
+/**
+ * Senior RBAC Middleware
+ * Restricts access to specific user roles
+ */
+export const restrictTo = (...roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      throw new ApiError(401, 'You are not logged in');
+    }
+
+    if (!roles.includes(req.user.role)) {
+      throw new ApiError(403, `User role '${req.user.role}' is not authorized to access this resource`);
+    }
+
+    next();
+  };
 };

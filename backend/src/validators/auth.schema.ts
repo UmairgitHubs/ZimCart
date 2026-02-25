@@ -12,6 +12,7 @@ export const registerSchema = z.object({
     password: z.string().min(6, "Password must be at least 6 characters"),
     name: z.string().min(2, "Name must be at least 2 characters"),
     phone: z.string().optional(),
+    role: z.enum(['CUSTOMER', 'ADMIN', 'STORE_MANAGER', 'RIDER']).optional(),
     avatar: z.string().url().optional(),
     deviceInfo: deviceInfoSchema,
   }).strict()
@@ -27,8 +28,8 @@ export const loginSchema = z.object({
 
 export const refreshTokenSchema = z.object({
   body: z.object({
-    refreshToken: z.string().min(1, "Refresh token is required"),
-  }).strict()
+    refreshToken: z.string().optional(),
+  })
 });
 
 export const forgotPasswordSchema = z.object({

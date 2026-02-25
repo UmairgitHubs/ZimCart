@@ -1,0 +1,92 @@
+import React, { useState } from "react";
+import { Search, ListFilter, ChevronDown, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { TicketStatus, TicketPriority, TicketCategory } from "@/types/support";
+
+interface SupportFiltersProps {
+  searchTerm: string;
+  setSearchTerm: (val: string) => void;
+  activeStatus: string;
+  setActiveStatus: (val: string) => void;
+  onNewTicket: () => void;
+}
+
+const STATUS_OPTIONS = ["All", "Open", "In Progress", "Resolved", "Closed"];
+
+export function SupportFilters({
+  searchTerm,
+  setSearchTerm,
+  activeStatus,
+  setActiveStatus,
+  onNewTicket,
+}: SupportFiltersProps) {
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+
+  return (
+    <div className="bg-white rounded-[32px] border border-slate-100 mb-6 p-4 md:p-6 shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
+        {/* Modern Search */}
+        <div className="relative flex-1 group">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search tickets by ID, Customer Name, or Order #"
+            className="w-full pl-12 pr-4 py-3 md:py-3.5 bg-slate-50/50 border-2 border-slate-200/60 rounded-2xl text-sm font-bold focus:ring-8 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/40 transition-all outline-none text-slate-700 placeholder:text-slate-400"
+          />
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+          {/* Status Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setIsStatusOpen(!isStatusOpen)}
+              className={cn(
+                "flex items-center justify-between w-full sm:w-auto gap-3 px-6 py-3 md:py-3.5 bg-white border-2 rounded-2xl text-[13px] font-black tracking-tight transition-all min-w-[180px]",
+                isStatusOpen ? "border-emerald-500 text-emerald-600 ring-8 ring-emerald-50 shadow-lg shadow-emerald-500/5" : "border-slate-100 text-slate-600 hover:border-slate-200"
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <ListFilter className="w-4 h-4" />
+                <span>{activeStatus} Status</span>
+              </div>
+              <ChevronDown className={cn("w-4 h-4 transition-transform duration-300", isStatusOpen && "rotate-180")} />
+            </button>
+
+            {isStatusOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setIsStatusOpen(false)} />
+                <div className="absolute top-full right-0 mt-2 w-full min-w-[180px] bg-white border-2 border-emerald-500/20 rounded-2xl shadow-xl shadow-slate-200/40 z-20 py-2 animate-in fade-in zoom-in-95 duration-100">
+                  {STATUS_OPTIONS.map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => {
+                        setActiveStatus(status);
+                        setIsStatusOpen(false);
+                      }}
+                      className={cn(
+                        "w-full text-left px-5 py-3 text-[13px] font-bold transition-all",
+                        activeStatus === status ? "text-emerald-600 bg-emerald-50/80" : "text-slate-600 hover:bg-slate-50"
+                      )}
+                    >
+                      {status === 'All' ? 'All Tickets' : status}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+          
+          <button 
+            onClick={onNewTicket}
+            className="flex items-center justify-center gap-2 px-6 py-3 md:py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[13px] font-black transition-all active:scale-95 shadow-lg shadow-emerald-500/20 uppercase tracking-widest shrink-0"
+          >
+             <Plus className="w-4 h-4" />
+             <span>New Ticket</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

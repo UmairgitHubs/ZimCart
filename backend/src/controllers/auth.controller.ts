@@ -5,11 +5,32 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
 import { getDeviceInfo } from '../utils/device.utils.js';
 
+const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax' as const, // For cross-domain dev
+};
+
 export class AuthController {
-    register = asyncHandler(async (req: Request, res: Response) => {
-        const { email, password, name, phone } = req.body;
+    private async generateTokensAndSetCookies(res: Response, user: any, deviceInfo: any) {
+        const data = await authService.loginWithTokens(user, deviceInfo);
         
-        // Basic validation (can also use Zod middleware)
+        res.cookie('accessToken', data.accessToken, {
+            ...cookieOptions,
+            maxAge: 15 * 60 * 1000, // 15 mins
+        });
+
+        res.cookie('refreshToken', data.refreshToken, {
+            ...cookieOptions,
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
+
+        return { user: data.user };
+    }
+
+    register = asyncHandler(async (req: Request, res: Response) => {
+        const { email, password, name, phone, role } = req.body;
+        
         if (!email || !password || !name) {
             throw new ApiError(400, "Name, email and password are required");
         }
@@ -17,6 +38,9 @@ export class AuthController {
         const deviceInfo = getDeviceInfo(req);
         const data = await authService.register(req.body, deviceInfo);
         
+        // Use cookie for registration login too
+        await this.generateTokensAndSetCookies(res, data.user, deviceInfo);
+
         return res.status(201).json(
             new ApiResponse(201, data, "User registered successfully")
         );
@@ -29,7 +53,14 @@ export class AuthController {
         }
 
         const deviceInfo = getDeviceInfo(req);
-        const data = await authService.login(req.body, deviceInfo);
+        const loginResult = await authService.login(req.body, deviceInfo) as any;
+
+        if (loginResult.mfaRequired) {
+            return res.status(200).json(new ApiResponse(200, loginResult, "2FA Required"));
+        }
+
+        // Senior: Set Cookies here
+        const data = await this.generateTokensAndSetCookies(res, loginResult.user, deviceInfo);
 
         return res.status(200).json(
             new ApiResponse(200, data, "User logged in successfully")
@@ -37,17 +68,25 @@ export class AuthController {
     });
 
     refresh = asyncHandler(async (req: Request, res: Response) => {
-        const { refreshToken } = req.body; // Expect RT in body for Mobile Apps
+        // First check cookies, then body (for mobile)
+        const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
-        const data = await authService.refreshTokens(refreshToken);
+        if (!incomingRefreshToken) {
+            throw new ApiError(401, "Refresh token is missing");
+        }
+
+        const data = await authService.refreshTokens(incomingRefreshToken);
+
+        // Update cookies with new tokens
+        res.cookie('accessToken', data.accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 });
+        res.cookie('refreshToken', data.refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
         return res.status(200).json(
-            new ApiResponse(200, data, "Token refreshed successfully")
+            new ApiResponse(200, {}, "Token refreshed successfully")
         );
     });
 
     logout = asyncHandler(async (req: Request, res: Response) => {
-        // req.user is populated by verifyJWT middleware
         const userId = req.user?.id;
         const sessionId = req.user?.sessionId;
         if (!userId) {
@@ -55,6 +94,10 @@ export class AuthController {
         }
 
         await authService.logout(userId, sessionId);
+
+        // Clear cookies
+        res.clearCookie('accessToken', cookieOptions);
+        res.clearCookie('refreshToken', cookieOptions);
 
         return res.status(200).json(
             new ApiResponse(200, {}, "Logged out successfully")
@@ -101,6 +144,9 @@ export class AuthController {
         const deviceInfo = getDeviceInfo(req);
         const data = await authService.verify2FA(mfaToken, code, deviceInfo);
 
+        // Success: Set Login Cookies
+        await this.generateTokensAndSetCookies(res, data.user, deviceInfo);
+
         return res.status(200).json(
             new ApiResponse(200, data, "2FA verification successful")
         );
@@ -114,6 +160,17 @@ export class AuthController {
 
         return res.status(200).json(
             new ApiResponse(200, result, "New verification code sent")
+        );
+    });
+
+    getMe = asyncHandler(async (req: Request, res: Response) => {
+        const user = req.user;
+        if (!user) {
+            throw new ApiError(401, "Unauthorized");
+        }
+
+        return res.status(200).json(
+            new ApiResponse(200, { user }, "User profile fetched successfully")
         );
     });
 }
