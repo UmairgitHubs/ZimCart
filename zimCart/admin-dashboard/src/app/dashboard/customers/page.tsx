@@ -17,15 +17,27 @@ import {
 import { StatCard } from "@/components/dashboard/StatCard";
 import { CustomerList } from "@/components/dashboard/customers/CustomerList";
 import { CustomerFilters } from "@/components/dashboard/customers/CustomerFilters";
+import { CustomerDetailsModal } from "@/components/dashboard/customers/CustomerDetailsModal";
+import { EditCustomerModal } from "@/components/dashboard/customers/EditCustomerModal";
+import { DeleteCustomerModal } from "@/components/dashboard/customers/DeleteCustomerModal";
+import { AddCustomerModal } from "@/components/dashboard/customers/AddCustomerModal";
 import { MOCK_CUSTOMERS } from "@/constants/customers";
 import { Customer } from "@/types/customers";
 
 export default function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeStatus, setActiveStatus] = useState("All");
+  const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  
+  // Modal States
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const filteredCustomers = useMemo(() => {
-    return MOCK_CUSTOMERS.filter((cust) => {
+    return customers.filter((cust) => {
       const matchesStatus = 
         activeStatus === "All" || 
         cust.status === activeStatus;
@@ -37,14 +49,42 @@ export default function CustomersPage() {
       
       return matchesStatus && matchesSearch;
     });
-  }, [searchTerm, activeStatus]);
+  }, [searchTerm, activeStatus, customers]);
 
-  const totalSpent = MOCK_CUSTOMERS.reduce((acc, curr) => acc + curr.totalSpent, 0);
-  const activeCount = MOCK_CUSTOMERS.filter(c => c.status === 'Active').length;
-  const blockedCount = MOCK_CUSTOMERS.filter(c => c.status === 'Blocked').length;
+  const totalSpent = customers.reduce((acc, curr) => acc + curr.totalSpent, 0);
+  const activeCount = customers.filter(c => c.status === 'Active').length;
+  const blockedCount = customers.filter(c => c.status === 'Blocked').length;
 
-  const handleView = (customer: Customer) => console.log("Viewing:", customer.id);
-  const handleEdit = (customer: Customer) => console.log("Editing:", customer.id);
+  const handleView = (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setIsDetailsModalOpen(true);
+  };
+  
+  const handleEdit = (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Confirm Handlers
+  const onUpdateConfirm = (updatedCustomer: Customer) => {
+    setCustomers(prev => prev.map(c => c.id === updatedCustomer.id ? updatedCustomer : c));
+    console.log("Profile Sync Complete:", updatedCustomer.id);
+  };
+
+  const onDeleteConfirm = (customer: Customer) => {
+    setCustomers(prev => prev.filter(c => c.id !== customer.id));
+    console.log("Profile Purged:", customer.id);
+  };
+
+  const onAddConfirm = (newCustomer: Customer) => {
+    setCustomers(prev => [newCustomer, ...prev]);
+    console.log("New Customer Onboarded:", newCustomer.id);
+  };
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-700">
@@ -72,7 +112,10 @@ export default function CustomersPage() {
             </button>
           </div>
 
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/10 group">
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/10 group"
+          >
             <UserPlus className="w-4 h-4 transition-transform group-hover:scale-110" />
             <span>Add Customer</span>
           </button>
@@ -83,7 +126,7 @@ export default function CustomersPage() {
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatCard 
           label="Total Users" 
-          value={MOCK_CUSTOMERS.length} 
+          value={customers.length} 
           icon={Users} 
           color="text-emerald-600" 
           bgColor="bg-emerald-50/50" 
@@ -130,6 +173,7 @@ export default function CustomersPage() {
                 customers={filteredCustomers} 
                 onView={handleView}
                 onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ) : (
               <div className="p-20 text-center">
@@ -169,6 +213,33 @@ export default function CustomersPage() {
           </div>
         </div>
       </section>
+
+      {/* Modals Handling */}
+      <CustomerDetailsModal 
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        customer={selectedCustomer}
+      />
+
+      <EditCustomerModal 
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        customer={selectedCustomer}
+        onConfirm={onUpdateConfirm}
+      />
+
+      <DeleteCustomerModal 
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        customer={selectedCustomer}
+        onConfirm={onDeleteConfirm}
+      />
+
+      <AddCustomerModal 
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onConfirm={onAddConfirm}
+      />
     </div>
   );
 }

@@ -46,10 +46,10 @@ export function NewTicketModal({ isOpen, onClose, onSubmit }: NewTicketModalProp
         {/* Header */}
         <div className="flex items-center justify-between p-6 md:p-8 border-b border-slate-50 relative bg-slate-50/50">
           <div>
-            <h2 className="text-xl md:text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
                Open New Ticket
             </h2>
-            <p className="text-[12px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Create a manual support request</p>
+            <p className="text-[11px] font-semibold text-slate-400 mt-1 uppercase tracking-widest">Create a manual support request</p>
           </div>
           <button 
             onClick={onClose}
@@ -64,7 +64,7 @@ export function NewTicketModal({ isOpen, onClose, onSubmit }: NewTicketModalProp
           <form id="new-ticket-form" onSubmit={handleSubmit} className="space-y-6">
             
             <div className="space-y-2">
-               <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
+               <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5" /> Customer Identity
                </label>
                <input
@@ -73,12 +73,12 @@ export function NewTicketModal({ isOpen, onClose, onSubmit }: NewTicketModalProp
                  placeholder="Enter Customer ID, Email, or Phone Number"
                  value={formData.customerId}
                  onChange={(e) => setFormData({ ...formData, customerId: e.target.value })}
-                 className="w-full bg-slate-50/50 border-2 border-slate-200/60 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-8 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/40 transition-all"
+                 className="w-full bg-slate-50/50 border-2 border-slate-200/60 rounded-2xl px-5 py-3.5 text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-8 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/40 transition-all"
                />
             </div>
 
             <div className="space-y-2">
-               <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
+               <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
                   <FileText className="w-3.5 h-3.5" /> Ticket Subject
                </label>
                <input
@@ -87,20 +87,20 @@ export function NewTicketModal({ isOpen, onClose, onSubmit }: NewTicketModalProp
                  placeholder="Brief summary of the issue..."
                  value={formData.subject}
                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                 className="w-full bg-slate-50/50 border-2 border-slate-200/60 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-8 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/40 transition-all"
+                 className="w-full bg-slate-50/50 border-2 border-slate-200/60 rounded-2xl px-5 py-3.5 text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-8 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/40 transition-all"
                />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                <div className="space-y-2">
-                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
                      <Tag className="w-3.5 h-3.5" /> Category
                   </label>
                   <div className="relative">
                     <select
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value as TicketCategory })}
-                      className="w-full bg-slate-50/50 border-2 border-slate-200/60 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-700 focus:outline-none focus:ring-8 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/40 transition-all appearance-none cursor-pointer"
+                      className="w-full bg-slate-50/50 border-2 border-slate-200/60 rounded-2xl px-5 py-3.5 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-8 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/40 transition-all appearance-none cursor-pointer"
                     >
                       {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                     </select>
@@ -109,7 +109,7 @@ export function NewTicketModal({ isOpen, onClose, onSubmit }: NewTicketModalProp
                </div>
                
                <div className="space-y-2">
-                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
                      <AlertCircle className="w-3.5 h-3.5" /> Priority
                   </label>
                   <div className="relative">
@@ -117,7 +117,7 @@ export function NewTicketModal({ isOpen, onClose, onSubmit }: NewTicketModalProp
                       value={formData.priority}
                       onChange={(e) => setFormData({ ...formData, priority: e.target.value as TicketPriority })}
                       className={cn(
-                        "w-full bg-slate-50/50 border-2 rounded-2xl px-5 py-3.5 text-sm font-bold focus:outline-none focus:ring-8 transition-all appearance-none cursor-pointer",
+                        "w-full bg-slate-50/50 border-2 rounded-2xl px-5 py-3.5 text-sm font-semibold focus:outline-none focus:ring-8 transition-all appearance-none cursor-pointer",
                         formData.priority === 'Critical' ? "border-red-200/60 text-red-700 bg-red-50/50 focus:ring-red-500/5 focus:border-red-500/40 focus:bg-white" :
                         formData.priority === 'High' ? "border-amber-200/60 text-amber-700 bg-amber-50/50 focus:ring-amber-500/5 focus:border-amber-500/40 focus:bg-white" :
                         formData.priority === 'Medium' ? "border-blue-200/60 text-blue-700 bg-blue-50/50 focus:ring-blue-500/5 focus:border-blue-500/40 focus:bg-white" :
@@ -137,7 +137,7 @@ export function NewTicketModal({ isOpen, onClose, onSubmit }: NewTicketModalProp
             </div>
 
             <div className="space-y-2">
-               <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
+               <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
                   Initial Message
                </label>
                <textarea
@@ -157,7 +157,7 @@ export function NewTicketModal({ isOpen, onClose, onSubmit }: NewTicketModalProp
            <button 
              type="button"
              onClick={onClose}
-             className="w-full sm:w-auto px-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-[12px] font-black text-slate-600 hover:bg-slate-50 transition-all active:scale-95 shadow-sm uppercase tracking-widest"
+             className="w-full sm:w-auto px-6 py-3 bg-white border border-slate-200 rounded-2xl text-[11px] font-bold text-slate-600 hover:bg-slate-50 transition-all active:scale-95 shadow-sm uppercase tracking-widest"
            >
              Cancel
            </button>
@@ -165,7 +165,7 @@ export function NewTicketModal({ isOpen, onClose, onSubmit }: NewTicketModalProp
              type="submit"
              form="new-ticket-form"
              disabled={isSubmitting}
-             className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[12px] font-black transition-all active:scale-95 shadow-lg shadow-emerald-500/20 uppercase tracking-widest disabled:opacity-70 disabled:pointer-events-none"
+             className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[11px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/20 uppercase tracking-widest disabled:opacity-70 disabled:pointer-events-none"
            >
              {isSubmitting ? (
                <Loader2 className="w-4 h-4 animate-spin" />

@@ -18,6 +18,8 @@ export interface Product {
   weight?: string;
   lastUpdated: string;
   sales: number;
+  discountPercentage?: number;
+  isDeal?: boolean;
 }
 
 export interface ProductFilters {

@@ -1,15 +1,41 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { ArrowRight, MoreHorizontal, Bike, CircleDot, Star, MapPin } from "lucide-react";
+import { 
+  ArrowRight, 
+  MoreHorizontal, 
+  Bike, 
+  CircleDot, 
+  Star, 
+  MapPin,
+  Edit2,
+  Trash2,
+  Eye
+} from "lucide-react";
 import { Rider } from "@/types/riders";
+import { cn } from "@/lib/utils";
 
 interface RiderListProps {
   riders: Rider[];
   onView: (rider: Rider) => void;
   onEdit: (rider: Rider) => void;
+  onDelete: (rider: Rider) => void;
 }
 
-export function RiderList({ riders, onView, onEdit }: RiderListProps) {
+export function RiderList({ riders, onView, onEdit, onDelete }: RiderListProps) {
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close menu on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setActiveMenuId(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div className="w-full">
       {/* Mobile View: Premium Cards Layout */}
@@ -24,7 +50,7 @@ export function RiderList({ riders, onView, onEdit }: RiderListProps) {
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <Image
-                    src={rider.avatarUrl}
+                    src={rider.avatarUrl || "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop"}
                     alt={rider.name}
                     width={56}
                     height={56}
@@ -44,12 +70,39 @@ export function RiderList({ riders, onView, onEdit }: RiderListProps) {
                   </div>
                 </div>
               </div>
-              <button 
-                onClick={() => onEdit(rider)}
-                className="p-2 text-slate-400 hover:text-emerald-600 bg-slate-50 hover:bg-emerald-50 rounded-xl transition-colors shrink-0"
-              >
-                <MoreHorizontal className="w-5 h-5" />
-              </button>
+              
+              <div className="relative">
+                <button 
+                  onClick={() => setActiveMenuId(activeMenuId === rider.id ? null : rider.id)}
+                  className={cn(
+                    "p-2 rounded-xl transition-all",
+                    activeMenuId === rider.id ? "bg-emerald-600 text-white" : "text-slate-400 hover:text-emerald-600 bg-slate-50 hover:bg-emerald-50"
+                  )}
+                >
+                  <MoreHorizontal className="w-5 h-5" />
+                </button>
+
+                {activeMenuId === rider.id && (
+                  <div 
+                    ref={menuRef}
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-30 animate-in fade-in zoom-in-95 duration-200"
+                  >
+                    <button 
+                      onClick={() => { onEdit(rider); setActiveMenuId(null); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-emerald-600 transition-colors"
+                    >
+                      <Edit2 className="w-4 h-4" /> Edit Profile
+                    </button>
+                    <div className="my-1 border-t border-slate-50"></div>
+                    <button 
+                      onClick={() => { onDelete(rider); setActiveMenuId(null); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" /> Terminate Access
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Status & Stats Grid */}
@@ -118,7 +171,7 @@ export function RiderList({ riders, onView, onEdit }: RiderListProps) {
                   <div className="flex items-center gap-4">
                     <div className="relative">
                       <Image
-                        src={rider.avatarUrl}
+                        src={rider.avatarUrl || "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop"}
                         alt={rider.name}
                         width={56}
                         height={56}
@@ -200,18 +253,46 @@ export function RiderList({ riders, onView, onEdit }: RiderListProps) {
                   <div className="flex items-center justify-end gap-2.5">
                     <button 
                       onClick={() => onView(rider)}
-                      className="p-2 w-10 h-10 bg-white border border-slate-200 text-slate-500 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center group/btn"
-                      title="View Full Profile"
+                      className="p-2 w-10 h-10 bg-white border border-slate-200 text-slate-300 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center group/btn"
+                      title="Quick View Profile"
                     >
-                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
+                      <Eye className="w-4 h-4" />
                     </button>
-                    <button 
-                      onClick={() => onEdit(rider)}
-                      className="p-2 w-10 h-10 bg-white border border-slate-200 text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center"
-                      title="Manage Rider Details"
-                    >
-                      <MoreHorizontal className="w-4 h-4" />
-                    </button>
+                    
+                    <div className="relative">
+                      <button 
+                        onClick={() => setActiveMenuId(activeMenuId === rider.id ? null : rider.id)}
+                        className={cn(
+                          "p-2 w-10 h-10 rounded-xl transition-all flex items-center justify-center border",
+                          activeMenuId === rider.id 
+                            ? "bg-emerald-600 text-white border-emerald-600" 
+                            : "bg-white border-slate-200 text-slate-300 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50"
+                        )}
+                      >
+                        <MoreHorizontal className="w-4 h-4" />
+                      </button>
+
+                      {activeMenuId === rider.id && (
+                        <div 
+                          ref={menuRef}
+                          className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-30 animate-in fade-in zoom-in-95 duration-200"
+                        >
+                          <button 
+                            onClick={() => { onEdit(rider); setActiveMenuId(null); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-emerald-600 transition-colors"
+                          >
+                            <Edit2 className="w-4 h-4" /> Edit Profile
+                          </button>
+                          <div className="my-1 border-t border-slate-50"></div>
+                          <button 
+                            onClick={() => { onDelete(rider); setActiveMenuId(null); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" /> Terminate Access
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </td>
               </tr>

@@ -7,12 +7,16 @@ import {
   FileText,
   Clock,
   XCircle,
-  Plus
+  Plus,
+  Loader2,
+  CheckCircle2
 } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { OrderTable } from "@/components/dashboard/orders/OrderTable";
 import { OrderFilters } from "@/components/dashboard/orders/OrderFilters";
 import { OrderEmptyState } from "@/components/dashboard/orders/OrderEmptyState";
+import { ManualOrderModal } from "@/components/dashboard/orders/ManualOrderModal";
+import { OrderDetailsModal } from "@/components/dashboard/orders/OrderDetailsModal";
 import { Order } from "@/types/orders";
 import { MOCK_ORDERS, STATUS_TABS } from "@/constants/orders";
 
@@ -20,6 +24,37 @@ export default function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("All Orders");
   const [timeRange, setTimeRange] = useState("All Time");
+
+  // Export states
+  const [isExportingCSV, setIsExportingCSV] = useState(false);
+  const [csvSuccess, setCsvSuccess] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
+  const [pdfSuccess, setPdfSuccess] = useState(false);
+  
+  // Modal State
+  const [isManualOrderOpen, setIsManualOrderOpen] = useState(false);
+  const [orderToEdit, setOrderToEdit] = useState<Order | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  const handleExportCSV = () => {
+    setIsExportingCSV(true);
+    // Simulate generation
+    setTimeout(() => {
+      setIsExportingCSV(false);
+      setCsvSuccess(true);
+      setTimeout(() => setCsvSuccess(false), 2000);
+    }, 1500);
+  };
+
+  const handleExportPDF = () => {
+    setIsExportingPDF(true);
+    // Simulate generation
+    setTimeout(() => {
+      setIsExportingPDF(false);
+      setPdfSuccess(true);
+      setTimeout(() => setPdfSuccess(false), 2000);
+    }, 1500);
+  };
 
   // Modern Search and Filter Logic
   const filteredOrders = useMemo(() => {
@@ -69,15 +104,14 @@ export default function OrdersPage() {
   }, [searchTerm, activeTab, timeRange]);
 
   const handleViewOrder = (order: Order) => {
-    console.log("Viewing order:", order.id);
-    // Modal logic would be triggered here
+    setSelectedOrder(order);
   };
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-700">
       {/* ... header and stats ... */}
       <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
             Order <span className="text-emerald-600"> Management</span>
           </h1>
@@ -86,22 +120,45 @@ export default function OrdersPage() {
           </p>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           {/* Export Actions Group */}
-          <div className="hidden sm:flex items-center bg-white border border-slate-100 rounded-xl p-1 gap-1">
-            <button className="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 rounded-lg text-[12px] font-bold text-slate-600 transition-all active:scale-95">
-              <Download className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="flex flex-1 sm:flex-none items-center bg-white border border-slate-100 rounded-xl p-1 gap-1">
+            <button 
+              onClick={handleExportCSV}
+              disabled={isExportingCSV || csvSuccess}
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[12px] font-bold transition-all ${
+                csvSuccess ? 'bg-emerald-50 text-emerald-700' :
+                isExportingCSV ? 'text-slate-400 cursor-not-allowed bg-slate-50' : 
+                'text-slate-600 hover:bg-slate-50 active:scale-95'
+              }`}
+            >
+              {isExportingCSV ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 
+               csvSuccess ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : 
+               <Download className="w-3.5 h-3.5 text-emerald-600" />}
               <span>CSV</span>
             </button>
             <div className="w-[1px] h-4 bg-slate-100"></div>
-            <button className="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 rounded-lg text-[12px] font-bold text-slate-600 transition-all active:scale-95">
-              <FileText className="w-3.5 h-3.5 text-emerald-600" />
+            <button 
+              onClick={handleExportPDF}
+              disabled={isExportingPDF || pdfSuccess}
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[12px] font-bold transition-all ${
+                pdfSuccess ? 'bg-emerald-50 text-emerald-700' :
+                isExportingPDF ? 'text-slate-400 cursor-not-allowed bg-slate-50' : 
+                'text-slate-600 hover:bg-slate-50 active:scale-95'
+              }`}
+            >
+              {isExportingPDF ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 
+               pdfSuccess ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : 
+               <FileText className="w-3.5 h-3.5 text-emerald-600" />}
               <span>PDF</span>
             </button>
           </div>
 
           {/* Primary Action */}
-          <button className="flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/10 group">
+          <button 
+            onClick={() => { setOrderToEdit(null); setIsManualOrderOpen(true); }}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/10 group whitespace-nowrap"
+          >
             <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
             <span>Manual Order</span>
           </button>
@@ -160,6 +217,7 @@ export default function OrdersPage() {
             <OrderTable 
               orders={filteredOrders} 
               onViewDetails={handleViewOrder}
+              onEdit={(order) => { setOrderToEdit(order); setIsManualOrderOpen(true); }}
             />
           ) : (
             <OrderEmptyState 
@@ -186,6 +244,18 @@ export default function OrdersPage() {
           </div>
         </div>
       </section>
+
+      <ManualOrderModal 
+        isOpen={isManualOrderOpen}
+        onClose={() => { setIsManualOrderOpen(false); setOrderToEdit(null); }}
+        editOrder={orderToEdit}
+      />
+
+      <OrderDetailsModal 
+        isOpen={!!selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+        order={selectedOrder}
+      />
     </div>
   );
 }

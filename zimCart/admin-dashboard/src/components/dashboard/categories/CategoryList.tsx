@@ -12,6 +12,16 @@ interface CategoryListProps {
 }
 
 export function CategoryList({ categories, onEdit, onDelete, onView }: CategoryListProps) {
+  const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
+
+  // Close menu when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = () => setOpenMenuId(null);
+    if (openMenuId) {
+      document.addEventListener("click", handleClickOutside);
+    }
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [openMenuId]);
   return (
     <div className="w-full">
       {/* Desktop Table View */}
@@ -75,13 +85,46 @@ export function CategoryList({ categories, onEdit, onDelete, onView }: CategoryL
                    </div>
                 </td>
                 <td className="px-6 py-5 text-right">
-                   <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => onView(cat)} className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95">
+                   <div className="flex items-center justify-end gap-2 relative">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); onView(cat); }} 
+                        className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95"
+                      >
                         <Eye className="w-5 h-5" />
                       </button>
-                      <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
-                        <MoreHorizontal className="w-5 h-5" />
-                      </button>
+                      <div className="relative">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenMenuId(openMenuId === cat.id ? null : cat.id);
+                          }}
+                          className={cn(
+                            "p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all",
+                            openMenuId === cat.id && "bg-slate-100 text-slate-600"
+                          )}
+                        >
+                          <MoreHorizontal className="w-5 h-5" />
+                        </button>
+                        
+                        {openMenuId === cat.id && (
+                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-200">
+                            <button 
+                              onClick={() => { onEdit(cat); setOpenMenuId(null); }}
+                              className="w-full flex items-center gap-3 px-4 py-2 text-[12px] font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+                            >
+                              <Edit2 className="w-4 h-4 text-emerald-500" />
+                              Edit Category
+                            </button>
+                            <button 
+                              onClick={() => { onDelete(cat); setOpenMenuId(null); }}
+                              className="w-full flex items-center gap-3 px-4 py-2 text-[12px] font-bold text-red-500 hover:bg-red-50 transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                              Delete Category
+                            </button>
+                          </div>
+                        )}
+                      </div>
                    </div>
                 </td>
               </tr>

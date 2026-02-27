@@ -1,4 +1,5 @@
-import { Eye, MoreHorizontal, Box, ArrowUpDown, ChevronRight, ShoppingCart } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Eye, MoreHorizontal, Box, ArrowUpDown, ChevronRight, ShoppingCart, Pencil, Trash2, AlertTriangle, Archive } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { Product } from "@/types/products";
@@ -12,6 +13,25 @@ interface ProductTableProps {
 }
 
 export function ProductTable({ products, onEdit, onDelete, onView }: ProductTableProps) {
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.dropdown-container')) {
+        setOpenMenuId(null);
+      }
+    };
+
+    if (openMenuId) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openMenuId]);
+
   return (
     <div className="w-full">
       {/* Desktop Table View */}
@@ -19,7 +39,7 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
         <table className="w-full text-left border-collapse min-w-[1000px]">
           <thead>
             <tr className="border-b border-slate-50 bg-slate-50/30">
-              <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider">
+              <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider pl-8">
                 <div className="flex items-center gap-2 cursor-pointer hover:text-slate-600 transition-colors">
                   Product Info
                   <ArrowUpDown className="w-3 h-3" />
@@ -35,7 +55,7 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
               </th>
               <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider">Inventory</th>
               <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider text-right">Action</th>
+              <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider text-right pr-8">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
@@ -44,7 +64,7 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                 key={product.id} 
                 className="group hover:bg-slate-50/50 transition-all duration-200 border-b last:border-0 border-slate-50"
               >
-                <td className="px-6 py-5">
+                <td className="px-6 py-5 pl-8">
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-2xl overflow-hidden border border-slate-100 flex-shrink-0 bg-slate-50 relative group-hover:scale-105 transition-transform duration-300 shadow-sm">
                       {product.images?.[0] ? (
@@ -56,6 +76,18 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                         />
                       ) : (
                         <Box className="w-6 h-6 text-slate-200 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                      )}
+                      
+                      {/* Discount/Deal Badge */}
+                      {(product.discountPercentage && product.discountPercentage > 0) && (
+                        <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-red-500 text-white text-[8px] font-black rounded-md shadow-lg z-10 animate-pulse">
+                          -{product.discountPercentage}%
+                        </div>
+                      )}
+                      {product.isDeal && (
+                        <div className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-amber-500 text-white text-[8px] font-black rounded-md shadow-lg z-10">
+                          DEAL
+                        </div>
                       )}
                     </div>
                     <div className="min-w-0 text-left">
@@ -73,7 +105,8 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                   <span className="text-[12px] font-bold text-slate-500 bg-emerald-50/30 px-2 py-1 rounded-lg border border-emerald-100/20">{product.category}</span>
                 </td>
                 <td className="px-6 py-5">
-                  <div className="flex flex-col text-left">
+                   {/* Price logic */}
+                   <div className="flex flex-col text-left">
                     <span className="font-extrabold text-slate-800 text-[14px] leading-none">${product.price.toFixed(2)}</span>
                     {product.compareAtPrice && (
                       <span className="text-[10px] font-bold text-slate-400 line-through mt-1">${product.compareAtPrice.toFixed(2)}</span>
@@ -103,17 +136,50 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                 <td className="px-6 py-5">
                   <ProductStatusBadge status={product.status} />
                 </td>
-                <td className="px-6 py-5 text-right">
-                  <div className="flex items-center justify-end gap-2">
+                <td className="px-6 py-5 text-right pr-8">
+                  <div className="flex items-center justify-end gap-2 relative">
                     <button 
                       onClick={() => onView(product)}
-                      className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95"
+                      className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95 group/view"
+                      title="View Details"
                     >
                       <Eye className="w-5 h-5" />
                     </button>
-                    <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
-                      <MoreHorizontal className="w-5 h-5" />
-                    </button>
+                    
+                    <div className="relative dropdown-container">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuId(openMenuId === product.id ? null : product.id);
+                        }}
+                        className={cn(
+                          "p-2 rounded-xl transition-all active:scale-95",
+                          openMenuId === product.id ? "bg-slate-100 text-slate-800" : "text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                        )}
+                      >
+                        <MoreHorizontal className="w-5 h-5" />
+                      </button>
+
+                      {openMenuId === product.id && (
+                        <div className="absolute right-0 mt-2 w-56 bg-white rounded-[24px] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] border border-slate-100 z-50 py-3 animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+                          
+                          
+                          <button 
+                            onClick={() => { onEdit(product); setOpenMenuId(null); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+                          >
+                            <Pencil className="w-4 h-4 text-blue-500" /> Edit Product
+                          </button>
+                          
+                          <button 
+                            onClick={() => { setProductToDelete(product); setOpenMenuId(null); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500" /> Delete Product
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -139,6 +205,18 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                   {product.images?.[0] ? (
                     <Image src={product.images[0]} alt="" fill className="object-cover" />
                   ) : <Box className="w-6 h-6 text-slate-200 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
+                  
+                  {/* Discount/Deal Badge */}
+                  {(product.discountPercentage && product.discountPercentage > 0) && (
+                    <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-red-500 text-white text-[8px] font-black rounded-md shadow-lg z-10 animate-pulse">
+                      -{product.discountPercentage}%
+                    </div>
+                  )}
+                  {product.isDeal && (
+                    <div className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-amber-500 text-white text-[8px] font-black rounded-md shadow-lg z-10">
+                      DEAL
+                    </div>
+                  )}
                 </div>
                 <div>
                   <h4 className="text-sm font-extrabold text-slate-800 leading-tight group-hover:text-emerald-600 transition-colors">{product.name}</h4>
@@ -172,6 +250,47 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
           </div>
         ))}
       </div>
+      {/* Delete Confirmation Modal */}
+      {productToDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setProductToDelete(null)} />
+          <div className="relative w-full max-w-md bg-white rounded-[32px] shadow-2xl p-8 animate-in zoom-in-95 duration-300">
+            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
+              <AlertTriangle className="w-8 h-8 text-red-500" />
+            </div>
+            
+            <h3 className="text-xl font-black text-slate-800 tracking-tight">Delete Product?</h3>
+            <p className="text-slate-500 mt-2 text-sm leading-relaxed">
+              Are you sure you want to delete <span className="font-bold text-slate-800">{productToDelete.name}</span>? 
+              This action cannot be undone and will remove the product from your catalog forever.
+            </p>
+            
+            <div className="flex items-center gap-3 mt-8">
+              <button 
+                onClick={() => setProductToDelete(null)}
+                className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-bold transition-all"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  setIsDeleting(true);
+                  // Simulate delete for now, then call onDelete
+                  setTimeout(() => {
+                    onDelete(productToDelete);
+                    setIsDeleting(false);
+                    setProductToDelete(null);
+                  }, 1500);
+                }}
+                disabled={isDeleting}
+                className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-red-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+              >
+                {isDeleting ? <Archive className="w-4 h-4 animate-pulse" /> : "Confirm Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

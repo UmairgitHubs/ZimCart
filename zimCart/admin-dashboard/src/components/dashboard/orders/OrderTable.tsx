@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Eye, 
   MoreHorizontal, 
   Clock, 
   Mail,
   Smartphone,
-  ChevronRight
+  ChevronRight,
+  Printer,
+  Pencil,
+  Trash2,
+  AlertTriangle,
+  X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Order } from "@/types/orders";
@@ -14,10 +19,30 @@ import { OrderStatusBadge } from "./OrderStatusBadge";
 interface OrderTableProps {
   orders: Order[];
   onViewDetails: (order: Order) => void;
+  onEdit: (order: Order) => void;
   isLoading?: boolean;
 }
 
-export function OrderTable({ orders, onViewDetails, isLoading }: OrderTableProps) {
+export function OrderTable({ orders, onViewDetails, onEdit, isLoading }: OrderTableProps) {
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.dropdown-container')) {
+        setOpenMenuId(null);
+      }
+    };
+
+    if (openMenuId) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openMenuId]);
+
   if (isLoading) {
     // Skeleton loader would go here in a real app
     return <div className="p-8 text-center text-slate-400 font-bold">Loading orders...</div>;
@@ -99,16 +124,51 @@ export function OrderTable({ orders, onViewDetails, isLoading }: OrderTableProps
                   </div>
                 </td>
                 <td className="px-8 py-5">
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center justify-end gap-2 relative">
                     <button 
                       onClick={() => onViewDetails(order)}
-                      className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95"
+                      className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95 group/view"
+                      title="View Details"
                     >
                       <Eye className="w-5 h-5" />
                     </button>
-                    <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
-                      <MoreHorizontal className="w-5 h-5" />
-                    </button>
+                    
+                    <div className="relative dropdown-container">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuId(openMenuId === order.id ? null : order.id);
+                        }}
+                        className={cn(
+                          "p-2 rounded-xl transition-all active:scale-95",
+                          openMenuId === order.id ? "bg-slate-100 text-slate-800" : "text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                        )}
+                      >
+                        <MoreHorizontal className="w-5 h-5" />
+                      </button>
+
+                      {openMenuId === order.id && (
+                        <div className="absolute right-0 mt-2 w-56 bg-white rounded-[24px] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] border border-slate-100 z-50 py-3 animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+                          <div className="px-4 py-2 border-b border-slate-50 mb-1">
+                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Danger zone</p>
+                          </div>
+                          
+                          <button 
+                            onClick={() => { onEdit(order); setOpenMenuId(null); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+                          >
+                            <Pencil className="w-4 h-4 text-blue-500" /> Edit Order
+                          </button>
+                          
+                          <button 
+                            onClick={() => { setOrderToDelete(order); setOpenMenuId(null); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" /> Delete Order
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -156,6 +216,45 @@ export function OrderTable({ orders, onViewDetails, isLoading }: OrderTableProps
           </div>
         ))}
       </div>
+      {/* Delete Confirmation Modal */}
+      {orderToDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setOrderToDelete(null)} />
+          <div className="relative w-full max-w-md bg-white rounded-[32px] shadow-2xl p-8 animate-in zoom-in-95 duration-300">
+            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
+              <AlertTriangle className="w-8 h-8 text-red-500" />
+            </div>
+            
+            <h3 className="text-xl font-black text-slate-800 tracking-tight">Delete Order?</h3>
+            <p className="text-slate-500 mt-2 text-sm leading-relaxed">
+              Are you sure you want to delete order <span className="font-bold text-slate-800">#{orderToDelete.id}</span>? 
+              This action cannot be undone and will remove all associated data.
+            </p>
+            
+            <div className="flex items-center gap-3 mt-8">
+              <button 
+                onClick={() => setOrderToDelete(null)}
+                className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-bold transition-all"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  setIsDeleting(true);
+                  setTimeout(() => {
+                    setIsDeleting(false);
+                    setOrderToDelete(null);
+                  }, 1500);
+                }}
+                disabled={isDeleting}
+                className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-red-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+              >
+                {isDeleting ? <Clock className="w-4 h-4 animate-spin" /> : "Confirm Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

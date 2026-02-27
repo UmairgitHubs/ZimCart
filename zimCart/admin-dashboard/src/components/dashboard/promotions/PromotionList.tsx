@@ -1,15 +1,15 @@
-import React from "react";
+"use client";
+
+import React, { useState, useRef, useEffect } from "react";
 import { 
   Eye, 
   MoreHorizontal, 
   ChevronRight, 
   Ticket, 
   Calendar, 
-  Users, 
-  Zap, 
   Clock,
-  TrendingUp,
-  Ban
+  Trash2,
+  Edit2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Promotion } from "@/types/promotions";
@@ -18,9 +18,23 @@ interface PromotionListProps {
   promotions: Promotion[];
   onView: (promo: Promotion) => void;
   onEdit: (promo: Promotion) => void;
+  onDelete: (promo: Promotion) => void;
 }
 
-export function PromotionList({ promotions, onView, onEdit }: PromotionListProps) {
+export function PromotionList({ promotions, onView, onEdit, onDelete }: PromotionListProps) {
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setActiveMenu(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div className="w-full">
       {/* Desktop Table View */}
@@ -83,9 +97,12 @@ export function PromotionList({ promotions, onView, onEdit }: PromotionListProps
                            <span className="text-[9px] font-bold text-slate-400">{Math.round((promo.usageCount / promo.usageLimit) * 100)}%</span>
                          )}
                       </div>
-                      <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-50">
                          <div 
-                           className="h-full bg-emerald-500 rounded-full transition-all duration-1000" 
+                           className={cn(
+                             "h-full rounded-full transition-all duration-1000",
+                             (promo.usageLimit && (promo.usageCount / promo.usageLimit) > 0.8) ? "bg-amber-500" : "bg-emerald-500"
+                           )} 
                            style={{ width: `${promo.usageLimit ? (promo.usageCount / promo.usageLimit) * 100 : 100}%` }}
                          />
                       </div>
@@ -102,14 +119,54 @@ export function PromotionList({ promotions, onView, onEdit }: PromotionListProps
                      {promo.status}
                    </span>
                 </td>
-                <td className="px-6 py-5 text-right">
+                <td className="px-6 py-5 text-right relative">
                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => onView(promo)} className="p-2.5 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-emerald-500 hover:border-emerald-100 transition-all active:scale-95">
-                        <Eye className="w-4 h-4" />
+                      <button 
+                        onClick={() => onView(promo)} 
+                        className="p-2.5 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-emerald-500 hover:border-emerald-100 transition-all active:scale-95 group/btn"
+                        title="View Intelligence"
+                      >
+                        <Eye className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
                       </button>
-                      <button className="p-2.5 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-slate-600 hover:border-slate-200 transition-all">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </button>
+                      
+                      <div className="relative">
+                        <button 
+                          onClick={() => setActiveMenu(activeMenu === promo.id ? null : promo.id)}
+                          className={cn(
+                            "p-2.5 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-slate-600 hover:border-slate-200 transition-all",
+                            activeMenu === promo.id && "bg-slate-50 text-slate-800 border-slate-200"
+                          )}
+                        >
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+
+                        {activeMenu === promo.id && (
+                          <div 
+                            ref={menuRef}
+                            className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-[60] animate-in fade-in zoom-in-95 duration-200"
+                          >
+                             <button 
+                               onClick={() => { onEdit(promo); setActiveMenu(null); }}
+                               className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-slate-50 transition-colors group"
+                             >
+                                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                                   <Edit2 className="w-4 h-4" />
+                                </div>
+                                <span className="text-[11px] font-black text-slate-700 uppercase tracking-widest">Edit Campaign</span>
+                             </button>
+                             <div className="h-[1px] bg-slate-50 my-1 mx-2"></div>
+                             <button 
+                               onClick={() => { onDelete(promo); setActiveMenu(null); }}
+                               className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-red-50 transition-colors group"
+                             >
+                                <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+                                   <Trash2 className="w-4 h-4" />
+                                </div>
+                                <span className="text-[11px] font-black text-red-600 uppercase tracking-widest">Terminate</span>
+                             </button>
+                          </div>
+                        )}
+                      </div>
                    </div>
                 </td>
               </tr>
@@ -127,7 +184,7 @@ export function PromotionList({ promotions, onView, onEdit }: PromotionListProps
           >
             <div className="flex items-start justify-between mb-6">
                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100 shadow-sm">
                     <Ticket className="w-7 h-7" />
                   </div>
                   <div>
@@ -135,35 +192,45 @@ export function PromotionList({ promotions, onView, onEdit }: PromotionListProps
                     <span className="text-[10px] font-black text-white bg-slate-800 px-2 py-0.5 rounded-md tracking-[2px]">{promo.code}</span>
                   </div>
                </div>
-               <span className={cn(
-                  "px-3 py-1 rounded-full text-[9px] font-black border uppercase tracking-widest",
-                  promo.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                  promo.status === 'Scheduled' ? "bg-blue-50 text-blue-600 border-blue-100" :
-                  promo.status === 'Expired' ? "bg-amber-50 text-amber-600 border-amber-100" :
-                  "bg-red-50 text-red-600 border-red-100"
-               )}>{promo.status}</span>
+               <div className="flex flex-col items-end gap-2">
+                 <span className={cn(
+                    "px-3 py-1 rounded-full text-[9px] font-black border uppercase tracking-widest",
+                    promo.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                    promo.status === 'Scheduled' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                    promo.status === 'Expired' ? "bg-amber-50 text-amber-600 border-amber-100" :
+                    "bg-red-50 text-red-600 border-red-100"
+                 )}>{promo.status}</span>
+                 <div className="flex gap-2">
+                   <button onClick={() => onEdit(promo)} className="p-2 bg-slate-50 rounded-lg text-slate-400 hover:text-blue-500 border border-slate-100">
+                     <Edit2 className="w-3.5 h-3.5" />
+                   </button>
+                   <button onClick={() => onDelete(promo)} className="p-2 bg-slate-50 rounded-lg text-slate-400 hover:text-red-500 border border-slate-100">
+                     <Trash2 className="w-3.5 h-3.5" />
+                   </button>
+                 </div>
+               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-50 mb-4">
                <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Discount</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Benefit Matrix</p>
                   <p className="text-sm font-black text-slate-800">
                      {promo.type === 'Percentage' ? `${promo.value}% OFF` : 
                       promo.type === 'Fixed Amount' ? `$${promo.value} OFF` : 'FREE SHIP'}
                   </p>
                </div>
                <div className="text-right">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Usage</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Consumption</p>
                   <p className="text-sm font-black text-slate-800">{promo.usageCount} Times</p>
                </div>
             </div>
 
             <div className="flex items-center justify-between mt-6">
-               <div className="flex items-center gap-2">
-                  <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                  <span className="text-[11px] font-bold text-slate-500">Expires {new Date(promo.endDate).toLocaleDateString()}</span>
+               <div className="flex items-center gap-2 text-slate-400">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span className="text-[11px] font-bold">Ends {new Date(promo.endDate).toLocaleDateString()}</span>
                </div>
-               <button onClick={() => onView(promo)} className="w-12 h-12 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-all">
+               <button onClick={() => onView(promo)} className="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-slate-200 active:scale-90 transition-all">
                   <ChevronRight className="w-5 h-5" />
                </button>
             </div>

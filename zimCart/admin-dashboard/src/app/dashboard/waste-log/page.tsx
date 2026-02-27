@@ -13,8 +13,15 @@ import {
   TrendingDown
 } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
+// Import Components
 import { WasteList } from "@/components/dashboard/waste/WasteList";
 import { WasteFilters } from "@/components/dashboard/waste/WasteFilters";
+// Import Modals
+import { WasteDetailsModal } from "@/components/dashboard/waste/WasteDetailsModal";
+import { AddWasteModal } from "@/components/dashboard/waste/AddWasteModal";
+import { EditWasteModal } from "@/components/dashboard/waste/EditWasteModal";
+import { DeleteWasteModal } from "@/components/dashboard/waste/DeleteWasteModal";
+// Data & Types
 import { MOCK_WASTE_LOGS } from "@/constants/waste";
 import { WasteLogEntry } from "@/types/waste";
 
@@ -22,6 +29,13 @@ export default function WasteLogPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeReason, setActiveReason] = useState("All");
   const [activeTimeFilter, setActiveTimeFilter] = useState("This Week");
+
+  // Modal States
+  const [selectedLog, setSelectedLog] = useState<WasteLogEntry | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const filteredLogs = useMemo(() => {
     return MOCK_WASTE_LOGS.filter((log) => {
@@ -58,13 +72,36 @@ export default function WasteLogPage() {
   const totalItemsWasted = filteredLogs.reduce((acc, curr) => acc + curr.quantity, 0);
   const latestEntry = filteredLogs.length > 0 ? filteredLogs[0] : null;
 
-  const handleView = (log: WasteLogEntry) => console.log("Viewing:", log.id);
-  const handleEdit = (log: WasteLogEntry) => console.log("Editing:", log.id);
+  const handleView = (log: WasteLogEntry) => {
+    setSelectedLog(log);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleEdit = (log: WasteLogEntry) => {
+    setSelectedLog(log);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (log: WasteLogEntry) => {
+    setSelectedLog(log);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleAddConfirm = (newLog: WasteLogEntry) => {
+    console.log("Adding Log:", newLog);
+  };
+
+  const handleEditConfirm = (updatedLog: WasteLogEntry) => {
+    console.log("Updating Log:", updatedLog);
+  };
+
+  const handleDeleteConfirm = (log: WasteLogEntry) => {
+    console.log("Deleting Log:", log.id);
+  };
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-700">
-      {/* Header Section */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1 md:px-0">
+      <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1 md:px-0 text-left">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
             Waste <span className="text-rose-600">Logging</span>
@@ -87,14 +124,16 @@ export default function WasteLogPage() {
             </button>
           </div>
 
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-rose-500/10 group">
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-rose-500/10 group uppercase tracking-widest"
+          >
             <Plus className="w-4 h-4 transition-transform group-hover:scale-110" />
             <span>Record New Waste</span>
           </button>
         </div>
       </section>
 
-      {/* Stats Cards Section */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatCard 
           label="Total Loss value" 
@@ -126,7 +165,6 @@ export default function WasteLogPage() {
         />
       </section>
 
-      {/* Main Content Area */}
       <section>
         <WasteFilters 
           searchTerm={searchTerm}
@@ -137,8 +175,7 @@ export default function WasteLogPage() {
           setActiveTimeFilter={setActiveTimeFilter}
         />
 
-        <div className="bg-white rounded-[40px] border border-slate-100 overflow-hidden relative group min-h-[500px]">
-          {/* subtle background element */}
+        <div className="bg-white rounded-[40px] border border-slate-100 overflow-hidden relative group min-h-[500px] shadow-sm">
           <div className="absolute top-0 right-0 w-96 h-96 bg-rose-50/10 blur-[120px] -z-10 rounded-full"></div>
           
           <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
@@ -147,46 +184,72 @@ export default function WasteLogPage() {
                 logs={filteredLogs} 
                 onView={handleView}
                 onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ) : (
               <div className="p-20 text-center">
                  <div className="w-24 h-24 bg-slate-50 rounded-[40px] flex items-center justify-center mx-auto mb-8 border border-slate-100 group-hover:scale-110 transition-transform duration-500">
                     <Database className="w-10 h-10 text-slate-200" />
                  </div>
-                 <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">No logs found</h3>
-                 <p className="text-slate-400 font-bold mt-2 max-w-sm mx-auto">Try adjusting your filters or search terms to find the specific log.</p>
+                 <h3 className="text-xl font-bold text-slate-800 uppercase tracking-tight">No records found</h3>
+                 <p className="text-slate-400 font-semibold mt-2 max-w-sm mx-auto text-sm">Adjust your filters or search terms to find specific log entries.</p>
                  <button 
                    onClick={() => { setSearchTerm(""); setActiveReason("All"); }}
-                   className="mt-8 px-8 py-3 bg-slate-800 text-white rounded-2xl text-[12px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-slate-200"
+                   className="mt-8 px-8 py-3 bg-slate-800 text-white rounded-2xl text-[11px] font-bold uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-slate-200"
                  >
-                   Reset Search View
+                   Reset filters
                  </button>
               </div>
             )}
             
-            {/* Pagination Placeholder */}
             {filteredLogs.length > 0 && (
               <div className="px-8 py-6 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between bg-slate-50/30 gap-6">
                 <div className="flex items-center gap-3">
                    <div className="flex -space-x-2">
-                      <div className="w-6 h-6 rounded-full bg-rose-100 border-2 border-white flex items-center justify-center">
-                         <DollarSign className="w-3 h-3 text-rose-500" />
+                      <div className="w-6 h-6 rounded-full bg-rose-100 border-2 border-white flex items-center justify-center text-rose-500">
+                         <DollarSign className="w-3 h-3" />
                       </div>
                       <div className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white"></div>
                    </div>
-                   <p className="text-xs font-black text-slate-400">
-                     Directory contains <span className="text-slate-800">{filteredLogs.length}</span> matching records
+                   <p className="font-bold text-slate-400 text-[11px] uppercase tracking-widest">
+                     Directory contains <span className="text-slate-800 underline decoration-rose-500/20 underline-offset-4">{filteredLogs.length}</span> matching records
                    </p>
                 </div>
                 <div className="flex items-center gap-3 w-full sm:w-auto">
-                  <button className="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-black text-slate-400 cursor-not-allowed transition-all uppercase tracking-widest">Previous</button>
-                  <button className="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-black text-slate-800 shadow-sm hover:border-emerald-200 hover:text-emerald-600 transition-all active:scale-95 uppercase tracking-widest">Next Page</button>
+                   <button className="flex-1 sm:flex-none px-8 py-3.5 bg-white border border-slate-100 rounded-2xl text-[11px] font-bold text-slate-300 cursor-not-allowed transition-all uppercase tracking-widest">Previous</button>
+                   <button className="flex-1 sm:flex-none px-8 py-3.5 bg-white border border-slate-100 rounded-2xl text-[11px] font-bold text-slate-800 shadow-sm hover:border-emerald-200 hover:text-emerald-600 transition-all active:scale-95 uppercase tracking-widest">Next Page</button>
                 </div>
               </div>
             )}
           </div>
         </div>
       </section>
+
+      <WasteDetailsModal 
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        log={selectedLog}
+      />
+
+      <AddWasteModal 
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onConfirm={handleAddConfirm}
+      />
+
+      <EditWasteModal 
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onConfirm={handleEditConfirm}
+        log={selectedLog}
+      />
+
+      <DeleteWasteModal 
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        log={selectedLog}
+      />
     </div>
   );
 }

@@ -5,15 +5,23 @@ import { Plus, Download, FileText, Tags, CheckCircle2, AlertCircle, EyeOff } fro
 import { StatCard } from "@/components/dashboard/StatCard";
 import { CategoryList } from "@/components/dashboard/categories/CategoryList";
 import { CategoryFilters } from "@/components/dashboard/categories/CategoryFilters";
+import { AddCategoryModal } from "@/components/dashboard/categories/AddCategoryModal";
+import { CategoryDetailsModal } from "@/components/dashboard/categories/CategoryDetailsModal";
+import { DeleteCategoryModal } from "@/components/dashboard/categories/DeleteCategoryModal";
 import { MOCK_CATEGORIES } from "@/constants/categories";
 import { Category } from "@/types/categories";
 
 export default function CategoriesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeStatus, setActiveStatus] = useState("All");
+  const [categories, setCategories] = useState(MOCK_CATEGORIES); // Convert to state
+  const [isModalOpen, setIsModalOpen] = useState(false); // Visibility state
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null); // Selection state
 
   const filteredCategories = useMemo(() => {
-    return MOCK_CATEGORIES.filter((cat) => {
+    return categories.filter((cat) => {
       const matchesStatus = 
         activeStatus === "All" || 
         cat.status === activeStatus;
@@ -24,11 +32,20 @@ export default function CategoriesPage() {
       
       return matchesStatus && matchesSearch;
     });
-  }, [searchTerm, activeStatus]);
+  }, [searchTerm, activeStatus, categories]);
 
-  const handleEdit = (cat: Category) => console.log("Edit:", cat.id);
-  const handleDelete = (cat: Category) => console.log("Delete:", cat.id);
-  const handleView = (cat: Category) => console.log("View:", cat.id);
+  const handleEdit = (cat: Category) => {
+    setSelectedCategory(cat);
+    setIsModalOpen(true);
+  };
+  const handleDelete = (cat: Category) => {
+    setSelectedCategory(cat);
+    setIsDeleteModalOpen(true);
+  };
+  const handleView = (cat: Category) => {
+    setSelectedCategory(cat);
+    setIsDetailsModalOpen(true);
+  };
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-700">
@@ -56,7 +73,10 @@ export default function CategoriesPage() {
             </button>
           </div>
 
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/10 group">
+          <button 
+            onClick={() => { setSelectedCategory(null); setIsModalOpen(true); }}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/10 group"
+          >
             <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
             <span>Create Category</span>
           </button>
@@ -67,28 +87,28 @@ export default function CategoriesPage() {
       <section className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatCard 
           label="Total" 
-          value={MOCK_CATEGORIES.length} 
+          value={categories.length} 
           icon={Tags} 
           color="text-emerald-600" 
           bgColor="bg-emerald-50/50" 
         />
         <StatCard 
           label="Published" 
-          value={MOCK_CATEGORIES.filter(c => c.status === 'Published').length} 
+          value={categories.filter(c => c.status === 'Published').length} 
           icon={CheckCircle2} 
           color="text-blue-600" 
           bgColor="bg-blue-50/50" 
         />
         <StatCard 
           label="Pending/Draft" 
-          value={MOCK_CATEGORIES.filter(c => c.status === 'Draft').length} 
+          value={categories.filter(c => c.status === 'Draft').length} 
           icon={AlertCircle} 
           color="text-amber-600" 
           bgColor="bg-amber-50/50" 
         />
         <StatCard 
           label="Hidden" 
-          value={MOCK_CATEGORIES.filter(c => c.status === 'Hidden').length} 
+          value={categories.filter(c => c.status === 'Hidden').length} 
           icon={EyeOff} 
           color="text-red-600" 
           bgColor="bg-red-50/50" 
@@ -135,7 +155,7 @@ export default function CategoriesPage() {
             {/* Pagination Placeholder */}
             <div className="px-8 py-6 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between bg-slate-50/30 gap-4">
               <p className="text-xs font-black text-slate-400">
-                Showing <span className="text-slate-700">{filteredCategories.length}</span> of {MOCK_CATEGORIES.length} categories
+                Showing <span className="text-slate-700">{filteredCategories.length}</span> of {categories.length} categories
               </p>
               <div className="flex items-center gap-2">
                 <button className="px-5 py-2.5 bg-white border border-slate-100 rounded-xl text-[11px] font-bold text-slate-400 cursor-not-allowed transition-all">Previous</button>
@@ -145,6 +165,39 @@ export default function CategoriesPage() {
           </div>
         </div>
       </section>
+
+      <AddCategoryModal 
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedCategory(null);
+        }}
+        category={selectedCategory}
+      />
+
+      <CategoryDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => {
+          setIsDetailsModalOpen(false);
+          setSelectedCategory(null);
+        }}
+        category={selectedCategory}
+        onEdit={handleEdit}
+      />
+
+      <DeleteCategoryModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedCategory(null);
+        }}
+        onConfirm={(cat) => {
+          setCategories(prev => prev.filter(c => c.id !== cat.id));
+          setIsDeleteModalOpen(false);
+          setSelectedCategory(null);
+        }}
+        category={selectedCategory}
+      />
     </div>
   );
 }

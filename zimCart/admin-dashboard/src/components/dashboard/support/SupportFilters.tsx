@@ -33,7 +33,7 @@ export function SupportFilters({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search tickets by ID, Customer Name, or Order #"
-            className="w-full pl-12 pr-4 py-3 md:py-3.5 bg-slate-50/50 border-2 border-slate-200/60 rounded-2xl text-sm font-bold focus:ring-8 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/40 transition-all outline-none text-slate-700 placeholder:text-slate-400"
+            className="w-full pl-12 pr-4 py-3 md:py-3.5 bg-slate-50/50 border-2 border-slate-200/60 rounded-2xl text-sm font-semibold focus:ring-8 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/40 transition-all outline-none text-slate-700 placeholder:text-slate-400"
           />
         </div>
 
@@ -43,7 +43,7 @@ export function SupportFilters({
             <button
               onClick={() => setIsStatusOpen(!isStatusOpen)}
               className={cn(
-                "flex items-center justify-between w-full sm:w-auto gap-3 px-6 py-3 md:py-3.5 bg-white border-2 rounded-2xl text-[13px] font-black tracking-tight transition-all min-w-[180px]",
+                "flex items-center justify-between w-full sm:w-auto gap-3 px-6 py-3 md:py-3.5 bg-white border-2 rounded-2xl text-[13px] font-bold tracking-tight transition-all min-w-[180px]",
                 isStatusOpen ? "border-emerald-500 text-emerald-600 ring-8 ring-emerald-50 shadow-lg shadow-emerald-500/5" : "border-slate-100 text-slate-600 hover:border-slate-200"
               )}
             >
@@ -80,7 +80,7 @@ export function SupportFilters({
           
           <button 
             onClick={onNewTicket}
-            className="flex items-center justify-center gap-2 px-6 py-3 md:py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[13px] font-black transition-all active:scale-95 shadow-lg shadow-emerald-500/20 uppercase tracking-widest shrink-0"
+            className="flex items-center justify-center gap-2 px-6 py-3 md:py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[13px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/20 uppercase tracking-widest shrink-0"
           >
              <Plus className="w-4 h-4" />
              <span>New Ticket</span>

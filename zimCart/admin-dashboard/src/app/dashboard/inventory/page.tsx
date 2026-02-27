@@ -16,15 +16,21 @@ import {
 import { StatCard } from "@/components/dashboard/StatCard";
 import { InventoryTable } from "@/components/dashboard/inventory/InventoryTable";
 import { InventoryFilters } from "@/components/dashboard/inventory/InventoryFilters";
+import { UpdateStockModal } from "@/components/dashboard/inventory/UpdateStockModal";
+import { InventoryHistoryModal } from "@/components/dashboard/inventory/InventoryHistoryModal";
 import { MOCK_INVENTORY } from "@/constants/inventory";
 import { InventoryItem } from "@/types/inventory";
 
 export default function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeStatus, setActiveStatus] = useState("All");
+  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [inventory, setInventory] = useState(MOCK_INVENTORY);
 
   const filteredInventory = useMemo(() => {
-    return MOCK_INVENTORY.filter((item) => {
+    return inventory.filter((item) => {
       const matchesStatus = 
         activeStatus === "All" || 
         item.status === activeStatus;
@@ -36,14 +42,20 @@ export default function InventoryPage() {
       
       return matchesStatus && matchesSearch;
     });
-  }, [searchTerm, activeStatus]);
+  }, [searchTerm, activeStatus, inventory]);
 
-  const totalValue = MOCK_INVENTORY.reduce((acc, curr) => acc + curr.totalValue, 0);
-  const lowStockCount = MOCK_INVENTORY.filter(i => i.status === 'Low Stock').length;
-  const outOfStockCount = MOCK_INVENTORY.filter(i => i.status === 'Out of Stock').length;
+  const totalValue = inventory.reduce((acc, curr) => acc + curr.totalValue, 0);
+  const lowStockCount = inventory.filter(i => i.status === 'Low Stock').length;
+  const outOfStockCount = inventory.filter(i => i.status === 'Out of Stock').length;
 
-  const handleAdjust = (item: InventoryItem) => console.log("Adjusting:", item.sku);
-  const handleViewHistory = (item: InventoryItem) => console.log("View History:", item.sku);
+  const handleAdjust = (item: InventoryItem) => {
+    setSelectedItem(item);
+    setIsUpdateModalOpen(true);
+  };
+  const handleViewHistory = (item: InventoryItem) => {
+    setSelectedItem(item);
+    setIsHistoryModalOpen(true);
+  };
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-700">
@@ -103,7 +115,7 @@ export default function InventoryPage() {
         />
         <StatCard 
           label="Reserved" 
-          value={MOCK_INVENTORY.reduce((acc, curr) => acc + curr.reservedStock, 0)} 
+          value={inventory.reduce((acc, curr) => acc + curr.reservedStock, 0)} 
           icon={Truck} 
           color="text-blue-600" 
           bgColor="bg-blue-50/50" 
@@ -168,6 +180,37 @@ export default function InventoryPage() {
           </div>
         </div>
       </section>
+      <UpdateStockModal 
+        isOpen={isUpdateModalOpen}
+        onClose={() => {
+          setIsUpdateModalOpen(false);
+          setSelectedItem(null);
+        }}
+        item={selectedItem}
+        onConfirm={(itemId, newStock, reason) => {
+          setInventory(prev => prev.map(item => 
+            item.id === itemId 
+              ? { 
+                  ...item, 
+                  availableStock: newStock,
+                  currentStock: newStock + item.reservedStock,
+                  status: newStock === 0 ? 'Out of Stock' : newStock <= item.restockThreshold ? 'Low Stock' : 'In Stock'
+                } 
+              : item
+          ));
+          setIsUpdateModalOpen(false);
+          setSelectedItem(null);
+        }}
+      />
+
+      <InventoryHistoryModal 
+        isOpen={isHistoryModalOpen}
+        onClose={() => {
+          setIsHistoryModalOpen(false);
+          setSelectedItem(null);
+        }}
+        item={selectedItem}
+      />
     </div>
   );
 }

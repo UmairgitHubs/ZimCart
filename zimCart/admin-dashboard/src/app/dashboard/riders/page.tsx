@@ -14,15 +14,27 @@ import {
 import { StatCard } from "@/components/dashboard/StatCard";
 import { RiderList } from "@/components/dashboard/riders/RiderList";
 import { RiderFilters } from "@/components/dashboard/riders/RiderFilters";
+import { RiderDetailsModal } from "@/components/dashboard/riders/RiderDetailsModal";
+import { EditRiderModal } from "@/components/dashboard/riders/EditRiderModal";
+import { DeleteRiderModal } from "@/components/dashboard/riders/DeleteRiderModal";
+import { AddRiderModal } from "@/components/dashboard/riders/AddRiderModal";
 import { MOCK_RIDERS } from "@/constants/riders";
 import { Rider } from "@/types/riders";
 
 export default function RidersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeStatus, setActiveStatus] = useState("All");
+  const [riders, setRiders] = useState<Rider[]>(MOCK_RIDERS);
+  const [selectedRider, setSelectedRider] = useState<Rider | null>(null);
+
+  // Modal States
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const filteredRiders = useMemo(() => {
-    return MOCK_RIDERS.filter((rider) => {
+    return riders.filter((rider) => {
       const matchesStatus = 
         activeStatus === "All" || 
         rider.status === activeStatus;
@@ -35,14 +47,42 @@ export default function RidersPage() {
       
       return matchesStatus && matchesSearch;
     });
-  }, [searchTerm, activeStatus]);
+  }, [searchTerm, activeStatus, riders]);
 
-  const activeCount = MOCK_RIDERS.filter(r => r.status === 'Available').length;
-  const dispatchCount = MOCK_RIDERS.filter(r => r.status === 'Dispatched').length;
-  const bannedCount = MOCK_RIDERS.filter(r => r.status === 'Banned').length;
+  const activeCount = riders.filter(r => r.status === 'Available').length;
+  const dispatchCount = riders.filter(r => r.status === 'Dispatched').length;
+  const bannedCount = riders.filter(r => r.status === 'Banned').length;
 
-  const handleView = (rider: Rider) => console.log("Viewing:", rider.id);
-  const handleEdit = (rider: Rider) => console.log("Editing:", rider.id);
+  const handleView = (rider: Rider) => {
+    setSelectedRider(rider);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleEdit = (rider: Rider) => {
+    setSelectedRider(rider);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (rider: Rider) => {
+    setSelectedRider(rider);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Confirm Handlers
+  const onUpdateConfirm = (updatedRider: Rider) => {
+    setRiders(prev => prev.map(r => r.id === updatedRider.id ? updatedRider : r));
+    console.log("Rider Sync Complete:", updatedRider.id);
+  };
+
+  const onDeleteConfirm = (rider: Rider) => {
+    setRiders(prev => prev.filter(r => r.id !== rider.id));
+    console.log("Rider Purged:", rider.id);
+  };
+
+  const onAddConfirm = (newRider: Rider) => {
+    setRiders(prev => [newRider, ...prev]);
+    console.log("New Rider Activated:", newRider.id);
+  };
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-700">
@@ -70,7 +110,10 @@ export default function RidersPage() {
             </button>
           </div>
 
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/10 group">
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/10 group"
+          >
             <UserPlus className="w-4 h-4 transition-transform group-hover:scale-110" />
             <span>Onboard Rider</span>
           </button>
@@ -81,7 +124,7 @@ export default function RidersPage() {
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatCard 
           label="Total Fleet" 
-          value={MOCK_RIDERS.length} 
+          value={riders.length} 
           icon={Bike} 
           color="text-emerald-600" 
           bgColor="bg-emerald-50/50" 
@@ -128,6 +171,7 @@ export default function RidersPage() {
                 riders={filteredRiders} 
                 onView={handleView}
                 onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ) : (
               <div className="p-20 text-center">
@@ -167,6 +211,33 @@ export default function RidersPage() {
           </div>
         </div>
       </section>
+
+      {/* Modals Handling */}
+      <RiderDetailsModal 
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        rider={selectedRider}
+      />
+
+      <EditRiderModal 
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        rider={selectedRider}
+        onConfirm={onUpdateConfirm}
+      />
+
+      <DeleteRiderModal 
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        rider={selectedRider}
+        onConfirm={onDeleteConfirm}
+      />
+
+      <AddRiderModal 
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onConfirm={onAddConfirm}
+      />
     </div>
   );
 }

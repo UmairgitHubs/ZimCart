@@ -49,7 +49,7 @@ export default function SupportPage() {
   return (
     <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-700">
       {/* Header Section */}
-      <section className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 px-1 md:px-0">
+      <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 px-1 md:px-0">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
             Customer <span className="text-emerald-600">Support</span>
@@ -133,13 +133,13 @@ export default function SupportPage() {
                  <div className="w-24 h-24 bg-slate-50 rounded-[40px] flex items-center justify-center mx-auto mb-8 border border-slate-100 group-hover:scale-110 transition-transform duration-500">
                     <MessageSquare className="w-10 h-10 text-slate-200" />
                  </div>
-                 <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">Inbox Zero Achieved</h3>
-                 <p className="text-slate-400 font-bold mt-2 max-w-sm mx-auto">No tickets match your current filters. Great job keeping the queue clean!</p>
+                 <h3 className="text-xl font-bold text-slate-800 uppercase tracking-tight">Inbox Zero Achieved</h3>
+                 <p className="text-slate-400 font-semibold mt-2 max-w-sm mx-auto text-sm">No tickets match your filters. Great job keeping the queue clean!</p>
                  <button 
                    onClick={() => { setSearchTerm(""); setActiveStatus("All"); }}
-                   className="mt-8 px-8 py-3 bg-slate-800 text-white rounded-2xl text-[12px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-slate-200"
+                   className="mt-8 px-8 py-3 bg-slate-800 text-white rounded-2xl text-[11px] font-bold uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-slate-200"
                  >
-                   Reset Inbox View
+                   Reset filters
                  </button>
               </div>
             )}
@@ -153,13 +153,13 @@ export default function SupportPage() {
                       <div className="w-6 h-6 rounded-full bg-blue-100 border-2 border-white"></div>
                       <div className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white"></div>
                    </div>
-                   <p className="text-xs font-black text-slate-400">
-                     Viewing <span className="text-slate-800">{filteredTickets.length}</span> support requests
+                   <p className="font-bold text-slate-400 text-[11px] uppercase tracking-widest">
+                     Viewing <span className="text-slate-800 underline decoration-emerald-500/20 underline-offset-4">{filteredTickets.length}</span> requests
                    </p>
                 </div>
                 <div className="flex items-center gap-3 w-full sm:w-auto">
-                  <button className="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-black text-slate-400 cursor-not-allowed transition-all uppercase tracking-widest">Previous</button>
-                  <button className="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-black text-slate-800 shadow-sm hover:border-emerald-200 hover:text-emerald-600 transition-all active:scale-95 uppercase tracking-widest">Next Page</button>
+                  <button className="flex-1 sm:flex-none px-8 py-3.5 bg-white border border-slate-100 rounded-2xl text-[11px] font-bold text-slate-300 cursor-not-allowed transition-all uppercase tracking-widest">Previous</button>
+                  <button className="flex-1 sm:flex-none px-8 py-3.5 bg-white border border-slate-100 rounded-2xl text-[11px] font-bold text-slate-800 shadow-sm hover:border-emerald-200 hover:text-emerald-600 transition-all active:scale-95 uppercase tracking-widest">Next Page</button>
                 </div>
               </div>
             )}

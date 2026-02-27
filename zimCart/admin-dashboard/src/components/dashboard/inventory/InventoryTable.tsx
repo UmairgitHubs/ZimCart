@@ -99,17 +99,17 @@ export function InventoryTable({ items, onAdjust, onViewHistory }: InventoryTabl
                    </div>
                 </td>
                 <td className="px-6 py-5 text-right">
-                   <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-3">
                       <button 
                         onClick={() => onAdjust(item)} 
-                        className="p-2.5 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-emerald-500 hover:border-emerald-100 hover:shadow-lg transition-all active:scale-95"
+                        className="w-10 h-10 bg-white border-2 border-emerald-600 rounded-[14px] flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all active:scale-90 shadow-sm shadow-emerald-100"
                         title="Adjust Stock"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button 
                          onClick={() => onViewHistory(item)}
-                         className="p-2.5 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-slate-600 hover:border-slate-200 transition-all active:scale-95"
+                         className="w-10 h-10 bg-[#f4faff] border border-[#eef5ff] rounded-[14px] flex items-center justify-center text-[#94a8c9] hover:bg-[#ebf5ff] transition-all active:scale-90"
                          title="Inventory History"
                       >
                         <History className="w-4 h-4" />
@@ -183,7 +183,7 @@ export function InventoryTable({ items, onAdjust, onViewHistory }: InventoryTabl
 
             <div className="flex items-center justify-between mt-6">
                <div className="flex items-center gap-2">
-                 <button onClick={() => onAdjust(item)} className="px-5 py-2.5 bg-slate-800 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-900 shadow-lg shadow-slate-200 transition-all flex items-center gap-2">
+                 <button onClick={() => onAdjust(item)} className="px-5 py-2.5 bg-emerald-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-emerald-700 shadow-lg shadow-emerald-500/10 transition-all flex items-center gap-2">
                    <Edit2 className="w-3.5 h-3.5" /> Adjust
                  </button>
                </div>

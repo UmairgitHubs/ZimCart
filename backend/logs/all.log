@@ -7069,3 +7069,165 @@
 2026-02-26 02:37:42:3742 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 27.607 ms[39m
 2026-02-26 02:37:43:3743 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 608.631 ms[39m
 2026-02-26 02:37:43:3743 [35mhttp[39m: [35mGET /api/v1/auth/me 200 253 - 49.081 ms[39m
+2026-02-26 03:21:15:2115 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-26 03:21:15:2115 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-26 03:21:15:2115 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-26 03:22:15:2215 [31merror[39m: [31mUnauthorized request[39m
+2026-02-26 03:22:15:2215 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 37.990 ms[39m
+2026-02-26 03:22:22:2222 [31merror[39m: [31mInvalid or expired refresh token[39m
+2026-02-26 03:22:22:2222 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 403 426 - 5386.937 ms[39m
+2026-02-26 03:22:38:2238 [31merror[39m: [31mUnauthorized request[39m
+2026-02-26 03:22:38:2238 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 6.519 ms[39m
+2026-02-26 03:22:39:2239 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 601.480 ms[39m
+2026-02-26 03:22:40:2240 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 32.331 ms[39m
+2026-02-26 03:44:27:4427 [31merror[39m: [31mUnauthorized request[39m
+2026-02-26 03:44:27:4427 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 65.122 ms[39m
+2026-02-26 03:44:29:4429 [31merror[39m: [31mInvalid or expired refresh token[39m
+2026-02-26 03:44:29:4429 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 403 426 - 2256.859 ms[39m
+2026-02-26 03:44:33:4433 [31merror[39m: [31mUnauthorized request[39m
+2026-02-26 03:44:33:4433 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 48.885 ms[39m
+2026-02-26 03:44:34:4434 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 670.339 ms[39m
+2026-02-26 03:44:34:4434 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 51.463 ms[39m
+2026-02-26 03:44:43:4443 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 153.720 ms[39m
+2026-02-26 03:44:44:4444 [31merror[39m: [31mUnauthorized request[39m
+2026-02-26 03:44:44:4444 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 51.048 ms[39m
+2026-02-26 03:44:44:4444 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-26 03:44:44:4444 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 69.873 ms[39m
+2026-02-26 03:55:59:5559 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 466 - 3145.300 ms[39m
+2026-02-26 03:58:58:5858 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 794.126 ms[39m
+2026-02-26 03:59:01:591 [31merror[39m: [31mUnauthorized request[39m
+2026-02-26 03:59:01:591 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 19.791 ms[39m
+2026-02-26 03:59:01:591 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-26 03:59:01:591 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 134.216 ms[39m
+2026-02-26 03:59:45:5945 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 466 - 1892.171 ms[39m
+2026-02-26 04:03:32:332 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 536.193 ms[39m
+2026-02-26 04:03:34:334 [31merror[39m: [31mUnauthorized request[39m
+2026-02-26 04:03:34:334 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 61.131 ms[39m
+2026-02-26 04:03:35:335 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-26 04:03:35:335 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 47.240 ms[39m
+2026-02-26 22:06:47:647 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-26 22:06:47:647 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-26 22:06:47:647 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-26 22:08:17:817 [31merror[39m: [31mUnauthorized request[39m
+2026-02-26 22:08:17:817 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 31.418 ms[39m
+2026-02-26 22:08:18:818 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-26 22:08:18:818 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 23.224 ms[39m
+2026-02-26 22:08:58:858 [31merror[39m: [31mtimeout exceeded when trying to connect[39m
+2026-02-26 22:08:58:858 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 1198 - 12913.714 ms[39m
+2026-02-26 22:09:08:98 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 466 - 628.685 ms[39m
+2026-02-26 22:27:04:274 [31merror[39m: [31mUnauthorized request[39m
+2026-02-26 22:27:05:275 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 772.661 ms[39m
+2026-02-26 22:27:08:278 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 2726.352 ms[39m
+2026-02-26 22:27:08:278 [35mhttp[39m: [35mGET /api/v1/auth/me 200 253 - 41.213 ms[39m
+2026-02-26 22:27:59:2759 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 2105.785 ms[39m
+2026-02-26 22:37:13:3713 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 1147.124 ms[39m
+2026-02-26 22:41:25:4125 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 1042.248 ms[39m
+2026-02-26 22:41:43:4143 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 153.642 ms[39m
+2026-02-26 22:41:48:4148 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 89.896 ms[39m
+2026-02-26 23:02:34:234 [31merror[39m: [31mUnauthorized request[39m
+2026-02-26 23:02:34:234 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 165.250 ms[39m
+2026-02-26 23:12:56:1256 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 1171.139 ms[39m
+2026-02-26 23:14:46:1446 [31merror[39m: [31mConnection terminated due to connection timeout[39m
+2026-02-26 23:14:46:1446 [35mhttp[39m: [35mGET /api/v1/auth/me 401 352 - 2309.208 ms[39m
+2026-02-26 23:14:51:1451 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 5135.707 ms[39m
+2026-02-26 23:14:51:1451 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 63.610 ms[39m
+2026-02-26 23:30:30:3030 [31merror[39m: [31mUnauthorized request[39m
+2026-02-26 23:30:30:3030 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 97.095 ms[39m
+2026-02-26 23:30:33:3033 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 2495.143 ms[39m
+2026-02-26 23:30:33:3033 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 75.615 ms[39m
+2026-02-26 23:50:42:5042 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-26 23:50:42:5042 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-26 23:50:42:5042 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-27 00:21:47:2147 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 00:21:48:2148 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 479.672 ms[39m
+2026-02-27 00:21:53:2153 [31merror[39m: [31mInvalid or expired refresh token[39m
+2026-02-27 00:21:53:2153 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 403 426 - 3834.587 ms[39m
+2026-02-27 00:21:58:2158 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 00:21:58:2158 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 9.729 ms[39m
+2026-02-27 00:21:59:2159 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 628.252 ms[39m
+2026-02-27 00:22:02:222 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 65.008 ms[39m
+2026-02-27 00:23:23:2323 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 778.741 ms[39m
+2026-02-27 00:24:33:2433 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 1491.700 ms[39m
+2026-02-27 01:07:21:721 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-27 01:07:21:721 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-27 01:07:21:721 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-27 01:07:42:742 [31merror[39m: [31mtimeout exceeded when trying to connect[39m
+2026-02-27 01:07:42:742 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 1198 - 12297.327 ms[39m
+2026-02-27 01:07:47:747 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 466 - 621.326 ms[39m
+2026-02-27 01:13:50:1350 [35mhttp[39m: [35mGET /api/v1/auth/me 200 253 - 1183.577 ms[39m
+2026-02-27 01:18:22:1822 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 972.178 ms[39m
+2026-02-27 01:18:32:1832 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 49.724 ms[39m
+2026-02-27 01:54:21:5421 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 01:54:21:5421 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 223.744 ms[39m
+2026-02-27 01:54:22:5422 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 1431.580 ms[39m
+2026-02-27 01:54:22:5422 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 137.661 ms[39m
+2026-02-27 01:54:27:5427 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 120.363 ms[39m
+2026-02-27 02:19:12:1912 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 02:19:12:1912 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 72.569 ms[39m
+2026-02-27 02:19:13:1913 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 737.349 ms[39m
+2026-02-27 02:19:13:1913 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 44.444 ms[39m
+2026-02-27 02:19:23:1923 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 93.288 ms[39m
+2026-02-27 02:20:40:2040 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-27 02:20:40:2040 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-27 02:20:40:2040 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-27 02:29:34:2934 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-27 02:29:34:2934 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-27 02:29:34:2934 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-27 02:30:22:3022 [31merror[39m: [31mtimeout exceeded when trying to connect[39m
+2026-02-27 02:30:22:3022 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 1198 - 4091.982 ms[39m
+2026-02-27 02:30:28:3028 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 466 - 697.989 ms[39m
+2026-02-27 02:30:31:3031 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 466 - 557.147 ms[39m
+2026-02-27 04:39:36:3936 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-27 04:39:36:3936 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-27 04:39:36:3936 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-27 04:40:41:4041 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 04:40:41:4041 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 37.451 ms[39m
+2026-02-27 04:40:47:4047 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 5409.059 ms[39m
+2026-02-27 04:40:47:4047 [35mhttp[39m: [35mGET /api/v1/auth/me 200 253 - 64.615 ms[39m
+2026-02-27 20:31:19:3119 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-27 20:31:19:3119 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-27 20:31:19:3119 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-27 20:32:22:3222 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 20:32:22:3222 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 19.131 ms[39m
+2026-02-27 20:32:30:3230 [31merror[39m: [31mInvalid or expired refresh token[39m
+2026-02-27 20:32:30:3230 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 403 426 - 6333.391 ms[39m
+2026-02-27 20:32:35:3235 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 20:32:35:3235 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 4.836 ms[39m
+2026-02-27 20:32:38:3238 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 2932.526 ms[39m
+2026-02-27 20:32:38:3238 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 114.160 ms[39m
+2026-02-27 22:24:03:243 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 22:24:03:243 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 107.676 ms[39m
+2026-02-27 22:24:05:245 [31merror[39m: [31mInvalid or expired refresh token[39m
+2026-02-27 22:24:05:245 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 403 426 - 2372.963 ms[39m
+2026-02-27 22:24:08:248 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 22:24:08:248 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 10.623 ms[39m
+2026-02-27 22:24:10:2410 [31merror[39m: [31mInvalid or expired refresh token[39m
+2026-02-27 22:24:10:2410 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 403 426 - 2161.681 ms[39m
+2026-02-27 22:24:25:2425 [31merror[39m: [31mtimeout exceeded when trying to connect[39m
+2026-02-27 22:24:25:2425 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 1198 - 12951.349 ms[39m
+2026-02-27 22:24:31:2431 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 466 - 465.432 ms[39m
+2026-02-27 22:40:10:4010 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 22:40:10:4010 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 3.599 ms[39m
+2026-02-27 22:40:10:4010 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 198.067 ms[39m
+2026-02-27 22:40:10:4010 [35mhttp[39m: [35mGET /api/v1/auth/me 200 253 - 42.533 ms[39m
+2026-02-27 22:40:13:4013 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 10.991 ms[39m
+2026-02-27 22:57:57:5757 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 22:57:57:5757 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 4.370 ms[39m
+2026-02-27 22:57:58:5758 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 174.417 ms[39m
+2026-02-27 22:58:00:580 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 21.792 ms[39m
+2026-02-27 23:04:23:423 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 712.755 ms[39m
+2026-02-27 23:04:25:425 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 10.777 ms[39m
+2026-02-27 23:24:36:2436 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 23:24:36:2436 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 29.795 ms[39m
+2026-02-27 23:24:37:2437 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 520.348 ms[39m
+2026-02-27 23:24:37:2437 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 20.834 ms[39m
+2026-02-27 23:24:57:2457 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 121.022 ms[39m
+2026-02-27 23:25:09:259 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 206.091 ms[39m
+2026-02-27 23:40:48:4048 [31merror[39m: [31mUnauthorized request[39m
+2026-02-27 23:40:48:4048 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 4.140 ms[39m
+2026-02-27 23:40:48:4048 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 220.975 ms[39m
+2026-02-27 23:40:48:4048 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 15.062 ms[39m
+2026-02-28 00:11:22:1122 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 00:11:22:1122 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 92.427 ms[39m
+2026-02-28 00:11:23:1123 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 369.321 ms[39m
+2026-02-28 00:11:23:1123 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 22.557 ms[39m
