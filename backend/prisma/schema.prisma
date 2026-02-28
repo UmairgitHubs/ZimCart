@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // url      = env("DATABASE_URL")
 }
 
 model User {
@@ -19,10 +18,13 @@ model User {
   updatedAt DateTime @updatedAt
 
   isPremium Boolean @default(false)
+  country   String?
   
   // Security & Privacy Settings
   isTwoFactorEnabled Boolean @default(false)
-  dataSharingConsent Boolean @default(true) // Default to opt-in or opt-out depending on policy
+  termsConsent       Boolean @default(false)
+  privacyConsent     Boolean @default(false)
+  dataSharingConsent Boolean @default(true)
 
   addresses      Address[]
   orders         Order[]

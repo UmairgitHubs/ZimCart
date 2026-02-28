@@ -7231,3 +7231,122 @@
 2026-02-28 00:11:22:1122 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 92.427 ms[39m
 2026-02-28 00:11:23:1123 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 369.321 ms[39m
 2026-02-28 00:11:23:1123 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 22.557 ms[39m
+2026-02-28 00:46:23:4623 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 00:46:23:4623 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 9.323 ms[39m
+2026-02-28 00:46:24:4624 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 568.608 ms[39m
+2026-02-28 00:46:24:4624 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 13.205 ms[39m
+2026-02-28 01:18:11:1811 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 01:18:11:1811 [35mhttp[39m: [35mPOST /api/v1/auth/logout 401 961 - 8.834 ms[39m
+2026-02-28 01:18:12:1812 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 956.920 ms[39m
+2026-02-28 01:18:12:1812 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 177.999 ms[39m
+2026-02-28 01:18:21:1821 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 01:18:21:1821 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 19.479 ms[39m
+2026-02-28 01:18:21:1821 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 01:18:21:1821 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 28.436 ms[39m
+2026-02-28 01:20:18:2018 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 466 - 935.900 ms[39m
+2026-02-28 01:20:22:2022 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 43.536 ms[39m
+2026-02-28 01:20:23:2023 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 01:20:23:2023 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 34.988 ms[39m
+2026-02-28 01:20:23:2023 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 01:20:23:2023 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 17.354 ms[39m
+2026-02-28 01:33:05:335 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 466 - 1269.793 ms[39m
+2026-02-28 01:49:07:497 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 01:49:07:497 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 50.799 ms[39m
+2026-02-28 01:49:09:499 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 1511.037 ms[39m
+2026-02-28 01:49:09:499 [35mhttp[39m: [35mGET /api/v1/auth/me 200 253 - 81.033 ms[39m
+2026-02-28 01:49:13:4913 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 214.333 ms[39m
+2026-02-28 02:24:59:2459 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 02:24:59:2459 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 26.486 ms[39m
+2026-02-28 02:25:00:250 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 450.117 ms[39m
+2026-02-28 02:25:00:250 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 48.412 ms[39m
+2026-02-28 03:14:31:1431 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-28 03:14:31:1431 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-28 03:14:31:1431 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-28 03:17:07:177 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:17:07:177 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 21.217 ms[39m
+2026-02-28 03:17:12:1712 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 2168.149 ms[39m
+2026-02-28 03:17:12:1712 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 53.100 ms[39m
+2026-02-28 03:20:38:2038 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 679.696 ms[39m
+2026-02-28 03:21:49:2149 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 416.882 ms[39m
+2026-02-28 03:21:51:2151 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:21:51:2151 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 9.757 ms[39m
+2026-02-28 03:21:51:2151 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:21:51:2151 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 24.815 ms[39m
+2026-02-28 03:38:51:3851 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:38:51:3851 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 91.177 ms[39m
+2026-02-28 03:38:51:3851 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:38:51:3851 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 63.393 ms[39m
+2026-02-28 03:38:56:3856 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:38:56:3856 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 36.914 ms[39m
+2026-02-28 03:38:56:3856 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:38:56:3856 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 50.713 ms[39m
+2026-02-28 03:40:34:4034 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:40:34:4034 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 2.561 ms[39m
+2026-02-28 03:40:35:4035 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:40:36:4036 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 49.462 ms[39m
+2026-02-28 03:40:38:4038 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:40:38:4038 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 151.582 ms[39m
+2026-02-28 03:40:39:4039 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:40:39:4039 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 67.234 ms[39m
+2026-02-28 03:40:40:4040 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:40:40:4040 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 186.001 ms[39m
+2026-02-28 03:40:40:4040 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:40:41:4041 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 85.862 ms[39m
+2026-02-28 03:44:17:4417 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-28 03:44:17:4417 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-28 03:44:17:4417 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-28 03:44:54:4454 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:44:54:4454 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 30.694 ms[39m
+2026-02-28 03:44:54:4454 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:44:54:4454 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 12.535 ms[39m
+2026-02-28 03:44:56:4456 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:44:56:4456 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 33.300 ms[39m
+2026-02-28 03:44:56:4456 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:44:56:4456 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 20.741 ms[39m
+2026-02-28 04:48:02:482 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-28 04:48:02:482 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-28 04:48:02:482 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-28 04:48:52:4852 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 04:48:52:4852 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 31.230 ms[39m
+2026-02-28 04:48:53:4853 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 04:48:53:4853 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 35.652 ms[39m
+2026-02-28 04:48:57:4857 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 04:48:57:4857 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 30.608 ms[39m
+2026-02-28 04:48:57:4857 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 04:48:57:4857 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 31.199 ms[39m
+2026-02-28 04:49:02:492 [31merror[39m: [31m[39m
+[31mInvalid `prisma.user.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\auth.service.ts:81:36[39m
+
+[31m  78 async login(data: any, deviceInfo?: any) {[39m
+[31m  79   const { email, password } = data;[39m
+[31m  80 [39m
+[31m→ 81   const user = await prisma.user.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-28 04:49:02:492 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 1527 - 1988.397 ms[39m
+2026-02-28 04:51:45:5145 [31merror[39m: [31mtimeout exceeded when trying to connect[39m
+2026-02-28 04:51:45:5145 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 1198 - 10601.663 ms[39m
+2026-02-28 04:51:48:5148 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 525 - 633.187 ms[39m
+2026-02-28 20:12:34:1234 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-02-28 20:12:34:1234 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-02-28 20:12:34:1234 [32minfo[39m: [32mEnvironment: development[39m
+2026-02-28 20:13:50:1350 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 20:13:50:1350 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 27.564 ms[39m
+2026-02-28 20:13:58:1358 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 5140.014 ms[39m
+2026-02-28 20:13:58:1358 [35mhttp[39m: [35mGET /api/v1/auth/me 200 253 - 31.921 ms[39m
+2026-02-28 20:14:12:1412 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 198.927 ms[39m
+2026-02-28 20:14:14:1414 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 20:14:14:1414 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 36.993 ms[39m
+2026-02-28 20:14:14:1414 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 20:14:14:1414 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 27.794 ms[39m
+2026-02-28 20:15:49:1549 [31merror[39m: [31mtimeout exceeded when trying to connect[39m
+2026-02-28 20:15:49:1549 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 1198 - 9840.582 ms[39m
+2026-02-28 20:15:52:1552 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 525 - 405.540 ms[39m
+2026-02-28 20:15:59:1559 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 525 - 851.475 ms[39m
+2026-02-28 20:21:20:2120 [35mhttp[39m: [35mGET /api/v1/auth/me 200 253 - 1898.853 ms[39m
+2026-02-28 20:27:30:2730 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 647.671 ms[39m
+2026-02-28 20:27:34:2734 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 20:27:34:2734 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 10.692 ms[39m
+2026-02-28 20:27:35:2735 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 20:27:35:2735 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 102.491 ms[39m
+2026-02-28 20:30:47:3047 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 525 - 842.162 ms[39m

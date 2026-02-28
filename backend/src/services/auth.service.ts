@@ -9,7 +9,7 @@ import { notificationService } from './notification.service.js';
 export class AuthService {
 
   async register(data: any, deviceInfo?: any) {
-    const { email, password, name, phone, role } = data;
+    const { email, password, name, phone, role, country, termsConsent, privacyConsent } = data;
 
     const finalRole = role || 'CUSTOMER';
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -25,7 +25,10 @@ export class AuthService {
         password: hashedPassword,
         name,
         phone,
+        country,
         role: finalRole,
+        termsConsent: termsConsent || false,
+        privacyConsent: privacyConsent || false,
         notifications: {
             create: {
                 pushEnabled: true,
@@ -46,6 +49,7 @@ export class AuthService {
           name: true,
           role: true,
           phone: true,
+          country: true,
           avatar: true,
           isPremium: true,
           createdAt: true

@@ -12,8 +12,11 @@ export const registerSchema = z.object({
     password: z.string().min(6, "Password must be at least 6 characters"),
     name: z.string().min(2, "Name must be at least 2 characters"),
     phone: z.string().optional(),
+    country: z.string().optional(),
     role: z.enum(['CUSTOMER', 'ADMIN', 'STORE_MANAGER', 'RIDER']).optional(),
     avatar: z.string().url().optional(),
+    termsConsent: z.boolean().refine(val => val === true, "Terms must be accepted"),
+    privacyConsent: z.boolean().refine(val => val === true, "Privacy policy must be accepted"),
     deviceInfo: deviceInfoSchema,
   }).strict()
 });

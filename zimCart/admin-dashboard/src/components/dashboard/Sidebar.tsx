@@ -59,7 +59,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
 
   return (
     <div className={cn(
-      "fixed inset-y-0 left-0 z-50 w-64 h-screen bg-white border-r border-slate-100 transition-all duration-300 transform lg:static lg:translate-x-0 flex flex-col",
+      "fixed inset-y-0 left-0 z-[100] w-64 h-screen bg-white border-r border-slate-100 transition-all duration-300 transform lg:static lg:translate-x-0 flex flex-col",
       isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
     )}>
       {/* Logo & Close Button */}
@@ -74,7 +74,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
         </div>
         <button 
           onClick={onClose}
-          className="lg:hidden p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+          className="lg:hidden flex items-center justify-center p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
         >
           <X className="w-5 h-5" />
         </button>

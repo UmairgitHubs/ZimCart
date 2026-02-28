@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import NextTopLoader from 'nextjs-toploader';
 
 export const metadata: Metadata = {
   title: "ZimCart | Admin Dashboard",
@@ -20,6 +21,15 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
       </head>
       <body className="antialiased">
+        <NextTopLoader
+          color="#10b981"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={2}
+          showSpinner={false}
+          shadow="0 0 10px #10b981,0 0 5px #10b981"
+          easing="ease"
+        />
         <Providers>
           {children}
         </Providers>

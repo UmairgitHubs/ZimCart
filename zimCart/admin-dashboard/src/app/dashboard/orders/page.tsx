@@ -9,7 +9,8 @@ import {
   XCircle,
   Plus,
   Loader2,
-  CheckCircle2
+  CheckCircle2,
+  ChevronDown
 } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { OrderTable } from "@/components/dashboard/orders/OrderTable";
@@ -19,6 +20,7 @@ import { ManualOrderModal } from "@/components/dashboard/orders/ManualOrderModal
 import { OrderDetailsModal } from "@/components/dashboard/orders/OrderDetailsModal";
 import { Order } from "@/types/orders";
 import { MOCK_ORDERS, STATUS_TABS } from "@/constants/orders";
+import { cn } from "@/lib/utils";
 
 export default function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,6 +37,7 @@ export default function OrdersPage() {
   const [isManualOrderOpen, setIsManualOrderOpen] = useState(false);
   const [orderToEdit, setOrderToEdit] = useState<Order | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showExportOptions, setShowExportOptions] = useState(false);
 
   const handleExportCSV = () => {
     setIsExportingCSV(true);
@@ -121,37 +124,69 @@ export default function OrdersPage() {
         </div>
         
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          {/* Export Actions Group */}
-          <div className="flex flex-1 sm:flex-none items-center bg-white border border-slate-100 rounded-xl p-1 gap-1">
+          {/* Export Actions Step */}
+          <div className="relative group/export flex-1 sm:flex-none">
             <button 
-              onClick={handleExportCSV}
-              disabled={isExportingCSV || csvSuccess}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[12px] font-bold transition-all ${
-                csvSuccess ? 'bg-emerald-50 text-emerald-700' :
-                isExportingCSV ? 'text-slate-400 cursor-not-allowed bg-slate-50' : 
-                'text-slate-600 hover:bg-slate-50 active:scale-95'
-              }`}
+              onClick={() => setShowExportOptions(!showExportOptions)}
+              className={cn(
+                "w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-sm hover:border-emerald-200 hover:bg-emerald-50/30 whitespace-nowrap",
+                showExportOptions && "border-emerald-200 bg-emerald-50/30 ring-4 ring-emerald-500/5 text-emerald-700"
+              )}
             >
-              {isExportingCSV ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 
-               csvSuccess ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : 
-               <Download className="w-3.5 h-3.5 text-emerald-600" />}
-              <span>CSV</span>
+              <Download className={cn("w-4 h-4 text-emerald-600 transition-transform", showExportOptions && "scale-110")} />
+              <span>Export Report</span>
+              <ChevronDown className={cn("w-3.5 h-3.5 ml-0.5 text-slate-400 transition-transform duration-300", showExportOptions && "rotate-180 text-emerald-500")} />
             </button>
-            <div className="w-[1px] h-4 bg-slate-100"></div>
-            <button 
-              onClick={handleExportPDF}
-              disabled={isExportingPDF || pdfSuccess}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[12px] font-bold transition-all ${
-                pdfSuccess ? 'bg-emerald-50 text-emerald-700' :
-                isExportingPDF ? 'text-slate-400 cursor-not-allowed bg-slate-50' : 
-                'text-slate-600 hover:bg-slate-50 active:scale-95'
-              }`}
-            >
-              {isExportingPDF ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 
-               pdfSuccess ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : 
-               <FileText className="w-3.5 h-3.5 text-emerald-600" />}
-              <span>PDF</span>
-            </button>
+
+            {showExportOptions && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setShowExportOptions(false)}
+                />
+                <div className="absolute right-0 mt-1 w-48 bg-white rounded-[24px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-100 z-50 py-1 px-3 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="flex flex-col">
+                    <button 
+                      onClick={() => { handleExportCSV(); setShowExportOptions(false); }}
+                      disabled={isExportingCSV || csvSuccess}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-4 py-2 rounded-2xl text-[12px] font-bold transition-all group/item",
+                        csvSuccess ? 'bg-emerald-50 text-emerald-700' :
+                        isExportingCSV ? 'text-slate-400 cursor-not-allowed bg-slate-50' : 
+                        'text-slate-600 hover:bg-slate-50 hover:text-emerald-700 active:scale-95'
+                      )}
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover/item:bg-white transition-colors">
+                        {isExportingCSV ? <Loader2 className="w-4 h-4 animate-spin text-emerald-600" /> : 
+                         csvSuccess ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : 
+                         <Download className="w-4 h-4 text-emerald-600 group-hover/item:scale-110 transition-transform" />}
+                      </div>
+                      <span className="tracking-tight uppercase">CSV Report</span>
+                    </button>
+                    
+                    <div className="h-[1px] w-full bg-slate-50 my-1" />
+
+                    <button 
+                      onClick={() => { handleExportPDF(); setShowExportOptions(false); }}
+                      disabled={isExportingPDF || pdfSuccess}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-[12px] font-bold transition-all group/item",
+                        pdfSuccess ? 'bg-emerald-50 text-emerald-700' :
+                        isExportingPDF ? 'text-slate-400 cursor-not-allowed bg-slate-50' : 
+                        'text-slate-600 hover:bg-slate-50 hover:text-emerald-700 active:scale-95'
+                      )}
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover/item:bg-white transition-colors">
+                        {isExportingPDF ? <Loader2 className="w-4 h-4 animate-spin text-emerald-600" /> : 
+                         pdfSuccess ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : 
+                         <FileText className="w-4 h-4 text-emerald-600 group-hover/item:scale-110 transition-transform" />}
+                      </div>
+                      <span className="tracking-tight uppercase">PDF Report</span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Primary Action */}

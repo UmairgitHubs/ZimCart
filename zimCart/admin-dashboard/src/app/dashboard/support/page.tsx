@@ -58,22 +58,6 @@ export default function SupportPage() {
             Manage support tickets, rider escalations, and customer inquiries.
           </p>
         </div>
-        
-        <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4">
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="hidden sm:flex items-center bg-white border border-slate-100 rounded-2xl p-1.5 gap-1 shadow-sm">
-              <button className="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 rounded-xl text-[12px] font-bold text-slate-600 transition-all active:scale-95">
-                <Download className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Export CSV</span>
-              </button>
-              <div className="w-[1px] h-4 bg-slate-100"></div>
-              <button className="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 rounded-xl text-[12px] font-bold text-slate-600 transition-all active:scale-95">
-                <FileText className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Reports</span>
-              </button>
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* KPI Stats Cards */}

@@ -38,12 +38,6 @@ export default function DashboardPage() {
             <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">Overview</h1>
             <div className="flex items-center gap-2 md:gap-3">
               <button 
-                onClick={() => router.push('/dashboard/analytics')}
-                className="flex-1 sm:flex-none px-4 md:px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-[12px] md:text-[13px] font-bold text-slate-700 hover:bg-slate-50 hover:border-emerald-200 hover:text-emerald-700 transition-all shadow-sm active:scale-95 text-nowrap"
-              >
-                Analytics Report
-              </button>
-              <button 
                 onClick={handleDownload}
                 disabled={isDownloading || downloadSuccess}
                 className={`flex-1 sm:flex-none px-4 md:px-5 py-2.5 rounded-xl text-[12px] md:text-[13px] font-bold text-white transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2 text-nowrap min-w-[160px] group ${
@@ -67,7 +61,7 @@ export default function DashboardPage() {
                 ) : (
                   <>
                     <Download className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
-                    Download
+                    Analytics Report
                   </>
                 )}
               </button>

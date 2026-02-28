@@ -10,8 +10,12 @@ import {
   Database,
   DollarSign,
   AlertOctagon,
-  TrendingDown
+  TrendingDown,
+  Loader2,
+  ChevronDown,
+  CheckCircle2
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { StatCard } from "@/components/dashboard/StatCard";
 // Import Components
 import { WasteList } from "@/components/dashboard/waste/WasteList";
@@ -36,6 +40,13 @@ export default function WasteLogPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // Export states
+  const [isExportingCSV, setIsExportingCSV] = useState(false);
+  const [csvSuccess, setCsvSuccess] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
+  const [pdfSuccess, setPdfSuccess] = useState(false);
+  const [showExportOptions, setShowExportOptions] = useState(false);
 
   const filteredLogs = useMemo(() => {
     return MOCK_WASTE_LOGS.filter((log) => {
@@ -67,6 +78,24 @@ export default function WasteLogPage() {
       return matchesReason && matchesSearch && matchesTime;
     });
   }, [searchTerm, activeReason, activeTimeFilter]);
+
+  const handleExportCSV = () => {
+    setIsExportingCSV(true);
+    setTimeout(() => {
+      setIsExportingCSV(false);
+      setCsvSuccess(true);
+      setTimeout(() => setCsvSuccess(false), 2000);
+    }, 1500);
+  };
+
+  const handleExportPDF = () => {
+    setIsExportingPDF(true);
+    setTimeout(() => {
+      setIsExportingPDF(false);
+      setPdfSuccess(true);
+      setTimeout(() => setPdfSuccess(false), 2000);
+    }, 1500);
+  };
 
   const totalWasteLoss = filteredLogs.reduce((acc, curr) => acc + curr.totalLoss, 0);
   const totalItemsWasted = filteredLogs.reduce((acc, curr) => acc + curr.quantity, 0);
@@ -112,16 +141,69 @@ export default function WasteLogPage() {
         </div>
         
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center bg-white border border-slate-100 rounded-xl p-1 gap-1">
-            <button className="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 rounded-lg text-[12px] font-bold text-slate-600 transition-all active:scale-95">
-              <Download className="w-3.5 h-3.5 text-rose-600" />
-              <span>CSV</span>
+          {/* Export Actions Step */}
+          <div className="relative group/export hidden sm:block">
+            <button 
+              onClick={() => setShowExportOptions(!showExportOptions)}
+              className={cn(
+                "flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-sm hover:border-rose-200 hover:bg-rose-50/30 whitespace-nowrap",
+                showExportOptions && "border-rose-200 bg-rose-50/30 ring-4 ring-rose-500/5 text-rose-700"
+              )}
+            >
+              <Download className={cn("w-4 h-4 text-rose-600 transition-transform", showExportOptions && "scale-110")} />
+              <span>Export Analysis</span>
+              <ChevronDown className={cn("w-3.5 h-3.5 ml-0.5 text-slate-400 transition-transform duration-300", showExportOptions && "rotate-180 text-rose-500")} />
             </button>
-            <div className="w-[1px] h-4 bg-slate-100"></div>
-            <button className="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 rounded-lg text-[12px] font-bold text-slate-600 transition-all active:scale-95">
-              <FileText className="w-3.5 h-3.5 text-rose-600" />
-              <span>PDF</span>
-            </button>
+
+            {showExportOptions && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setShowExportOptions(false)}
+                />
+                <div className="absolute right-0 mt-1 w-48 bg-white rounded-[24px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-100 z-50 py-1 px-3 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="flex flex-col">
+                    <button 
+                      onClick={() => { handleExportCSV(); setShowExportOptions(false); }}
+                      disabled={isExportingCSV || csvSuccess}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-4 py-2 rounded-2xl text-[12px] font-bold transition-all group/item",
+                        csvSuccess ? 'bg-rose-50 text-rose-700' :
+                        isExportingCSV ? 'text-slate-400 cursor-not-allowed bg-slate-50' : 
+                        'text-slate-600 hover:bg-rose-50 hover:text-rose-700 active:scale-95'
+                      )}
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover/item:bg-white transition-colors">
+                        {isExportingCSV ? <Loader2 className="w-4 h-4 animate-spin text-rose-600" /> : 
+                         csvSuccess ? <CheckCircle2 className="w-4 h-4 text-rose-600" /> : 
+                         <Download className="w-4 h-4 text-rose-600 group-hover/item:scale-110 transition-transform" />}
+                      </div>
+                      <span className="tracking-tight uppercase">CSV Report</span>
+                    </button>
+                    
+                    <div className="h-[1px] w-full bg-slate-50 my-1" />
+
+                    <button 
+                      onClick={() => { handleExportPDF(); setShowExportOptions(false); }}
+                      disabled={isExportingPDF || pdfSuccess}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-4 py-2 rounded-2xl text-[12px] font-bold transition-all group/item",
+                        pdfSuccess ? 'bg-rose-50 text-rose-700' :
+                        isExportingPDF ? 'text-slate-400 cursor-not-allowed bg-slate-50' : 
+                        'text-slate-600 hover:bg-rose-50 hover:text-rose-700 active:scale-95'
+                      )}
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover/item:bg-white transition-colors">
+                        {isExportingPDF ? <Loader2 className="w-4 h-4 animate-spin text-rose-600" /> : 
+                         pdfSuccess ? <CheckCircle2 className="w-4 h-4 text-rose-600" /> : 
+                         <FileText className="w-4 h-4 text-rose-600 group-hover/item:scale-110 transition-transform" />}
+                      </div>
+                      <span className="tracking-tight uppercase">PDF Report</span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           <button 

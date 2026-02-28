@@ -94,21 +94,9 @@ export default function PromotionsPage() {
         </div>
         
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center bg-white border border-slate-100 rounded-xl p-1 gap-1">
-            <button className="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 rounded-lg text-[12px] font-bold text-slate-600 transition-all active:scale-95">
-              <Download className="w-3.5 h-3.5 text-emerald-600" />
-              <span>CSV</span>
-            </button>
-            <div className="w-[1px] h-4 bg-slate-100"></div>
-            <button className="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 rounded-lg text-[12px] font-bold text-slate-600 transition-all active:scale-95">
-              <FileText className="w-3.5 h-3.5 text-emerald-600" />
-              <span>PDF</span>
-            </button>
-          </div>
-
           <button 
             onClick={() => setIsAddModalOpen(true)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[12px] font-black transition-all active:scale-95 shadow-xl shadow-emerald-500/20 group uppercase tracking-widest"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[12px] font-black transition-all active:scale-95 shadow-sm shadow-emerald-500/20 group uppercase tracking-widest"
           >
             <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
             <span>Create Campaign</span>

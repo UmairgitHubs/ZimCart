@@ -20,53 +20,7 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
 
       <div className="space-y-4">
         
-        {/* Core Identity */}
-        <div className="bg-slate-50/50 rounded-xl p-6 border border-slate-100">
-           <h3 className="text-[14px] font-semibold text-slate-800 mb-1">Core Identity</h3>
-           <p className="text-[13px] text-slate-500 mb-5">Primary public-facing details for your merchant dashboard.</p>
-           
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-             <div className="space-y-1.5">
-               <label className="text-[13px] font-medium text-slate-700">Store Name</label>
-               <input
-                 type="text"
-                 value={formData.storeName}
-                 onChange={(e) => setFormData({ ...formData, storeName: e.target.value })}
-                 className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-               />
-             </div>
-             
-             <div className="space-y-1.5">
-               <label className="text-[13px] font-medium text-slate-700">Physical Address</label>
-               <input
-                 type="text"
-                 value={formData.physicalAddress}
-                 onChange={(e) => setFormData({ ...formData, physicalAddress: e.target.value })}
-                 className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-               />
-             </div>
-             
-             <div className="space-y-1.5">
-               <label className="text-[13px] font-medium text-slate-700">Support Email</label>
-               <input
-                 type="email"
-                 value={formData.contactEmail}
-                 onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
-                 className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-               />
-             </div>
-             
-             <div className="space-y-1.5">
-               <label className="text-[13px] font-medium text-slate-700">Support Hotline</label>
-               <input
-                 type="tel"
-                 value={formData.supportPhone}
-                 onChange={(e) => setFormData({ ...formData, supportPhone: e.target.value })}
-                 className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-               />
-             </div>
-           </div>
-        </div>
+       
 
         {/* Localization & Operations */}
         <div className="bg-slate-50/50 rounded-xl p-6 border border-slate-100">
@@ -201,7 +155,7 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
         </div>
 
         {/* Document Vault */}
-        <div className="bg-slate-50/50 rounded-xl p-6 border border-slate-100">
+        {/* <div className="bg-slate-50/50 rounded-xl p-6 border border-slate-100">
            <div className="flex items-center justify-between mb-5">
               <div>
                  <h3 className="text-[14px] font-semibold text-slate-800 mb-1">Document Vault</h3>
@@ -241,7 +195,7 @@ export function StoreSettingsForm({ initialData }: StoreSettingsFormProps) {
                  </div>
               ))}
            </div>
-        </div>
+        </div> */}
 
       </div>
     </div>

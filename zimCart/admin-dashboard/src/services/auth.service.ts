@@ -10,13 +10,16 @@ export const authService = {
     return response.data;
   },
 
-  async signup(data: SignupInput & { role?: string }) {
+  async signup(data: SignupInput & { name?: string; role?: string }) {
     const response = await apiClient.post('/auth/register', {
       email: data.email,
       password: data.password,
       name: data.martName,
       phone: data.phone,
-      role: data.role
+      country: data.country,
+      role: data.role,
+      termsConsent: data.agreeToTerms,
+      privacyConsent: data.agreeToPrivacy
     });
     return response.data;
   },

@@ -3305,3 +3305,48 @@
 2026-02-27 23:24:36:2436 [31merror[39m: [31mUnauthorized request[39m
 2026-02-27 23:40:48:4048 [31merror[39m: [31mUnauthorized request[39m
 2026-02-28 00:11:22:1122 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 00:46:23:4623 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 01:18:11:1811 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 01:18:21:1821 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 01:18:21:1821 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 01:20:23:2023 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 01:20:23:2023 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 01:49:07:497 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 02:24:59:2459 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:17:07:177 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:21:51:2151 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:21:51:2151 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:38:51:3851 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:38:51:3851 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:38:56:3856 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:38:56:3856 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:40:34:4034 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:40:35:4035 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:40:38:4038 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:40:39:4039 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:40:40:4040 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:40:40:4040 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:44:54:4454 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:44:54:4454 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 03:44:56:4456 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 03:44:56:4456 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 04:48:52:4852 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 04:48:53:4853 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 04:48:57:4857 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 04:48:57:4857 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 04:49:02:492 [31merror[39m: [31m[39m
+[31mInvalid `prisma.user.findUnique()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\auth.service.ts:81:36[39m
+
+[31m  78 async login(data: any, deviceInfo?: any) {[39m
+[31m  79   const { email, password } = data;[39m
+[31m  80 [39m
+[31m→ 81   const user = await prisma.user.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-02-28 04:51:45:5145 [31merror[39m: [31mtimeout exceeded when trying to connect[39m
+2026-02-28 20:13:50:1350 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 20:14:14:1414 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 20:14:14:1414 [31merror[39m: [31mRefresh token is missing[39m
+2026-02-28 20:15:49:1549 [31merror[39m: [31mtimeout exceeded when trying to connect[39m
+2026-02-28 20:27:34:2734 [31merror[39m: [31mUnauthorized request[39m
+2026-02-28 20:27:35:2735 [31merror[39m: [31mRefresh token is missing[39m
