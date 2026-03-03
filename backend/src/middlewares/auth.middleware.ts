@@ -81,10 +81,7 @@ export const verifyJWT = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-/**
- * Senior RBAC Middleware
- * Restricts access to specific user roles
- */
+
 export const restrictTo = (...roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {

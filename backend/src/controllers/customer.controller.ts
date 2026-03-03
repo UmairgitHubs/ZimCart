@@ -1,297 +1,274 @@
-import type { Request, Response } from 'express';
-import { customerService } from '../services/customer.service.js';
+import * as customerService from '../services/customer.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
 import { getDeviceInfo } from '../utils/device.utils.js';
-import { notificationService } from '../services/notification.service.js';
+import * as notificationService from '../services/notification.service.js';
 
+export const getProfile = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
 
+  const profile = await customerService.getProfile(userId);
+  
+  return res.status(200).json(
+    new ApiResponse(200, profile, 'User profile fetched successfully')
+  );
+});
 
-export class CustomerController {
+export const updateProfile = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const updatedProfile = await customerService.updateProfile(userId, req.body);
+  
+  return res.status(200).json(
+    new ApiResponse(200, updatedProfile, 'Profile updated successfully')
+  );
+});
 
-  getProfile = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
+export const getOrders = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
 
-    const profile = await customerService.getProfile(userId);
-    
-    return res.status(200).json(
-      new ApiResponse(200, profile, 'User profile fetched successfully')
-    );
-  });
+  const status = req.query.status as string;
+  const orders = await customerService.getOrders(userId, status);
 
+  return res.status(200).json(
+    new ApiResponse(200, orders, 'Orders fetched successfully')
+  );
+});
 
-  updateProfile = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    const updatedProfile = await customerService.updateProfile(userId, req.body);
-    
-    return res.status(200).json(
-      new ApiResponse(200, updatedProfile, 'Profile updated successfully')
-    );
-  });
+export const placeOrder = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
 
- 
-  getOrders = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
+  const order = await customerService.placeOrder(userId, req.body);
 
-    const status = req.query.status as string;
-    const orders = await customerService.getOrders(userId, status);
+  return res.status(201).json(
+    new ApiResponse(201, order, 'Order placed successfully')
+  );
+});
 
-    return res.status(200).json(
-      new ApiResponse(200, orders, 'Orders fetched successfully')
-    );
-  });
+export const getVouchers = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const vouchers = await customerService.getVouchers(userId);
+  
+  return res.status(200).json(
+    new ApiResponse(200, vouchers, 'Vouchers fetched successfully')
+  );
+});
 
-  placeOrder = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
+export const getFavourites = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const favourites = await customerService.getFavourites(userId);
+  
+  return res.status(200).json(
+    new ApiResponse(200, favourites, 'Favourites fetched successfully')
+  );
+});
 
-    const order = await customerService.placeOrder(userId, req.body);
+export const toggleFavourite = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  const { productId } = req.params;
+  
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  if (!productId) throw new ApiError(400, 'Product ID is required');
 
-    return res.status(201).json(
-      new ApiResponse(201, order, 'Order placed successfully')
-    );
-  });
+  const result = await customerService.toggleFavourite(userId, productId as string);
+  const message = result.isFavourited ? 'Added to favourites' : 'Removed from favourites';
 
+  return res.status(200).json(
+    new ApiResponse(200, result, message)
+  );
+});
 
-  getVouchers = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    const vouchers = await customerService.getVouchers(userId);
-    
-    return res.status(200).json(
-      new ApiResponse(200, vouchers, 'Vouchers fetched successfully')
-    );
-  });
+export const getAddresses = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const addresses = await customerService.getAddresses(userId);
+  
+  return res.status(200).json(
+    new ApiResponse(200, addresses, 'Addresses fetched successfully')
+  );
+});
 
+export const addAddress = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const address = await customerService.addAddress(userId, req.body);
+  
+  return res.status(201).json(
+    new ApiResponse(201, address, 'Address added successfully')
+  );
+});
 
-  getFavourites = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    const favourites = await customerService.getFavourites(userId);
-    
-    return res.status(200).json(
-      new ApiResponse(200, favourites, 'Favourites fetched successfully')
-    );
-  });
+export const updateAddress = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  const { id } = req.params;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const address = await customerService.updateAddress(userId, id as string, req.body);
+  
+  return res.status(200).json(
+    new ApiResponse(200, address, 'Address updated successfully')
+  );
+});
 
-  /*
-   * Toggle Favourite
-   * POST /api/v1/customer/favourites/:productId/toggle
-   */
-  toggleFavourite = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    const { productId } = req.params;
-    
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    if (!productId) throw new ApiError(400, 'Product ID is required');
+export const deleteAddress = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  const { id } = req.params;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  await customerService.deleteAddress(userId, id as string);
+  
+  return res.status(200).json(
+    new ApiResponse(200, {}, 'Address deleted successfully')
+  );
+});
 
-    const result = await customerService.toggleFavourite(userId, productId as string);
-    
-    const message = result.isFavourited ? 'Added to favourites' : 'Removed from favourites';
+export const updateSecuritySettings = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const settings = await customerService.updateSecuritySettings(userId, req.body);
+  
+  return res.status(200).json(
+    new ApiResponse(200, settings, 'Security settings updated successfully')
+  );
+});
 
-    return res.status(200).json(
-      new ApiResponse(200, result, message)
-    );
-  });
+export const deleteAccount = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  const { password } = req.body;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  await customerService.deleteAccount(userId, password);
+  
+  return res.status(200).json(
+    new ApiResponse(200, {}, 'Account deleted successfully')
+  );
+});
 
-  /*
-   * Addresses
-   */
-  getAddresses = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    const addresses = await customerService.getAddresses(userId);
-    
-    return res.status(200).json(
-      new ApiResponse(200, addresses, 'Addresses fetched successfully')
-    );
-  });
+export const requestDataExport = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const result = await customerService.exportUserData(userId);
+  
+  return res.status(200).json(
+    new ApiResponse(200, result, 'Data export requested successfully')
+  );
+});
 
-  addAddress = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    const address = await customerService.addAddress(userId, req.body);
-    
-    return res.status(201).json(
-      new ApiResponse(201, address, 'Address added successfully')
-    );
-  });
+export const clearHistory = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const { type } = req.body;
+  const result = await customerService.clearHistory(userId, type || 'all');
+  
+  return res.status(200).json(
+    new ApiResponse(200, result, 'History cleared successfully')
+  );
+});
 
-  updateAddress = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    const { id } = req.params;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    const address = await customerService.updateAddress(userId, id as string, req.body);
-    
-    return res.status(200).json(
-      new ApiResponse(200, address, 'Address updated successfully')
-    );
-  });
+export const getSessions = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const { ipAddress } = getDeviceInfo(req);
+  const sessions = await customerService.getSessions(userId, ipAddress);
 
-  deleteAddress = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    const { id } = req.params;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    await customerService.deleteAddress(userId, id as string);
-    
-    return res.status(200).json(
-      new ApiResponse(200, {}, 'Address deleted successfully')
-    );
-  });
+  return res.status(200).json(
+    new ApiResponse(200, sessions, 'User sessions fetched successfully')
+  );
+});
 
-  /*
-   * Security
-   */
-  updateSecuritySettings = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    const settings = await customerService.updateSecuritySettings(userId, req.body);
-    
-    return res.status(200).json(
-      new ApiResponse(200, settings, 'Security settings updated successfully')
-    );
-  });
+export const revokeSession = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  const { id } = req.params;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
 
-  deleteAccount = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    const { password } = req.body;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    await customerService.deleteAccount(userId, password);
-    
-    return res.status(200).json(
-      new ApiResponse(200, {}, 'Account deleted successfully')
-    );
-  });
+  await customerService.revokeSession(userId, id as string);
 
-  requestDataExport = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    const result = await customerService.exportUserData(userId);
-    
-    return res.status(200).json(
-      new ApiResponse(200, result, 'Data export requested successfully')
-    );
-  });
+  return res.status(200).json(
+    new ApiResponse(200, {}, 'Session revoked successfully')
+  );
+});
 
-  clearHistory = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    const { type } = req.body;
-    const result = await customerService.clearHistory(userId, type || 'all');
-    
-    return res.status(200).json(
-      new ApiResponse(200, result, 'History cleared successfully')
-    );
-  });
+export const revokeAllOtherSessions = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  const sessionId = req.user?.sessionId;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
 
-  getSessions = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    
-    const { ipAddress } = getDeviceInfo(req);
-    const sessions = await customerService.getSessions(userId, ipAddress);
+  await customerService.revokeAllOtherSessions(userId, sessionId);
 
-    return res.status(200).json(
-        new ApiResponse(200, sessions, 'User sessions fetched successfully')
-    );
-  });
+  return res.status(200).json(
+    new ApiResponse(200, {}, 'All other sessions revoked successfully')
+  );
+});
 
-  revokeSession = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    const { id } = req.params;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
+export const updatePushToken = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  const { pushToken } = req.body;
 
-    await customerService.revokeSession(userId, id as string);
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  if (!pushToken) throw new ApiError(400, 'Push token is required');
 
-    return res.status(200).json(
-        new ApiResponse(200, {}, 'Session revoked successfully')
-    );
-  });
+  const result = await notificationService.updatePushToken(userId, pushToken);
 
-  revokeAllOtherSessions = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    const sessionId = req.user?.sessionId;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
+  return res.status(200).json(
+    new ApiResponse(200, result, 'Push token updated successfully')
+  );
+});
 
-    await customerService.revokeAllOtherSessions(userId, sessionId);
+export const updateNotificationPreferences = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
 
-    return res.status(200).json(
-        new ApiResponse(200, {}, 'All other sessions revoked successfully')
-    );
-  });
+  const result = await customerService.updateNotificationPreferences(userId, req.body);
 
-  updatePushToken = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    const { pushToken } = req.body;
+  return res.status(200).json(
+    new ApiResponse(200, result, 'Notification preferences updated successfully')
+  );
+});
 
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-    if (!pushToken) throw new ApiError(400, 'Push token is required');
+export const getNotifications = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
 
-    const result = await notificationService.updatePushToken(userId, pushToken);
+  const result = await customerService.getNotifications(userId);
 
-    return res.status(200).json(
-        new ApiResponse(200, result, 'Push token updated successfully')
-    );
-  });
+  return res.status(200).json(
+    new ApiResponse(200, result, 'Notifications retrieved successfully')
+  );
+});
 
-  updateNotificationPreferences = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
+export const markNotificationRead = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
 
-    const result = await customerService.updateNotificationPreferences(userId, req.body);
+  const result = await customerService.markNotificationRead(userId, req.params.id as string);
 
-    return res.status(200).json(
-        new ApiResponse(200, result, 'Notification preferences updated successfully')
-    );
-  });
+  return res.status(200).json(
+    new ApiResponse(200, result, 'Notification marked as read')
+  );
+});
 
-  getNotifications = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
+export const markAllNotificationsRead = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
 
-    const result = await customerService.getNotifications(userId);
+  const result = await customerService.markAllNotificationsRead(userId);
 
-    return res.status(200).json(
-        new ApiResponse(200, result, 'Notifications retrieved successfully')
-    );
-  });
-
-  markNotificationRead = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-
-    const result = await customerService.markNotificationRead(userId, req.params.id as string);
-
-    return res.status(200).json(
-        new ApiResponse(200, result, 'Notification marked as read')
-    );
-  });
-
-  markAllNotificationsRead = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) throw new ApiError(401, 'Unauthorized');
-
-    const result = await customerService.markAllNotificationsRead(userId);
-
-    return res.status(200).json(
-        new ApiResponse(200, result, 'All notifications marked as read')
-    );
-  });
-}
-
-export const customerController = new CustomerController();
+  return res.status(200).json(
+    new ApiResponse(200, result, 'All notifications marked as read')
+  );
+});

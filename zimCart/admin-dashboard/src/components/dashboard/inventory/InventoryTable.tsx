@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Eye, Edit2, Warehouse, AlertTriangle, ArrowUpDown, ChevronRight, Box, History } from "lucide-react";
+import { Eye, Edit2, Warehouse, AlertTriangle, ArrowUpDown, ChevronRight, Box, History, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { InventoryItem } from "@/types/inventory";
 
@@ -8,9 +8,10 @@ interface InventoryTableProps {
   items: InventoryItem[];
   onAdjust: (item: InventoryItem) => void;
   onViewHistory: (item: InventoryItem) => void;
+  onDelete: (item: InventoryItem) => void;
 }
 
-export function InventoryTable({ items, onAdjust, onViewHistory }: InventoryTableProps) {
+export function InventoryTable({ items, onAdjust, onViewHistory, onDelete }: InventoryTableProps) {
   return (
     <div className="w-full">
       {/* Desktop Table View */}
@@ -114,6 +115,13 @@ export function InventoryTable({ items, onAdjust, onViewHistory }: InventoryTabl
                       >
                         <History className="w-4 h-4" />
                       </button>
+                      <button 
+                         onClick={() => onDelete(item)}
+                         className="w-10 h-10 bg-red-50 border border-red-100 rounded-[14px] flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all active:scale-90"
+                         title="Delete Product"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                    </div>
                 </td>
               </tr>
@@ -150,6 +158,13 @@ export function InventoryTable({ items, onAdjust, onViewHistory }: InventoryTabl
                   </div>
                 </div>
               </div>
+              <button 
+                onClick={() => onDelete(item)}
+                className="p-3 text-red-400 hover:text-red-600 transition-colors"
+                title="Delete"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
             </div>
 
             <div className="grid grid-cols-2 gap-6 py-4 border-y border-slate-50 mb-4">
@@ -186,8 +201,11 @@ export function InventoryTable({ items, onAdjust, onViewHistory }: InventoryTabl
                  <button onClick={() => onAdjust(item)} className="px-5 py-2.5 bg-emerald-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-emerald-700 shadow-lg shadow-emerald-500/10 transition-all flex items-center gap-2">
                    <Edit2 className="w-3.5 h-3.5" /> Adjust
                  </button>
+                 <button onClick={() => onViewHistory(item)} className="px-5 py-2.5 bg-slate-50 text-slate-500 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-100 transition-all">
+                   Logs
+                 </button>
                </div>
-               <button onClick={() => onViewHistory(item)} className="w-12 h-12 bg-slate-50 border border-slate-100 rounded-[20px] flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-all">
+               <button className="w-12 h-12 bg-slate-50 border border-slate-100 rounded-[20px] flex items-center justify-center text-slate-400">
                  <ChevronRight className="w-5 h-5" />
                </button>
             </div>

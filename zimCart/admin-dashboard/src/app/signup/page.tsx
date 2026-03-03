@@ -11,7 +11,7 @@ import AuthHeader from "@/components/auth/AuthHeader";
 import AuthInput from "@/components/auth/AuthInput";
 import AuthButton from "@/components/auth/AuthButton";
 import { useRouter } from "next/navigation";
-import { signupSchema, SignupInput } from "@/lib/validations/auth";
+import { signupSchema, SignupInput } from "@/validations/auth";
 import { RootState } from "@/lib/store";
 import { Globe, Lock, ShieldCheck } from "lucide-react";
 

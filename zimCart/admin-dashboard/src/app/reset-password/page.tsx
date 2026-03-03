@@ -9,7 +9,7 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import AuthHeader from "@/components/auth/AuthHeader";
 import AuthInput from "@/components/auth/AuthInput";
 import AuthButton from "@/components/auth/AuthButton";
-import { resetPasswordSchema, ResetPasswordInput } from "@/lib/validations/auth";
+import { resetPasswordSchema, ResetPasswordInput } from "@/validations/auth";
 import { RootState } from "@/lib/store";
 
 import { useRouter } from "next/navigation";

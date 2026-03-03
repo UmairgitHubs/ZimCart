@@ -11,7 +11,7 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import AuthHeader from "@/components/auth/AuthHeader";
 import AuthInput from "@/components/auth/AuthInput";
 import AuthButton from "@/components/auth/AuthButton";
-import { forgotPasswordSchema, ForgotPasswordInput, verifyCodeSchema, VerifyCodeInput } from "@/lib/validations/auth";
+import { forgotPasswordSchema, ForgotPasswordInput, verifyCodeSchema, VerifyCodeInput } from "@/validations/auth";
 import { RootState } from "@/lib/store";
 import { setError } from "@/lib/features/auth/authSlice";
 

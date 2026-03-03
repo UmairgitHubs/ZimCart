@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Filter, ChevronDown, ListFilter } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface CategoryFiltersProps {
   searchTerm: string;
@@ -18,20 +19,33 @@ export function CategoryFilters({
   setActiveStatus,
 }: CategoryFiltersProps) {
   const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
+  const debouncedSearchTerm = useDebounce(localSearchTerm, 400);
+
+  // Sync external resets
+  useEffect(() => {
+    setLocalSearchTerm(searchTerm);
+  }, [searchTerm]);
+
+  // Debounce dispatch
+  useEffect(() => {
+    if (debouncedSearchTerm !== searchTerm) {
+      setSearchTerm(debouncedSearchTerm);
+    }
+  }, [debouncedSearchTerm, searchTerm, setSearchTerm]);
 
   return (
-    <div className="bg-white rounded-[24px] border border-slate-100 mb-6 p-4 md:p-6 group relative overflow-hidden">
-      {/* Search & Filter Unit */}
+    <div className="bg-white rounded-[32px] border border-slate-100 mb-6 p-4 md:p-6 shadow-sm">
       <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
         {/* Modern Search */}
-        <div className="relative flex-1 group/search">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/search:text-emerald-500 transition-colors" />
+        <div className="relative flex-1 group">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
           <input
             type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Filter categories by name or ID..."
-            className="w-full pl-11 pr-4 py-2.5 md:py-3 bg-slate-50/50 border border-slate-100 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/20 transition-all outline-none text-slate-700"
+            value={localSearchTerm}
+            onChange={(e) => setLocalSearchTerm(e.target.value)}
+            placeholder="Search categories by name, ID or description..."
+            className="w-full pl-12 pr-4 py-3 md:py-3.5 bg-slate-50/50 border-2 border-slate-200/60 rounded-2xl text-[13px] font-bold focus:ring-8 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/40 transition-all outline-none text-slate-700 placeholder:text-slate-400"
           />
         </div>
 
@@ -40,14 +54,14 @@ export function CategoryFilters({
           <button
             onClick={() => setIsStatusOpen(!isStatusOpen)}
             className={cn(
-              "w-full lg:w-48 flex items-center justify-between gap-3 px-5 py-2.5 md:py-3 bg-white border rounded-2xl text-sm font-black transition-all",
+              "flex items-center justify-between gap-3 px-6 py-3 md:py-3.5 bg-white border-2 rounded-2xl text-[13px] font-black tracking-tight transition-all min-w-[180px]",
               isStatusOpen 
-                ? "border-emerald-500 text-emerald-600 ring-4 ring-emerald-50 shadow-lg shadow-emerald-500/5 scale-[1.02]" 
+                ? "border-emerald-500 text-emerald-600 ring-8 ring-emerald-50 shadow-lg shadow-emerald-500/5" 
                 : "border-slate-100 text-slate-600 hover:border-slate-200"
             )}
           >
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4" />
+              <ListFilter className="w-4 h-4" />
               <span>{activeStatus}</span>
             </div>
             <ChevronDown className={cn("w-4 h-4 transition-transform duration-300", isStatusOpen && "rotate-180")} />
@@ -65,7 +79,7 @@ export function CategoryFilters({
                       setIsStatusOpen(false);
                     }}
                     className={cn(
-                      "w-full text-left px-4 py-3 text-sm font-bold transition-all",
+                      "w-full text-left px-5 py-3 text-[13px] font-bold transition-all",
                       activeStatus === status ? "text-emerald-600 bg-emerald-50/80" : "text-slate-600 hover:bg-slate-50"
                     )}
                   >

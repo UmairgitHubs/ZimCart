@@ -102,14 +102,16 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                   </span>
                 </td>
                 <td className="px-6 py-5">
-                  <span className="text-[12px] font-bold text-slate-500 bg-emerald-50/30 px-2 py-1 rounded-lg border border-emerald-100/20">{product.category}</span>
+                  <span className="text-[12px] font-bold text-slate-500 bg-emerald-50/30 px-2 py-1 rounded-lg border border-emerald-100/20">
+                    {typeof product.category === 'object' ? product.category.name : product.category}
+                  </span>
                 </td>
                 <td className="px-6 py-5">
                    {/* Price logic */}
                    <div className="flex flex-col text-left">
                     <span className="font-extrabold text-slate-800 text-[14px] leading-none">${product.price.toFixed(2)}</span>
-                    {product.compareAtPrice && (
-                      <span className="text-[10px] font-bold text-slate-400 line-through mt-1">${product.compareAtPrice.toFixed(2)}</span>
+                    {product.discountPrice && product.discountPrice > 0 && (
+                      <span className="text-[10px] font-bold text-slate-400 line-through mt-1">${product.discountPrice.toFixed(2)}</span>
                     )}
                   </div>
                 </td>
@@ -231,7 +233,9 @@ export function ProductTable({ products, onEdit, onDelete, onView }: ProductTabl
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Pricing</p>
                 <div className="flex items-baseline gap-2">
                   <p className="text-lg font-black text-slate-800">${product.price.toFixed(2)}</p>
-                  {product.compareAtPrice && <p className="text-xs font-bold text-slate-300 line-through">${product.compareAtPrice.toFixed(2)}</p>}
+                  {product.discountPrice && product.discountPrice > 0 && (
+                    <p className="text-xs font-bold text-slate-300 line-through">${product.discountPrice.toFixed(2)}</p>
+                  )}
                 </div>
               </div>
               <div className="text-right">

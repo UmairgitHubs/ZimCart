@@ -1,7 +1,7 @@
 import "dotenv/config";
 import app from "./app.js";
 import http from "http";
-import { socketService } from "./services/socket.service.js";
+import * as socketService from "./services/socket.service.js";
 
 import logger from "./utils/logger.js";
 

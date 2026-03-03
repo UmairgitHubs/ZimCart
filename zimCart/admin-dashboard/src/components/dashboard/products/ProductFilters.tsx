@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Search, Filter, ChevronDown, ListFilter, Plus } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, Filter, ChevronDown, ListFilter, Plus, List } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PRODUCT_CATEGORIES, PRODUCT_STATUSES } from "@/constants/products";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface ProductFiltersProps {
   searchTerm: string;
@@ -23,6 +24,20 @@ export function ProductFilters({
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
 
+  // Debouncing for Search functionality (Senior level performance optimization)
+  const [localSearch, setLocalSearch] = useState(searchTerm);
+  const debouncedSearch = useDebounce(localSearch, 300);
+
+  // Sync Redux only when debounced value changes
+  useEffect(() => {
+    setSearchTerm(debouncedSearch);
+  }, [debouncedSearch, setSearchTerm]);
+
+  // Sync internal state when external resets happen
+  useEffect(() => {
+    setLocalSearch(searchTerm);
+  }, [searchTerm]);
+
   return (
     <div className="bg-white rounded-[24px] border border-slate-100 mb-6 p-4 md:p-6">
       <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
@@ -31,10 +46,10 @@ export function ProductFilters({
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
           <input
             type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search products by name, SKU..."
-            className="w-full pl-11 pr-4 py-2.5 bg-slate-50/50 border border-slate-100 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/20 transition-all outline-none"
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
+            placeholder="Search products by name, SKU, brand..."
+            className="w-full pl-11 pr-4 py-3 bg-slate-50/50 border border-slate-100 rounded-2xl text-[13px] font-bold text-slate-700 focus:ring-4 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500/20 transition-all outline-none"
           />
         </div>
 

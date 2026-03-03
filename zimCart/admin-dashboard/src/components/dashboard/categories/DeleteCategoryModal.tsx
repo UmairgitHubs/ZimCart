@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { AlertTriangle, Trash2, X } from "lucide-react";
 import { Category } from "@/types/categories";
 import { cn } from "@/lib/utils";
+import { useDeleteCategory } from "@/hooks/useCategories";
 
 interface DeleteCategoryModalProps {
   isOpen: boolean;
@@ -13,17 +14,24 @@ interface DeleteCategoryModalProps {
 }
 
 export function DeleteCategoryModal({ isOpen, onClose, onConfirm, category }: DeleteCategoryModalProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
+  const { mutateAsync: deleteCategory, isPending: isDeleting } = useDeleteCategory();
+  const [errorStatus, setErrorStatus] = useState<string | null>(null);
 
   if (!isOpen || !category) return null;
 
   const handleConfirm = async () => {
-    setIsDeleting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    onConfirm(category);
-    setIsDeleting(false);
-    onClose();
+    try {
+      setErrorStatus(null);
+      await deleteCategory(category.id);
+      onConfirm(category);
+      onClose();
+    } catch (e: any) {
+      console.error("Failed to delete category", e);
+      // Backend uses ApiResponse: { success: false, message: "..." }
+      // Axios puts this in e.response.data
+      const message = e.response?.data?.message || "Something went wrong while deleting this category.";
+      setErrorStatus(message);
+    }
   };
 
   return (
@@ -56,6 +64,23 @@ export function DeleteCategoryModal({ isOpen, onClose, onConfirm, category }: De
           Are you sure you want to delete <span className="font-bold text-slate-800">"{category.name}"</span>? 
           This will permanently remove the category and may affect products linked to it. This action cannot be undone.
         </p>
+
+        {errorStatus && (
+          <div className="bg-red-50 border-2 border-red-100 p-4 rounded-2xl mt-6 animate-in slide-in-from-top-4 duration-300">
+             <div className="flex items-start gap-3">
+               <AlertTriangle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+               <div className="flex-1">
+                 <h4 className="text-[11px] font-black text-red-700 uppercase tracking-widest leading-none mb-1.5">Action Blocked</h4>
+                 <p className="text-[12px] font-bold text-red-600 leading-relaxed italic">
+                   "{errorStatus}"
+                 </p>
+                 <p className="text-[10px] text-red-400 font-medium mt-2 leading-tight">
+                   To delete this category, please reassign or delete these products first to maintain data integrity.
+                 </p>
+               </div>
+             </div>
+          </div>
+        )}
 
         <div className="bg-amber-50 border border-amber-100 p-4 rounded-2xl mt-6 flex items-start gap-3">
            <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />

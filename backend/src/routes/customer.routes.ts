@@ -1,10 +1,6 @@
 import { Router } from 'express';
-import { customerController } from '../controllers/customer.controller.js';
+import * as customerController from '../controllers/customer.controller.js';
 import { verifyJWT } from '../middlewares/auth.middleware.js';
-
-// customerController is exported as an instance from the controller file.
-// The file exported class CustomerController and const customerController.
-// I should use the instance.
 
 const router = Router();
 // const controller = new CustomerController(); // Removed

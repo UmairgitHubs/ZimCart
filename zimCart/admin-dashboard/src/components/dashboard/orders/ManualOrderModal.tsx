@@ -3,7 +3,7 @@ import { X, Plus, Trash2, ShoppingBag, User, MapPin, DollarSign, Loader2, CheckC
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
-import { manualOrderSchema, ManualOrderFormData } from "@/lib/validations/order";
+import { manualOrderSchema, ManualOrderFormData } from "@/validations/order";
 import { createManualOrder, resetSubmitSuccess } from "@/lib/features/orders/ordersSlice";
 import { AppDispatch, RootState } from "@/lib/store";
 import { Order, OrderItem } from "@/types/orders";

@@ -6,19 +6,19 @@ import {
   History, 
   ArrowUpRight, 
   ArrowDownRight, 
-  User, 
   Calendar, 
   Clock,
   Search,
   Filter,
   AlertCircle,
-  Hash,
   Database,
-  ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  Loader2
 } from "lucide-react";
 import { InventoryItem } from "@/types/inventory";
 import { cn } from "@/lib/utils";
+import { useInventoryHistory } from "@/hooks/useInventory";
+import { format } from "date-fns";
 
 interface InventoryHistoryModalProps {
   isOpen: boolean;
@@ -26,15 +26,10 @@ interface InventoryHistoryModalProps {
   item: InventoryItem | null;
 }
 
-const MOCK_LOGS = [
-  { id: "LOG-001", type: "Inbound", change: "+120", reason: "Restock", user: "Admin John", date: "2026-02-26 14:30" },
-  { id: "LOG-002", type: "Outbound", change: "-12", reason: "Order #4492", user: "System", date: "2026-02-26 11:20" },
-  { id: "LOG-003", type: "Audit", change: "-5", reason: "Damage Found", user: "Manager Sara", date: "2026-02-25 09:15" },
-  { id: "LOG-004", type: "Inbound", change: "+45", reason: "Return Processed", user: "Support Mike", date: "2026-02-24 16:45" },
-  { id: "LOG-005", type: "Outbound", change: "-8", reason: "Order #4481", user: "System", date: "2026-02-24 10:30" },
-];
-
 export function InventoryHistoryModal({ isOpen, onClose, item }: InventoryHistoryModalProps) {
+  const { data: historyResponse, isLoading } = useInventoryHistory(item?.id || "");
+  const history = historyResponse?.data || [];
+
   if (!isOpen || !item) return null;
 
   return (
@@ -90,63 +85,69 @@ export function InventoryHistoryModal({ isOpen, onClose, item }: InventoryHistor
 
         {/* Ledger Content */}
         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-[#fbfcfd]">
-          <div className="space-y-4">
-            {MOCK_LOGS.map((log, idx) => {
-              const isInbound = log.type === "Inbound";
-              const isAudit = log.type === "Audit";
-              return (
-                <div key={log.id} className="group bg-white p-5 rounded-3xl border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-6 relative">
-                   {/* Vertical Connector dot indicator */}
-                   <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-slate-100 group-hover:bg-emerald-500 transition-colors hidden md:block"></div>
-                   
-                   <div className="flex items-center gap-5">
-                      <div className={cn(
-                        "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border",
-                        isInbound ? "bg-emerald-50 text-emerald-600 border-emerald-100" : 
-                        isAudit ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-blue-50 text-blue-600 border-blue-100"
-                      )}>
-                         {isInbound ? <ArrowUpRight className="w-5 h-5" /> : 
-                          isAudit ? <AlertCircle className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm font-black text-slate-800 tracking-tight leading-none">{log.reason}</p>
-                        <div className="flex items-center gap-3 mt-2">
-                           <span className={cn(
-                             "text-[9px] font-black uppercase tracking-widest",
-                             isInbound ? "text-emerald-500" : isAudit ? "text-amber-500" : "text-blue-500"
-                           )}>{log.type}</span>
-                           <span className="w-1 h-1 rounded-full bg-slate-200"></span>
-                           <div className="flex items-center gap-1.5">
-                              <User className="w-3 h-3 text-slate-300" />
-                              <span className="text-[10px] font-bold text-slate-400">{log.user}</span>
-                           </div>
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+               <Loader2 className="w-10 h-10 text-emerald-500 animate-spin mb-4" />
+               <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Retrieving Digital Audit Trail...</p>
+            </div>
+          ) : history.length > 0 ? (
+            <div className="space-y-4">
+              {history.map((log: any, idx: number) => {
+                const eventType = log.event.toLowerCase();
+                const isInbound = eventType.includes('restock') || eventType.includes('initiated');
+                const isAdjustment = eventType.includes('alignment');
+                
+                return (
+                  <div key={log.id} className="group bg-white p-5 rounded-3xl border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-6 relative">
+                     <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-slate-100 group-hover:bg-emerald-500 transition-colors hidden md:block"></div>
+                     
+                     <div className="flex items-center gap-5">
+                        <div className={cn(
+                          "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border",
+                          isInbound ? "bg-emerald-50 text-emerald-600 border-emerald-100" : 
+                          isAdjustment ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-blue-50 text-blue-600 border-blue-100"
+                        )}>
+                           {isInbound ? <ArrowUpRight className="w-5 h-5" /> : 
+                            isAdjustment ? <AlertCircle className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
                         </div>
-                      </div>
-                   </div>
+                        
+                        <div>
+                          <p className="text-sm font-black text-slate-800 tracking-tight leading-none">{log.event}</p>
+                          <p className="text-[11px] font-medium text-slate-400 mt-1 max-w-[200px] truncate">{log.description}</p>
+                        </div>
+                     </div>
 
-                   <div className="flex items-center justify-between md:justify-end gap-10">
-                      <div className="flex flex-col text-right">
-                         <p className="text-[10px] font-black text-slate-800 flex items-center justify-end gap-2 uppercase tracking-tighter">
-                            <Calendar className="w-3 h-3 text-slate-300" /> {log.date.split(' ')[0]}
-                         </p>
-                         <p className="text-[10px] font-bold text-slate-400 flex items-center justify-end gap-2 mt-1">
-                            <Clock className="w-3 h-3 text-slate-300" /> {log.date.split(' ')[1]}
-                         </p>
-                      </div>
-                      
-                      <div className={cn(
-                        "min-w-[90px] py-2.5 px-4 rounded-xl text-center font-black text-sm border-2 shadow-sm",
-                        isInbound ? "bg-emerald-50 text-emerald-700 border-emerald-100" : 
-                        isAudit ? "bg-amber-50 text-amber-700 border-amber-100" : "bg-blue-50 text-blue-700 border-blue-100"
-                      )}>
-                         {isInbound ? `+ ${log.change.replace('+', '')}` : log.change}
-                      </div>
-                   </div>
-                </div>
-              );
-            })}
-          </div>
+                     <div className="flex items-center justify-between md:justify-end gap-10">
+                        <div className="flex flex-col text-right">
+                           <p className="text-[10px] font-black text-slate-800 flex items-center justify-end gap-2 uppercase tracking-tighter">
+                              <Calendar className="w-3 h-3 text-slate-300" /> {format(new Date(log.createdAt), 'yyyy-MM-dd')}
+                           </p>
+                           <p className="text-[10px] font-bold text-slate-400 flex items-center justify-end gap-2 mt-1">
+                              <Clock className="w-3 h-3 text-slate-300" /> {format(new Date(log.createdAt), 'HH:mm')}
+                           </p>
+                        </div>
+                        
+                        {log.metadata?.new !== undefined && (
+                          <div className={cn(
+                            "min-w-[90px] py-2.5 px-4 rounded-xl text-center font-black text-sm border-2 shadow-sm",
+                            isInbound ? "bg-emerald-50 text-emerald-700 border-emerald-100" : 
+                            isAdjustment ? "bg-amber-50 text-amber-700 border-amber-100" : "bg-blue-50 text-blue-700 border-blue-100"
+                          )}>
+                             {log.metadata.new} PCS
+                          </div>
+                        )}
+                     </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 bg-white border border-dashed border-slate-200 rounded-[32px]">
+               <Database className="w-12 h-12 text-slate-200 mb-4" />
+               <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No Historical Records Found</p>
+               <p className="text-[11px] text-slate-300 font-medium mt-1">Lifecycle logs will be generated upon stock mutations.</p>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -157,7 +158,7 @@ export function InventoryHistoryModal({ isOpen, onClose, item }: InventoryHistor
                </div>
                <div>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Registry Integrity</p>
-                  <p className="text-[11px] font-bold text-slate-700 uppercase">Synchronized with Global CDN</p>
+                  <p className="text-[11px] font-bold text-slate-700 uppercase">Synchronized with System Audit</p>
                </div>
             </div>
             <button 

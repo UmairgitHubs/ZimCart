@@ -10,9 +10,10 @@ import {
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { categorySchema, CategoryFormData } from "@/lib/validations/category";
+import { CategoryFormData, categorySchema } from "@/validations/category";
 import { Category } from "@/types/categories";
-import { MOCK_CATEGORIES } from "@/constants/categories";
+import { useCreateCategory, useUpdateCategory, useCategories } from "@/hooks/useCategories";
+import apiClient from "@/lib/api-client";
 
 interface AddCategoryModalProps {
   isOpen: boolean;
@@ -23,6 +24,16 @@ interface AddCategoryModalProps {
 export function AddCategoryModal({ isOpen, onClose, category }: AddCategoryModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const { data: categoriesResponse } = useCategories();
+  
+  // Robust data extraction to handle standard ApiResponse wrapper
+  const apiPayload = categoriesResponse?.data?.data || categoriesResponse?.data;
+  const allCategories: Category[] = apiPayload?.items || (Array.isArray(apiPayload) ? apiPayload : []);
+
+  const { mutateAsync: createCategory } = useCreateCategory();
+  const { mutateAsync: updateCategory } = useUpdateCategory();
 
   const {
     register,
@@ -91,22 +102,44 @@ export function AddCategoryModal({ isOpen, onClose, category }: AddCategoryModal
 
   const onSubmitForm = async (data: CategoryFormData) => {
     setIsSubmitting(true);
-    // Simulate API call
-    console.log("Submitting category:", data);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    
-    setTimeout(() => {
-      onClose();
-    }, 2000);
+    try {
+      if (category) {
+        await updateCategory({ id: category.id, data });
+      } else {
+        await createCategory(data);
+      }
+      setIsSuccess(true);
+      setTimeout(() => {
+        onClose();
+      }, 2000);
+    } catch (e) {
+      console.error("Failed to save category", e);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setValue("image", url, { shouldValidate: true });
+    if (!file) return;
+
+    setIsUploadingImage(true);
+    const formData = new FormData();
+    formData.append("image", file); // Must match multer expected field
+
+    try {
+      const response = await apiClient.post("/upload/single", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (response.data.success) {
+        setValue("image", response.data.data.url, { shouldValidate: true });
+      }
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      alert("Failed to upload image. Please try again.");
+    } finally {
+      setIsUploadingImage(false);
+      e.target.value = "";
     }
   };
 
@@ -222,7 +255,7 @@ export function AddCategoryModal({ isOpen, onClose, category }: AddCategoryModal
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl text-[13px] font-bold text-slate-700 outline-none focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       <option value="">None (Top Level)</option>
-                      {MOCK_CATEGORIES.map(cat => (
+                      {allCategories.filter(c => c.id !== category?.id).map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                       ))}
                     </select>
@@ -271,11 +304,14 @@ export function AddCategoryModal({ isOpen, onClose, category }: AddCategoryModal
                   </div>
 
                   <div className="flex-1 space-y-3">
-                    <label className="inline-block px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-[11px] font-black uppercase tracking-widest text-slate-600 cursor-pointer hover:bg-slate-50 hover:border-emerald-500 hover:text-emerald-600 transition-all active:scale-95 shadow-sm">
-                      <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
+                    <label className={`inline-flex items-center justify-center px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-[11px] font-black uppercase tracking-widest text-slate-600 transition-all shadow-sm ${isUploadingImage ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-slate-50 hover:border-emerald-500 hover:text-emerald-600 active:scale-95'}`}>
+                      <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={isUploadingImage} />
                       <div className="flex items-center gap-2">
-                        <ImagePlus className="w-3.5 h-3.5" />
-                        Upload Thumbnail
+                        {isUploadingImage ? (
+                           <><Loader2 className="w-3.5 h-3.5 text-emerald-500 animate-spin" /> Uploading...</>
+                        ) : (
+                           <><ImagePlus className="w-3.5 h-3.5" /> Upload Thumbnail</>
+                        )}
                       </div>
                     </label>
                     <p className="text-[10px] font-medium text-slate-400">
@@ -344,7 +380,7 @@ export function AddCategoryModal({ isOpen, onClose, category }: AddCategoryModal
             <button 
               type="submit"
               form="category-form"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isUploadingImage}
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-10 py-3 bg-emerald-600 text-white text-[13px] font-bold rounded-xl hover:bg-emerald-700 transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-emerald-500/20"
             >
               {isSubmitting ? (

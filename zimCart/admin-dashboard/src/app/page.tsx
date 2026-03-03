@@ -10,7 +10,7 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import AuthHeader from "@/components/auth/AuthHeader";
 import AuthInput from "@/components/auth/AuthInput";
 import AuthButton from "@/components/auth/AuthButton";
-import { loginSchema, LoginInput } from "@/lib/validations/auth";
+import { loginSchema, LoginInput } from "@/validations/auth";
 import { RootState } from "@/lib/store";
 import { useRouter } from "next/navigation";
 

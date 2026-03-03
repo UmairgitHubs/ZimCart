@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Eye, Edit2, Trash2, MoreHorizontal, ChevronRight, Tags, Search, ArrowUpDown } from "lucide-react";
+import { Eye, Edit2, Trash2, MoreHorizontal, ChevronRight, Tags, Search, ArrowUpDown, Network } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Category } from "@/types/categories";
 
@@ -57,7 +57,15 @@ export function CategoryList({ categories, onEdit, onDelete, onView }: CategoryL
                           <span className="bg-amber-100/50 text-amber-600 text-[8px] font-black px-1.5 py-0.5 rounded-md border border-amber-200 uppercase tracking-tighter">Featured</span>
                         )}
                       </div>
-                      <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-tight">ID: {cat.id} • Order: {cat.displayOrder}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-tight">ID: {cat.id} • Order: {cat.displayOrder}</p>
+                        {cat.parentCategory && (
+                          <span className="flex items-center gap-1 text-[9px] font-black text-indigo-500 bg-indigo-50 px-1.5 py-0.5 rounded-md border border-indigo-100 uppercase tracking-tighter">
+                            <Network className="w-2.5 h-2.5" />
+                            {cat.parentCategory}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -149,9 +157,14 @@ export function CategoryList({ categories, onEdit, onDelete, onView }: CategoryL
               </div>
               <div className="flex-1">
                 <div className="flex justify-between items-start mb-1">
-                  <h4 className="text-sm font-black text-slate-800 uppercase tracking-tighter group-hover:text-emerald-600 transition-colors leading-none">{cat.name}</h4>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-black text-slate-800 uppercase tracking-tighter group-hover:text-emerald-600 transition-colors leading-none">{cat.name}</h4>
+                    {cat.parentCategory && (
+                      <Network className="w-3.5 h-3.5 text-indigo-400" />
+                    )}
+                  </div>
                   <span className={cn(
-                    "px-2 py-0.5 rounded-full text-[8px] font-black border uppercase tracking-tighter",
+                    "px-2 py-0.5 rounded-full text-[8px] font-black border uppercase tracking-tighter shrink-0",
                     cat.status === 'Published' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
                     cat.status === 'Draft' ? "bg-amber-50 text-amber-600 border-amber-100" :
                     "bg-slate-50 text-slate-400 border-slate-100"

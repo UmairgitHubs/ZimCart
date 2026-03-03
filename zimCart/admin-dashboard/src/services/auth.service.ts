@@ -1,5 +1,5 @@
 import apiClient from '@/lib/api-client';
-import { LoginInput, SignupInput, ForgotPasswordInput, ResetPasswordInput } from '@/lib/validations/auth';
+import { LoginInput, SignupInput, ForgotPasswordInput, ResetPasswordInput } from '@/validations/auth';
 
 export const authService = {
   async login(data: LoginInput) {

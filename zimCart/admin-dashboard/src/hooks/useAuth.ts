@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth.service";
 import { setCredentials, setError } from "@/lib/features/auth/authSlice";
 import { AppDispatch } from "@/lib/store";
-import { LoginInput, SignupInput, ForgotPasswordInput, ResetPasswordInput } from "@/lib/validations/auth";
+import { LoginInput, SignupInput, ForgotPasswordInput, ResetPasswordInput } from "@/validations/auth";
 
 export const useAuth = () => {
   const router = useRouter();

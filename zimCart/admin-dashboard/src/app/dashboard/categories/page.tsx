@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Plus, Download, FileText, Tags, CheckCircle2, AlertCircle, EyeOff, Loader2, ChevronDown } from "lucide-react";
+import { Plus, Download, FileText, Tags, CheckCircle2, AlertCircle, EyeOff, Loader2, ChevronDown, Archive } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { CategoryList } from "@/components/dashboard/categories/CategoryList";
@@ -9,13 +9,25 @@ import { CategoryFilters } from "@/components/dashboard/categories/CategoryFilte
 import { AddCategoryModal } from "@/components/dashboard/categories/AddCategoryModal";
 import { CategoryDetailsModal } from "@/components/dashboard/categories/CategoryDetailsModal";
 import { DeleteCategoryModal } from "@/components/dashboard/categories/DeleteCategoryModal";
-import { MOCK_CATEGORIES } from "@/constants/categories";
 import { Category } from "@/types/categories";
+import { useCategories } from "@/hooks/useCategories";
 
 export default function CategoriesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeStatus, setActiveStatus] = useState("All");
-  const [categories, setCategories] = useState(MOCK_CATEGORIES); // Convert to state
+  
+  const { data: categoriesResponse, isLoading } = useCategories({
+    search: searchTerm,
+    status: activeStatus
+  });
+  
+  // Robust Data Extraction - Backend returns ApiResponse { data: { items, stats } }
+  // We handle both nested (ApiResponse) and flat formats defensively
+  const apiPayload = categoriesResponse?.data?.data || categoriesResponse?.data;
+  
+  const categories: Category[] = apiPayload?.items || [];
+  const stats = apiPayload?.stats || { total: 0, published: 0, draft: 0, hidden: 0 };
+
   const [isModalOpen, setIsModalOpen] = useState(false); // Visibility state
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -28,19 +40,9 @@ export default function CategoriesPage() {
   const [pdfSuccess, setPdfSuccess] = useState(false);
   const [showExportOptions, setShowExportOptions] = useState(false);
 
-  const filteredCategories = useMemo(() => {
-    return categories.filter((cat) => {
-      const matchesStatus = 
-        activeStatus === "All" || 
-        cat.status === activeStatus;
-      
-      const matchesSearch = 
-        cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cat.id.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      return matchesStatus && matchesSearch;
-    });
-  }, [searchTerm, activeStatus, categories]);
+  // Since the backend query already filters properly,
+  // we just utilize the query data directly as our source of truth.
+  const filteredCategories = categories;
 
   const handleExportCSV = () => {
     setIsExportingCSV(true);
@@ -166,31 +168,31 @@ export default function CategoriesPage() {
       <section className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatCard 
           label="Total" 
-          value={categories.length} 
+          value={stats.total} 
           icon={Tags} 
           color="text-emerald-600" 
           bgColor="bg-emerald-50/50" 
         />
         <StatCard 
           label="Published" 
-          value={categories.filter(c => c.status === 'Published').length} 
+          value={stats.published} 
           icon={CheckCircle2} 
           color="text-blue-600" 
           bgColor="bg-blue-50/50" 
         />
         <StatCard 
           label="Pending/Draft" 
-          value={categories.filter(c => c.status === 'Draft').length} 
+          value={stats.draft} 
           icon={AlertCircle} 
           color="text-amber-600" 
           bgColor="bg-amber-50/50" 
         />
         <StatCard 
           label="Hidden" 
-          value={categories.filter(c => c.status === 'Hidden').length} 
-          icon={EyeOff} 
-          color="text-red-600" 
-          bgColor="bg-red-50/50" 
+          value={stats.hidden} 
+          icon={Archive} 
+          color="text-slate-500" 
+          bgColor="bg-slate-100" 
         />
       </section>
 
@@ -208,7 +210,12 @@ export default function CategoriesPage() {
           <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-50/20 blur-[100px] -z-10 rounded-full"></div>
           
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {filteredCategories.length > 0 ? (
+            {isLoading ? (
+               <div className="p-20 text-center flex flex-col items-center justify-center">
+                  <Loader2 className="w-10 h-10 text-emerald-500 animate-spin mb-4" />
+                  <p className="text-slate-500 font-bold">Loading categorires...</p>
+               </div>
+            ) : filteredCategories.length > 0 ? (
               <CategoryList 
                 categories={filteredCategories} 
                 onEdit={handleEdit}
@@ -270,8 +277,7 @@ export default function CategoriesPage() {
           setIsDeleteModalOpen(false);
           setSelectedCategory(null);
         }}
-        onConfirm={(cat) => {
-          setCategories(prev => prev.filter(c => c.id !== cat.id));
+        onConfirm={() => {
           setIsDeleteModalOpen(false);
           setSelectedCategory(null);
         }}

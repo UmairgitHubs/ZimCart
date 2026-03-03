@@ -62,22 +62,22 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
       "fixed inset-y-0 left-0 z-[100] w-64 h-screen bg-white border-r border-slate-100 transition-all duration-300 transform lg:static lg:translate-x-0 flex flex-col",
       isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
     )}>
-      {/* Logo & Close Button */}
-      <div className="p-6 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-xl">Z</span>
-          </div>
-          <span className="text-xl font-extrabold tracking-tight text-slate-800">
-            Zim<span className="text-emerald-600">Cart</span>
-          </span>
+      {/* Mobile Close Button - Absolute Positioned for Cleanliness */}
+      <button 
+        onClick={onClose}
+        className="lg:hidden absolute top-4 right-4 p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all z-50 shadow-sm border border-slate-50"
+      >
+        <X className="w-4 h-4" />
+      </button>
+
+      {/* Logo Section */}
+      <div className="p-8 pb-4 flex items-center gap-3">
+        <div className="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-600/20">
+          <span className="text-white font-bold text-xl">Z</span>
         </div>
-        <button 
-          onClick={onClose}
-          className="lg:hidden flex items-center justify-center p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        <span className="text-xl font-extrabold tracking-tight text-slate-800">
+          Zim<span className="text-emerald-600">Cart</span>
+        </span>
       </div>
 
       {/* Main Menu */}

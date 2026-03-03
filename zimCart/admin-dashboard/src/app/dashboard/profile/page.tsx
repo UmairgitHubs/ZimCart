@@ -153,7 +153,7 @@ export default function ProfilePage() {
              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">System Operational</span>
           </div>
-          <h1 className="text-4xl font-bold text-slate-800 tracking-tighter">Merchant Profile</h1>
+          <h1 className="text-3xl font-bold text-slate-800 tracking-tighter">Merchant Profile</h1>
           <p className="text-sm font-semibold text-slate-500 leading-relaxed max-w-xl">
             Integrate your business into the <span className="text-emerald-600 font-semibold">ZimCart Ecosystem</span> by completing our multi-vector verification process.
           </p>

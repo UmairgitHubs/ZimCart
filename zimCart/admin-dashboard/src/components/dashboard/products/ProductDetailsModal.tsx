@@ -9,10 +9,12 @@ import {
   QrCode, FileText, Download, Printer, Save,
   ShoppingCart, ArrowUpRight, Scale, Sparkles
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import Image from "next/image";
 import { Product } from "@/types/products";
 import { ProductStatusBadge } from "./ProductStatusBadge";
 import { cn } from "@/lib/utils";
+import { useProduct } from "@/hooks/useProducts";
 
 interface ProductDetailsModalProps {
   product: Product | null;
@@ -23,6 +25,10 @@ interface ProductDetailsModalProps {
 
 export function ProductDetailsModal({ product, isOpen, onClose, onEdit }: ProductDetailsModalProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  // Fetch full product details including history
+  const { data: productResponse, isLoading } = useProduct(product?.id || "");
+  const fullProduct = productResponse?.data || product;
 
   // Reset state when product changes or modal opens
   useEffect(() => {
@@ -47,11 +53,11 @@ export function ProductDetailsModal({ product, isOpen, onClose, onEdit }: Produc
 
   if (!isOpen || !product) return null;
 
-  const images = product.images.length > 0 ? product.images : ["/placeholder-product.png"];
+  const images = fullProduct.images.length > 0 ? fullProduct.images : ["/placeholder-product.png"];
 
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[155] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
@@ -69,10 +75,10 @@ export function ProductDetailsModal({ product, isOpen, onClose, onEdit }: Produc
             </div>
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <ProductStatusBadge status={product.status} />
-                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">{product.id}</span>
+                <ProductStatusBadge status={fullProduct.status} />
+                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">{fullProduct.id}</span>
               </div>
-              <h2 className="text-xl font-bold text-slate-800 tracking-tight leading-none">{product.name}</h2>
+              <h2 className="text-xl font-bold text-slate-800 tracking-tight leading-none">{fullProduct.name}</h2>
             </div>
           </div>
           <button 
@@ -94,11 +100,11 @@ export function ProductDetailsModal({ product, isOpen, onClose, onEdit }: Produc
                   <div className="relative aspect-square rounded-[24px] overflow-hidden bg-slate-50 border border-slate-100 group shadow-inner">
                     <Image 
                       src={images[activeImageIndex]} 
-                      alt={product.name} 
+                      alt={fullProduct.name} 
                       fill 
                       className="object-contain p-4 group-hover:scale-105 transition-transform duration-500" 
                     />
-                    {product.isDeal && (
+                    {fullProduct.isDeal && (
                       <div className="absolute top-4 left-4 px-3 py-1 bg-rose-500 text-white text-[10px] font-bold rounded-full uppercase tracking-widest flex items-center gap-1.5 shadow-lg">
                         <Zap className="w-3 h-3 fill-current" />
                         Hot Deal
@@ -107,7 +113,7 @@ export function ProductDetailsModal({ product, isOpen, onClose, onEdit }: Produc
                   </div>
                   {images.length > 1 && (
                     <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-                      {images.map((url, idx) => (
+                      {images.map((url: string, idx: number) => (
                         <button 
                           key={idx} 
                           onClick={() => setActiveImageIndex(idx)}
@@ -131,9 +137,9 @@ export function ProductDetailsModal({ product, isOpen, onClose, onEdit }: Produc
                            <DollarSign className="w-3 h-3" /> Price Point
                         </p>
                         <div className="flex items-baseline gap-2">
-                           <span className="text-2xl font-bold text-slate-900">${product.price.toFixed(2)}</span>
-                           {product.compareAtPrice && (
-                             <span className="text-[13px] font-medium text-slate-400 line-through">${product.compareAtPrice.toFixed(2)}</span>
+                           <span className="text-2xl font-bold text-slate-900">${fullProduct.price.toFixed(2)}</span>
+                           {fullProduct.compareAtPrice && (
+                             <span className="text-[13px] font-medium text-slate-400 line-through">${fullProduct.compareAtPrice.toFixed(2)}</span>
                            )}
                         </div>
                      </div>
@@ -144,8 +150,8 @@ export function ProductDetailsModal({ product, isOpen, onClose, onEdit }: Produc
                         <div className="flex items-center gap-2">
                            <span className={cn(
                              "text-2xl font-bold",
-                             product.inventory < 10 ? "text-amber-500" : "text-emerald-600"
-                           )}>{product.inventory}</span>
+                             fullProduct.inventory < 10 ? "text-amber-500" : "text-emerald-600"
+                           )}>{fullProduct.inventory}</span>
                            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Units In Site</span>
                         </div>
                      </div>
@@ -155,23 +161,25 @@ export function ProductDetailsModal({ product, isOpen, onClose, onEdit }: Produc
                      <div className="grid grid-cols-2 gap-y-4">
                         <div>
                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Category</p>
-                           <p className="text-[13px] font-semibold text-slate-700">{product.category}</p>
+                           <p className="text-[13px] font-semibold text-slate-700">
+                              {typeof fullProduct.category === 'object' ? fullProduct.category.name : (fullProduct.category || "General")}
+                           </p>
                         </div>
                         <div>
                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sub-Category</p>
-                           <p className="text-[13px] font-semibold text-slate-700">{product.subCategory || "General"}</p>
+                           <p className="text-[13px] font-semibold text-slate-700">{fullProduct.subCategory || "General"}</p>
                         </div>
                         <div>
                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">SKU identifier</p>
-                           <p className="text-[13px] font-bold text-slate-800 font-mono tracking-tight">{product.sku}</p>
+                           <p className="text-[13px] font-bold text-slate-800 font-mono tracking-tight">{fullProduct.sku}</p>
                         </div>
                         <div>
                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Barcode Asset</p>
-                           <p className="text-[13px] font-semibold text-slate-700">{product.barcode || "N/A"}</p>
+                           <p className="text-[13px] font-semibold text-slate-700">{fullProduct.barcode || "N/A"}</p>
                         </div>
                         <div>
                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Weight / Scale</p>
-                           <p className="text-[13px] font-semibold text-slate-700">{product.weight || "0.50 KG"}</p>
+                           <p className="text-[13px] font-semibold text-slate-700">{fullProduct.weight || "0.50 KG"}</p>
                         </div>
                      </div>
                   </div>
@@ -185,11 +193,11 @@ export function ProductDetailsModal({ product, isOpen, onClose, onEdit }: Produc
                      </div>
                      <div className="flex items-center justify-between">
                         <div>
-                           <p className="text-[20px] font-bold text-emerald-700">{product.sales}</p>
+                           <p className="text-[20px] font-bold text-emerald-700">{fullProduct.sales}</p>
                            <p className="text-[9px] font-semibold text-emerald-600/70 uppercase">Total Redemptions</p>
                         </div>
                         <div className="text-right">
-                           <p className="text-[20px] font-bold text-emerald-700">${(product.price * product.sales).toLocaleString()}</p>
+                           <p className="text-[20px] font-bold text-emerald-700">${(fullProduct.price * fullProduct.sales).toLocaleString()}</p>
                            <p className="text-[9px] font-semibold text-emerald-600/70 uppercase">Estimated Revenue</p>
                         </div>
                      </div>
@@ -206,7 +214,7 @@ export function ProductDetailsModal({ product, isOpen, onClose, onEdit }: Produc
                      </h4>
                      <div className="p-6 bg-slate-50/50 border border-slate-100 rounded-[24px]">
                         <p className="text-[14px] font-medium text-slate-600 leading-relaxed italic">
-                           {product.description || "No strategic overview established for this product protocol."}
+                           {fullProduct.description || "No strategic overview established for this product protocol."}
                         </p>
                      </div>
                   </div>
@@ -253,30 +261,44 @@ export function ProductDetailsModal({ product, isOpen, onClose, onEdit }: Produc
                   {/* Vertical Line */}
                   <div className="absolute left-[7px] top-2 bottom-6 w-[2px] bg-slate-100" />
                   
-                  {[
-                    { title: "Protocol Initiated", date: "Jan 12, 2026", status: "completed", desc: "Product listing added to ZimCart fleet." },
-                    { title: "Inventory Alignment", date: "Feb 05, 2026", status: "completed", desc: "Manual stock adjustment confirmed (+50 units)." },
-                    { title: "Price Vector Optimized", date: "Feb 24, 2026", status: "completed", desc: "Pricing model updated for seasonal performance." },
-                  ].map((log, i) => (
-                    <div key={i} className="relative">
-                       <div className="absolute -left-[23px] top-1 w-3 h-3 rounded-full border-2 border-white bg-emerald-500 shadow-sm" />
+                  {fullProduct.history && fullProduct.history.length > 0 ? (
+                    fullProduct.history.map((log: any, i: number) => (
+                      <div key={log.id || i} className="relative">
+                         <div className="absolute -left-[23px] top-1 w-3 h-3 rounded-full border-2 border-white bg-emerald-500 shadow-sm" />
+                         <div className="flex items-center justify-between mb-1">
+                            <h5 className="text-[13px] font-bold text-slate-800">{log.event}</h5>
+                            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
+                               {new Date(log.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
+                            </span>
+                         </div>
+                         <p className="text-[12px] font-medium text-slate-500">{log.description}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="relative">
+                       <div className="absolute -left-[23px] top-1 w-3 h-3 rounded-full border-2 border-white bg-slate-200 shadow-sm" />
                        <div className="flex items-center justify-between mb-1">
-                          <h5 className="text-[13px] font-bold text-slate-800">{log.title}</h5>
-                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">{log.date}</span>
+                          <h5 className="text-[13px] font-bold text-slate-400 italic">No history recorded yet</h5>
                        </div>
-                       <p className="text-[12px] font-medium text-slate-500">{log.desc}</p>
+                       <p className="text-[12px] font-medium text-slate-300">Detailed lifecycle logs will appear as the product is modified.</p>
                     </div>
-                  ))}
+                  )}
                </div>
             </div>
 
             {/* QR Section */}
             <div className="pt-8 border-t border-slate-50 flex flex-col items-center justify-center space-y-4">
-               <div className="p-8 bg-slate-50/50 border border-slate-100 rounded-[32px] group hover:bg-white transition-all">
-                  <QrCode className="w-24 h-24 text-slate-800 opacity-60 group-hover:opacity-100 transition-opacity" />
+               <div className="p-8 bg-slate-50/50 border border-slate-100 rounded-[32px] group hover:bg-white transition-all shadow-sm">
+                  <QRCodeSVG 
+                    value={fullProduct.sku} 
+                    size={120} 
+                    level="H"
+                    includeMargin={false}
+                    className="opacity-80 group-hover:opacity-100 transition-opacity"
+                  />
                </div>
                <div className="text-center">
-                  <p className="text-[12px] font-bold text-slate-800 uppercase tracking-[0.4em]">{product.sku}</p>
+                  <p className="text-[12px] font-bold text-slate-800 uppercase tracking-[0.4em]">{fullProduct.sku}</p>
                   <p className="text-[10px] font-semibold text-slate-400 uppercase mt-1">Product Digital Signature</p>
                </div>
             </div>

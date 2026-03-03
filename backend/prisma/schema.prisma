@@ -172,24 +172,52 @@ model Store { // Mart
 }
 
 model Category {
-  id      String    @id @default(uuid())
-  name    String
-  image   String?
-  storeId String
-  store   Store     @relation(fields: [storeId], references: [id])
-  products Product[]
+  id               String     @id @default(uuid())
+  name             String
+  slug             String?    @unique @default(uuid())
+  description      String?
+  image            String?
+  status           String     @default("Published") // "Published", "Draft", "Hidden"
+  isFeatured       Boolean    @default(false)
+  displayOrder     Int        @default(0)
+  
+  parentCategoryId String?
+  parentCategory   Category?  @relation("SubCategories", fields: [parentCategoryId], references: [id])
+  children         Category[] @relation("SubCategories")
+
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime?  @updatedAt
+
+  storeId          String
+  store            Store      @relation(fields: [storeId], references: [id])
+  products         Product[]
 }
 
 model Product {
   id            String    @id @default(uuid())
   name          String
+  brand         String?
   description   String?
-  image         String?
+  images        String[]  @default([])
   price         Float
-  discountPrice Float?
-  stock         Int       @default(0)
+  discountPrice Float?    @default(0)
+  costPrice     Float?    @default(0)
+  taxPercentage Float     @default(0)
+  sku           String    @unique
+  barcode       String?
+  inventory     Int       @default(0)
+  status        String    @default("Draft")
+  subCategory   String?
+  isDeal        Boolean   @default(false)
+  discountPercentage Int  @default(0)
+  weight        String?
+  variants      Json?     // Stores array of { type: string, values: string[] }
+  sales         Int       @default(0)
+  
   rating        Float     @default(0)
   reviewsCount  Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   
   categoryId    String
   category      Category  @relation(fields: [categoryId], references: [id])
@@ -198,6 +226,18 @@ model Product {
 
   orderItems    OrderItem[]
   favourites    Favourite[]
+  history       ProductHistory[]
+}
+
+model ProductHistory {
+  id          String   @id @default(uuid())
+  event       String   // e.g. "Protocol Initiated", "Inventory Alignment", "Price Vector Optimized"
+  description String?
+  metadata    Json?    // For storing specific changes like { oldPrice: 10, newPrice: 12 }
+  createdAt   DateTime @default(now())
+  
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Order {

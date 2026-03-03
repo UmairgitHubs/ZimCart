@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { 
   Package, 
   RefreshCw, 
@@ -9,9 +9,7 @@ import {
   AlertTriangle, 
   Database, 
   TrendingUp, 
-  ArrowDownToLine,
   Truck,
-  Heading3,
   Loader2,
   ChevronDown,
   CheckCircle2
@@ -22,16 +20,37 @@ import { InventoryTable } from "@/components/dashboard/inventory/InventoryTable"
 import { InventoryFilters } from "@/components/dashboard/inventory/InventoryFilters";
 import { UpdateStockModal } from "@/components/dashboard/inventory/UpdateStockModal";
 import { InventoryHistoryModal } from "@/components/dashboard/inventory/InventoryHistoryModal";
-import { MOCK_INVENTORY } from "@/constants/inventory";
+import { DeleteInventoryModal } from "@/components/dashboard/inventory/DeleteInventoryModal";
+import { useInventory, useUpdateStock, useDeleteInventory } from "@/hooks/useInventory";
 import { InventoryItem } from "@/types/inventory";
+import { exportInventoryToCSV, exportInventoryToPDF } from "@/utils/exportInventory";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/lib/store";
+import { setSearchTerm, setStatus, setPage, setCategory } from "@/lib/features/inventory/inventorySlice";
 
 export default function InventoryPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeStatus, setActiveStatus] = useState("All");
+  const dispatch = useDispatch();
+  const { filters } = useSelector((state: RootState) => state.inventory);
+
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-  const [inventory, setInventory] = useState(MOCK_INVENTORY);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // Tanstack Query
+  const { data: inventoryResponse, isLoading, refetch } = useInventory({
+    search: filters.searchTerm,
+    status: filters.status === "All" ? undefined : filters.status,
+    category: filters.category === "All Categories" ? undefined : filters.category,
+    page: filters.page,
+    limit: filters.limit
+  });
+
+  const { mutateAsync: updateStock } = useUpdateStock();
+  const { mutateAsync: deleteItem, isPending: isDeleting } = useDeleteInventory();
+
+  const inventory = inventoryResponse?.data?.items || [];
+  const pagination = inventoryResponse?.data?.pagination || { total: 0 };
 
   // Export states
   const [isExportingCSV, setIsExportingCSV] = useState(false);
@@ -40,42 +59,43 @@ export default function InventoryPage() {
   const [pdfSuccess, setPdfSuccess] = useState(false);
   const [showExportOptions, setShowExportOptions] = useState(false);
 
-  const filteredInventory = useMemo(() => {
-    return inventory.filter((item) => {
-      const matchesStatus = 
-        activeStatus === "All" || 
-        item.status === activeStatus;
-      
-      const matchesSearch = 
-        item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.id.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      return matchesStatus && matchesSearch;
-    });
-  }, [searchTerm, activeStatus, inventory]);
-
-  const handleExportCSV = () => {
+  const handleExportCSV = async () => {
     setIsExportingCSV(true);
-    setTimeout(() => {
-      setIsExportingCSV(false);
+    try {
+      await exportInventoryToCSV(inventory);
       setCsvSuccess(true);
       setTimeout(() => setCsvSuccess(false), 2000);
-    }, 1500);
+    } catch (e) {
+      console.error("CSV Export Failed", e);
+    } finally {
+      setIsExportingCSV(false);
+    }
   };
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     setIsExportingPDF(true);
-    setTimeout(() => {
-      setIsExportingPDF(false);
+    try {
+      await exportInventoryToPDF(inventory);
       setPdfSuccess(true);
       setTimeout(() => setPdfSuccess(false), 2000);
-    }, 1500);
+    } catch (e) {
+      console.error("PDF Export Failed", e);
+    } finally {
+      setIsExportingPDF(false);
+    }
   };
 
-  const totalValue = inventory.reduce((acc, curr) => acc + curr.totalValue, 0);
-  const lowStockCount = inventory.filter(i => i.status === 'Low Stock').length;
-  const outOfStockCount = inventory.filter(i => i.status === 'Out of Stock').length;
+  const stats = inventoryResponse?.data?.stats || {
+    totalValue: 0,
+    lowStockCount: 0,
+    outOfStockCount: 0,
+    reservedStockCount: 0
+  };
+
+  const totalValue = stats.totalValue;
+  const lowStockCount = stats.lowStockCount;
+  const outOfStockCount = stats.outOfStockCount;
+  const reservedStockCount = stats.reservedStockCount;
 
   const handleAdjust = (item: InventoryItem) => {
     setSelectedItem(item);
@@ -84,6 +104,23 @@ export default function InventoryPage() {
   const handleViewHistory = (item: InventoryItem) => {
     setSelectedItem(item);
     setIsHistoryModalOpen(true);
+  };
+
+  const handleDeleteTrigger = (item: InventoryItem) => {
+    setSelectedItem(item);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedItem) return;
+    try {
+      await deleteItem(selectedItem.id);
+      setIsDeleteModalOpen(false);
+      setSelectedItem(null);
+    } catch (error) {
+      console.error("Deletion failed:", error);
+      alert("Failed to remove item. Please verify connectivity.");
+    }
   };
 
   return (
@@ -165,8 +202,11 @@ export default function InventoryPage() {
             )}
           </div>
 
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-slate-200 group">
-            <RefreshCw className="w-4 h-4 transition-transform group-active:rotate-180" />
+          <button 
+            onClick={() => refetch()}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-slate-200 group"
+          >
+            <RefreshCw className={cn("w-4 h-4 transition-transform", isLoading && "animate-spin")} />
             <span>Sync Inventory</span>
           </button>
         </div>
@@ -197,20 +237,21 @@ export default function InventoryPage() {
         />
         <StatCard 
           label="Reserved" 
-          value={inventory.reduce((acc, curr) => acc + curr.reservedStock, 0)} 
+          value={reservedStockCount} 
           icon={Truck} 
           color="text-blue-600" 
           bgColor="bg-blue-50/50" 
         />
       </section>
 
-      {/* Main Content Area */}
       <section>
         <InventoryFilters 
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          activeStatus={activeStatus}
-          setActiveStatus={setActiveStatus}
+          searchTerm={filters.searchTerm}
+          setSearchTerm={(term) => dispatch(setSearchTerm(term))}
+          activeCategory={filters.category}
+          setActiveCategory={(category) => dispatch(setCategory(category))}
+          activeStatus={filters.status}
+          setActiveStatus={(status) => dispatch(setStatus(status as any))}
         />
 
         <div className="bg-white rounded-[40px] border border-slate-100 overflow-hidden relative group min-h-[500px]">
@@ -218,11 +259,22 @@ export default function InventoryPage() {
           <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-50/10 blur-[120px] -z-10 rounded-full"></div>
           
           <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
-            {filteredInventory.length > 0 ? (
+            {isLoading ? (
+               <div className="p-40 text-center flex flex-col items-center justify-center">
+                  <div className="relative w-24 h-24 mb-6">
+                    <div className="absolute inset-0 border-4 border-emerald-100 rounded-[32px] animate-pulse"></div>
+                    <div className="absolute inset-0 border-t-4 border-emerald-500 rounded-[32px] animate-spin"></div>
+                    <Database className="absolute inset-0 m-auto w-8 h-8 text-emerald-500" />
+                  </div>
+                  <h3 className="text-lg font-black text-slate-800 uppercase tracking-widest">Hydrating Stocks</h3>
+                  <p className="text-slate-400 font-bold mt-2">Connecting to the vault...</p>
+               </div>
+            ) : inventory.length > 0 ? (
               <InventoryTable 
-                items={filteredInventory} 
+                items={inventory} 
                 onAdjust={handleAdjust}
                 onViewHistory={handleViewHistory}
+                onDelete={handleDeleteTrigger}
               />
             ) : (
               <div className="p-20 text-center">
@@ -232,7 +284,7 @@ export default function InventoryPage() {
                  <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">Stock record not found</h3>
                  <p className="text-slate-400 font-bold mt-2 max-w-sm mx-auto">We couldn't find any inventory results matching your criteria. Try adjusting your filters.</p>
                  <button 
-                   onClick={() => { setSearchTerm(""); setActiveStatus("All"); }}
+                   onClick={() => { dispatch(setSearchTerm("")); dispatch(setStatus("All")); dispatch(setCategory("All Categories")); }}
                    className="mt-8 px-8 py-3 bg-slate-800 text-white rounded-2xl text-[12px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-slate-200"
                  >
                    Reset Inventory View
@@ -241,21 +293,33 @@ export default function InventoryPage() {
             )}
             
             {/* Pagination Placeholder */}
-            {filteredInventory.length > 0 && (
+            {!isLoading && inventory.length > 0 && (
               <div className="px-8 py-6 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between bg-slate-50/30 gap-6">
                 <div className="flex items-center gap-3">
                    <div className="flex -space-x-2">
-                      <div className="w-6 h-6 rounded-full bg-emerald-100 border-2 border-white"></div>
+                      <div className="w-6 h-6 rounded-full bg-emerald-100 border-2 border-white animate-pulse"></div>
                       <div className="w-6 h-6 rounded-full bg-blue-100 border-2 border-white"></div>
                       <div className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white"></div>
                    </div>
                    <p className="text-xs font-black text-slate-400">
-                     Tracking <span className="text-slate-800">{filteredInventory.length}</span> SKUs across all hubs
+                     Tracking <span className="text-slate-800">{pagination.total || inventory.length}</span> SKUs across the network
                    </p>
                 </div>
                 <div className="flex items-center gap-3 w-full sm:w-auto">
-                  <button className="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-black text-slate-400 cursor-not-allowed transition-all uppercase tracking-widest">Previous</button>
-                  <button className="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-black text-slate-800 shadow-sm hover:border-emerald-200 hover:text-emerald-600 transition-all active:scale-95 uppercase tracking-widest">Next Page</button>
+                  <button 
+                    onClick={() => dispatch(setPage(filters.page - 1))}
+                    disabled={filters.page <= 1}
+                    className="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-black text-slate-800 disabled:text-slate-400 disabled:opacity-50 hover:border-emerald-200 hover:text-emerald-600 transition-all active:scale-95 disabled:active:scale-100 uppercase tracking-widest"
+                  >
+                    Previous
+                  </button>
+                  <button 
+                    onClick={() => dispatch(setPage(filters.page + 1))}
+                    disabled={filters.page >= (pagination.pages || 1)}
+                    className="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-black text-slate-800 shadow-sm hover:border-emerald-200 hover:text-emerald-600 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 uppercase tracking-widest"
+                  >
+                    Next Page
+                  </button>
                 </div>
               </div>
             )}
@@ -269,19 +333,15 @@ export default function InventoryPage() {
           setSelectedItem(null);
         }}
         item={selectedItem}
-        onConfirm={(itemId, newStock, reason) => {
-          setInventory(prev => prev.map(item => 
-            item.id === itemId 
-              ? { 
-                  ...item, 
-                  availableStock: newStock,
-                  currentStock: newStock + item.reservedStock,
-                  status: newStock === 0 ? 'Out of Stock' : newStock <= item.restockThreshold ? 'Low Stock' : 'In Stock'
-                } 
-              : item
-          ));
-          setIsUpdateModalOpen(false);
-          setSelectedItem(null);
+        onConfirm={async (itemId, newStock, reason) => {
+          try {
+            await updateStock({ id: itemId, currentStock: newStock, reason });
+            setIsUpdateModalOpen(false);
+            setSelectedItem(null);
+          } catch (error) {
+            console.error("Failed to update stock:", error);
+            alert("Strategic adjustment failed. Please verify connectivity.");
+          }
         }}
       />
 
@@ -292,6 +352,17 @@ export default function InventoryPage() {
           setSelectedItem(null);
         }}
         item={selectedItem}
+      />
+
+      <DeleteInventoryModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedItem(null);
+        }}
+        onConfirm={confirmDelete}
+        item={selectedItem}
+        isLoading={isDeleting}
       />
     </div>
   );
