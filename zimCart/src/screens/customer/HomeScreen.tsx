@@ -30,8 +30,12 @@ import {
     EXPLORE_MARTS
 } from '@/data/mock/home';
 
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   return (
     <View className="flex-1 bg-white">
@@ -44,18 +48,58 @@ export default function HomeScreen() {
          <View className="bg-white -mt-4 rounded-t-[20px] pt-6 pb-4 px-4 shadow-sm">
              {/* Quick Links */}
              <View className="flex-row justify-between mb-8">
-                 {QUICK_LINKS.map(item => <QuickLinkItem key={item.id} item={item} />)}
+                 {QUICK_LINKS.map(item => (
+                    <QuickLinkItem 
+                        key={item.id} 
+                        item={item} 
+                        onPress={() => {
+                            if (item.name === 'Offers') navigation.navigate('Offers');
+                            if (item.name === 'Marts') navigation.navigate('Marts');
+                            if (item.name === 'New In') navigation.navigate('NewIn');
+                            if (item.name === 'Pickup') navigation.navigate('Pickup');
+                        }}
+                    />
+                 ))}
              </View>
              
              {/* Category Circles */}
              <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-8 -mx-4 px-4">
-                 {CATEGORY_CIRCLES.map(item => <CategoryCircle key={item.id} item={item} />)}
+                 {CATEGORY_CIRCLES.map(item => (
+                    <CategoryCircle 
+                        key={item.id} 
+                        item={item} 
+                        onPress={() => {
+                            if (item.name === 'Grocery') navigation.navigate('GroceryTab');
+                            if (item.name === 'Tech') navigation.navigate('Tech');
+                            if (item.name === 'Fashion') navigation.navigate('Fashion');
+                            if (item.name === 'Beauty') navigation.navigate('Beauty');
+                            if (item.name === 'Home' || item.name === 'Home Decor') navigation.navigate('HomeDecor');
+                            if (item.name === 'Pet Care') navigation.navigate('PetCare');
+                        }}
+                    />
+                 ))}
              </ScrollView>
              
              {/* Promo Cards */}
              <View className="mb-8">
                  <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
-                     {PROMO_CARDS.map(item => <PromoCard key={item.id} item={item} />)}
+                     {PROMO_CARDS.map(item => (
+                        <PromoCard 
+                            key={item.id} 
+                            item={item} 
+                            onPress={() => {
+                                if (item.title.toLowerCase().includes('tech')) {
+                                    navigation.navigate('TechSale');
+                                } else if (item.title.toLowerCase().includes('grocery')) {
+                                    navigation.navigate('GroceryBundle');
+                                } else if (item.title.toLowerCase().includes('fashion')) {
+                                    navigation.navigate('FashionWeek');
+                                } else {
+                                    navigation.navigate('Offers');
+                                }
+                            }}
+                        />
+                     ))}
                  </ScrollView>
              </View>
              
@@ -68,7 +112,11 @@ export default function HomeScreen() {
                  
                  <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4 pb-4">
                      {STORES.map(mart => (
-                         <ModernMartCard key={mart.id} mart={mart} />
+                         <ModernMartCard 
+                            key={mart.id} 
+                            mart={mart} 
+                            onPress={() => navigation.navigate('StoreDetail', { mart })}
+                          />
                      ))}
                  </ScrollView>
              </View>
@@ -92,7 +140,11 @@ export default function HomeScreen() {
                  <Text className="text-xl font-black text-gray-900 mb-4 px-1">Top Brands</Text>
                  <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
                      {TOP_BRANDS.map(brand => (
-                        <BrandCard key={brand.id} item={brand} />
+                        <BrandCard 
+                            key={brand.id} 
+                            item={brand} 
+                            onPress={() => navigation.navigate('CategoryDetail', { brand: brand.name })}
+                        />
                      ))}
                  </ScrollView>
              </View>
@@ -105,7 +157,18 @@ export default function HomeScreen() {
                  </View>
                  <View className="flex-row flex-wrap justify-between">
                      {AISLES.map(aisle => (
-                        <AisleCard key={aisle.id} item={aisle} />
+                        <AisleCard 
+                           key={aisle.id} 
+                           item={aisle} 
+                           onPress={() => {
+                               if (aisle.name === 'Pet Care') navigation.navigate('PetCare');
+                               else if (aisle.name === 'Tech') navigation.navigate('Tech');
+                               else if (aisle.name === 'Fashion') navigation.navigate('Fashion');
+                               else if (aisle.name === 'Beauty') navigation.navigate('Beauty');
+                               else if (aisle.name === 'Home' || aisle.name === 'Home Decor') navigation.navigate('HomeDecor');
+                               else navigation.navigate('CategoryDetail', { category: aisle });
+                           }}
+                        />
                      ))}
                  </View>
              </View>
@@ -114,7 +177,11 @@ export default function HomeScreen() {
              <View className="mb-8">
                  <Text className="text-xl font-black text-gray-900 mb-4 px-1">Fresh Arrivals</Text>
                  {FRESH_ARRIVALS.map(item => (
-                    <FreshArrivalCard key={item.id} item={item} />
+                    <FreshArrivalCard 
+                        key={item.id} 
+                        item={item} 
+                        onPress={() => navigation.navigate('ProductDetail', { product: item })}
+                    />
                  ))}
              </View>
 
@@ -122,8 +189,19 @@ export default function HomeScreen() {
              <View className="mb-8">
                  <Text className="text-xl font-black text-gray-900 mb-4 px-1">Browse Categories</Text>
                  <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4 pb-4">
-                     {SHOP_CATEGORIES.map(category => (
-                        <ShopCategoryCard key={category.id} item={category} />
+                     {SHOP_CATEGORIES.map(cat => (
+                        <ShopCategoryCard 
+                            key={cat.id} 
+                            item={cat} 
+                            onPress={() => {
+                                if (cat.name === 'Pet Care') navigation.navigate('PetCare');
+                                else if (cat.name === 'Tech') navigation.navigate('Tech');
+                                else if (cat.name === 'Fashion') navigation.navigate('Fashion');
+                                else if (cat.name === 'Beauty') navigation.navigate('Beauty');
+                                else if (cat.name === 'Home' || cat.name === 'Home Decor') navigation.navigate('HomeDecor');
+                                else navigation.navigate('CategoryDetail', { category: cat });
+                            }}
+                        />
                      ))}
                  </ScrollView>
              </View>
@@ -133,7 +211,11 @@ export default function HomeScreen() {
                  <Text className="text-xl font-black text-gray-900 mb-4 px-1">Explore Marts Nearby</Text>
                  <View className="px-0">
                      {EXPLORE_MARTS.map(mart => (
-                        <LargeMartCard key={mart.id} item={mart} />
+                        <LargeMartCard 
+                           key={mart.id} 
+                           item={mart} 
+                           onPress={() => navigation.navigate('StoreDetail', { store: mart })}
+                        />
                      ))}
                  </View>
              </View>

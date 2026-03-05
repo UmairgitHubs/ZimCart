@@ -10,6 +10,7 @@ import categoryRoutes from './category.routes.js';
 const router = Router();
 
 router.use('/auth', authRoutes);
+router.use('/customer', customerRoutes); // Alias for backward compatibility
 router.use('/customers', customerRoutes);
 router.use('/health', healthRoutes);
 router.use('/help', helpRoutes);

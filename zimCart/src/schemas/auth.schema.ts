@@ -12,6 +12,9 @@ export const registerSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string(),
+  termsConsent: z.boolean().refine(val => val === true, "Terms must be accepted"),
+  privacyConsent: z.boolean().refine(val => val === true, "Privacy policy must be accepted"),
+  role: z.enum(['CUSTOMER', 'ADMIN', 'STORE_MANAGER', 'RIDER']),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],

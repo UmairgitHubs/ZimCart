@@ -82,6 +82,39 @@ export const verifyJWT = async (req: Request, res: Response, next: NextFunction)
 };
 
 
+export const verifyJWTOptional = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = req.cookies?.accessToken || req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      return next(); // No token, no problem (public access)
+    }
+
+    const decoded = jwt.verify(token, config.JWT_SECRET) as JwtPayload;
+    if (!decoded?.id) return next();
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      select: { id: true, email: true, role: true }
+    });
+
+    if (user) {
+      req.user = { 
+        id: (user as any).id, 
+        role: (user as any).role, 
+        email: (user as any).email,
+        sessionId: decoded.sessionId 
+      };
+    }
+    
+    next();
+  } catch (error) {
+    // If token is expired/invalid, we just treat it as public access
+    next();
+  }
+};
+
+
 export const restrictTo = (...roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {

@@ -1,221 +1,152 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, ScrollView, Image, Dimensions, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-
-// Order Type Definition
-interface OrderItemType {
-    id: string;
-    storeName: string;
-    items: string[];
-    total: string;
-    status: 'active' | 'completed' | 'cancelled';
-    date: string;
-    orderNumber: string;
-    storeImage: string;
-    itemCount: number;
-}
-
-// MOCK_ORDERS removed. Using useOrders hook.
 import { useOrders } from '@/hooks/useCustomer';
 import { Order } from '@/types/order';
 
+const { width } = Dimensions.get('window');
+
 const OrderCard = ({ item }: { item: Order }) => {
     const isCompleted = item.status === 'completed';
-    const isCancelled = item.status === 'cancelled';
     const isActive = item.status === 'active';
 
-    let statusColor = "text-gray-600";
-    let statusBg = "bg-gray-50";
-    let statusLabel: string = item.status;
-    let statusIcon: any = "help-circle-outline";
+    let statusConfig = {
+        color: "#1F2937",
+        bg: "bg-gray-100",
+        label: "Pending",
+        icon: "clock-outline"
+    };
 
     if (isActive) {
-        statusColor = "text-blue-600";
-        statusBg = "bg-blue-50";
-        statusLabel = "In Progress";
-        statusIcon = "clock-outline";
+        statusConfig = { color: "#16A34A", bg: "bg-green-50", label: "In Progress", icon: "moped" };
     } else if (isCompleted) {
-        statusColor = "text-green-600";
-        statusBg = "bg-green-50";
-        statusLabel = "Delivered";
-        statusIcon = "check-circle-outline";
-    } else if (isCancelled) {
-        statusColor = "text-red-500";
-        statusBg = "bg-red-50";
-        statusLabel = "Cancelled";
-        statusIcon = "close-circle-outline";
+        statusConfig = { color: "#1d4ed8", bg: "bg-blue-50", label: "Delivered", icon: "check-decagram" };
     }
 
     return (
-        <View 
-            className="bg-white rounded-3xl p-5 mb-5 shadow-sm border border-gray-100"
-            style={{
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.05,
-                shadowRadius: 10,
-                elevation: 2
-            }}
-        >
-            {/* Header: Store Info & Status */}
-            <View className="flex-row justify-between items-start mb-4">
-                <View className="flex-row items-center flex-1">
-                    <View className="w-12 h-12 rounded-2xl bg-gray-100 overflow-hidden border border-gray-100 mr-3">
-                        <Image 
-                            source={{ uri: item.store.image }} 
-                            className="w-full h-full"
-                            resizeMode="cover"
-                        />
+        <View className="bg-white rounded-[32px] p-5 mb-5 shadow-sm border border-gray-100">
+            <View className="flex-row justify-between items-center mb-4">
+                <View className="flex-row items-center">
+                    <View className="w-12 h-12 rounded-2xl bg-gray-50 overflow-hidden border border-gray-100 mr-3">
+                        <Image source={{ uri: item.store.image }} className="w-full h-full" />
                     </View>
-                    <View className="flex-1">
-                        <Text className="text-lg font-bold text-gray-900 leading-tight" numberOfLines={1}>
-                            {item.store.name}
-                        </Text>
-                        <Text className="text-xs text-gray-400 mt-0.5">{new Date(item.date).toLocaleDateString()}</Text>
+                    <View>
+                        <Text className="text-gray-900 font-black text-sm">{item.store.name}</Text>
+                        <Text className="text-gray-400 text-[10px] font-bold uppercase mt-0.5">{new Date(item.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })} • #{item.orderNumber}</Text>
                     </View>
                 </View>
-                
-                <View className={`px-3 py-1.5 rounded-full flex-row items-center ${statusBg}`}>
-                    {/* Using simple text/icon logic to avoid context issues */}
-                    <MaterialCommunityIcons name={statusIcon} size={14} color={isActive ? "#2563EB" : isCompleted ? "#16A34A" : "#EF4444"} style={{ marginRight: 4 }} />
-                    <Text className={`text-[10px] font-bold uppercase tracking-wide ${statusColor}`}>
-                        {statusLabel}
+                <View className={`${statusConfig.bg} px-3 py-1.5 rounded-full flex-row items-center`}>
+                    <MaterialCommunityIcons name={statusConfig.icon as any} size={14} color={statusConfig.color} className="mr-1.5" />
+                    <Text style={{ color: statusConfig.color }} className="text-[10px] font-black uppercase tracking-widest">{statusConfig.label}</Text>
+                </View>
+            </View>
+
+            <View className="h-[1px] bg-gray-50 mb-4" />
+
+            <View className="flex-row justify-between items-end">
+                <View className="flex-1 pr-4">
+                    <Text className="text-gray-500 font-bold text-xs uppercase mb-1">Order Summary</Text>
+                    <Text className="text-gray-900 font-black text-xs leading-4" numberOfLines={2}>
+                        {item.items.map(i => i.name).join(', ')}
                     </Text>
                 </View>
+                <View className="items-end">
+                    <Text className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-0.5">Total Paid</Text>
+                    <Text className="text-gray-900 font-black text-lg">{item.total}</Text>
+                </View>
             </View>
 
-            {/* Divider */}
-            <View className="h-[1px] bg-gray-50 mb-4 w-full" />
-
-            {/* Content: Items & Price */}
-            <View className="mb-5">
-                <View className="flex-row justify-between items-center mb-2">
-                    <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest">Order {item.orderNumber}</Text>
-                    <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest">{item.items.length} Items</Text>
-                </View>
-                
-                <Text className="text-gray-700 text-sm leading-6 font-medium" numberOfLines={2}>
-                    {item.items.map(i => i.name).join(', ')}
-                </Text>
-                {item.items.length > 2 && (
-                    <Text className="text-xs text-gray-400 mt-1 font-medium">+{item.items.length - 2} more items...</Text>
-                )}
-            </View>
-
-            {/* Footer: Price & Action */}
-            <View className="flex-row items-center justify-between">
-                <View>
-                    <Text className="text-xs text-gray-400 mb-0.5 font-medium">Total Amount</Text>
-                    <Text className="text-xl font-extrabold text-gray-900">{item.total}</Text>
-                </View>
-
+            <View className="flex-row mt-6">
                 {isActive ? (
-                    <Pressable 
-                        className="bg-[#2e7d32] px-5 py-3 rounded-2xl flex-row items-center shadow-md shadow-green-200 active:opacity-80"
-                    >
-                        <Text className="text-white font-bold text-sm mr-2">Track Order</Text>
-                        <MaterialCommunityIcons name="arrow-right" size={16} color="white" />
-                    </Pressable>
+                    <TouchableOpacity className="flex-1 bg-green-700 h-12 rounded-2xl flex-row items-center justify-center shadow-lg shadow-green-900/40">
+                        <MaterialCommunityIcons name="map-marker-path" size={18} color="white" className="mr-2" />
+                        <Text className="text-white font-black text-xs uppercase tracking-widest">Track Ride</Text>
+                    </TouchableOpacity>
                 ) : (
-                    <Pressable 
-                        className="bg-white border border-gray-200 px-5 py-3 rounded-2xl flex-row items-center active:bg-gray-50"
-                        style={{ elevation: 0 }}
-                    >
-                        <MaterialCommunityIcons name="refresh" size={18} color="#374151" style={{ marginRight: 6 }} />
-                        <Text className="text-gray-700 font-bold text-sm">Reorder</Text>
-                    </Pressable>
+                    <TouchableOpacity className="flex-1 bg-gray-900 h-12 rounded-2xl flex-row items-center justify-center shadow-lg shadow-gray-900/40">
+                        <MaterialCommunityIcons name="refresh" size={18} color="white" className="mr-2" />
+                        <Text className="text-white font-black text-xs uppercase tracking-widest">Reorder</Text>
+                    </TouchableOpacity>
                 )}
+                <TouchableOpacity className="w-12 h-12 bg-gray-50 rounded-2xl items-center justify-center ml-3 border border-gray-100">
+                    <MaterialCommunityIcons name="chat-outline" size={20} color="#374151" />
+                </TouchableOpacity>
             </View>
         </View>
     );
-
 };
 
-export default function OrdersScreen(props: any) {
-  const navigation = props.navigation;
+export default function OrdersScreen({ navigation }: any) {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
-
-  const { data: orders, isLoading, error } = useOrders(activeTab === 'active' ? 'active' : 'history');
-
-  const filteredOrders = orders || [];
+  const { data: orders, isLoading } = useOrders(activeTab === 'active' ? 'active' : 'history');
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-[#F9FAFB]">
       <StatusBar style="dark" />
       
-      {/* Immersive Modern Header */}
-      <View 
-        style={{ paddingTop: insets.top }} 
-        className="bg-white px-5 pb-6 border-b border-gray-50 shadow-sm z-10"
-      >
-          <View className="flex-row items-center justify-between mb-6 mt-2">
-              <Pressable 
-                onPress={() => navigation && navigation.goBack()} 
-                className="w-10 h-10 bg-gray-50 rounded-full items-center justify-center border border-gray-100"
-              >
-                  <MaterialCommunityIcons name="arrow-left" size={20} color="#1F2937" />
-              </Pressable>
-              
-              <Text className="text-xl font-bold text-gray-900">My Orders</Text>
-              
-              <Pressable className="w-10 h-10 bg-gray-50 rounded-full items-center justify-center border border-gray-100">
-                  <MaterialCommunityIcons name="magnify" size={20} color="#1F2937" />
-              </Pressable>
+      <View style={{ paddingTop: insets.top }} className="bg-white px-5 pb-6 rounded-b-[40px] shadow-sm z-10">
+          <View className="flex-row items-center justify-between mt-2 mb-6">
+              <TouchableOpacity onPress={() => navigation.goBack()} className="w-11 h-11 bg-gray-50 rounded-full items-center justify-center">
+                  <MaterialCommunityIcons name="arrow-left" size={24} color="#111827" />
+              </TouchableOpacity>
+              <View className="items-center">
+                  <Text className="text-gray-400 text-[10px] font-black uppercase tracking-widest">My Account</Text>
+                  <Text className="text-gray-900 font-black text-xl">Order Hub</Text>
+              </View>
+              <TouchableOpacity className="w-11 h-11 bg-gray-50 rounded-full items-center justify-center">
+                  <MaterialCommunityIcons name="magnify" size={24} color="#111827" />
+              </TouchableOpacity>
           </View>
 
-          {/* Segmented Control Tabs */}
-          <View className="flex-row bg-gray-100 p-1 rounded-2xl">
-              <Pressable 
-                onPress={() => setActiveTab('active')}
-                className={`flex-1 py-3 items-center rounded-xl transition-all ${
-                    activeTab === 'active' ? 'bg-white shadow-sm' : 'bg-transparent'
-                }`}
-              >
-                  <Text className={`font-bold transition-all ${
-                      activeTab === 'active' ? 'text-gray-900' : 'text-gray-500'
-                  }`}>Active</Text>
-              </Pressable>
-              <Pressable 
-                onPress={() => setActiveTab('history')}
-                className={`flex-1 py-3 items-center rounded-xl transition-all ${
-                    activeTab === 'history' ? 'bg-white shadow-sm' : 'bg-transparent'
-                }`}
-              >
-                  <Text className={`font-bold transition-all ${
-                      activeTab === 'history' ? 'text-gray-900' : 'text-gray-500'
-                  }`}>History</Text>
-              </Pressable>
+          <View className="bg-gray-100 p-1.5 rounded-[24px] flex-row">
+              {['active', 'history'].map((tab) => (
+                  <TouchableOpacity 
+                    key={tab}
+                    onPress={() => setActiveTab(tab as any)}
+                    className={`flex-1 py-3.5 items-center rounded-[20px] ${activeTab === tab ? 'bg-white shadow-md' : ''}`}
+                  >
+                      <Text className={`text-xs font-black uppercase tracking-widest ${activeTab === tab ? 'text-gray-900' : 'text-gray-400'}`}>
+                          {tab === 'active' ? 'Live Track' : 'History'}
+                      </Text>
+                  </TouchableOpacity>
+              ))}
           </View>
       </View>
 
       <ScrollView 
-        contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
+        contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
-          {filteredOrders.length > 0 ? (
-              filteredOrders.map(item => (
-                  <OrderCard key={item.id} item={item} />
-              ))
+          {isLoading ? (
+              <View className="items-center justify-center mt-20">
+                  <ActivityIndicator color="#16A34A" />
+              </View>
+          ) : orders && orders.length > 0 ? (
+              orders.map(item => <OrderCard key={item.id} item={item} />)
           ) : (
             <View className="items-center justify-center mt-20 px-10">
-                <View className="w-24 h-24 bg-gray-100 rounded-full items-center justify-center mb-6">
-                    <MaterialCommunityIcons name="shopping-outline" size={48} color="#9CA3AF" />
+                <View className="w-24 h-24 bg-white rounded-full items-center justify-center mb-8 shadow-sm">
+                    <MaterialCommunityIcons name="shopping-outline" size={40} color="#E5E7EB" />
                 </View>
-                <Text className="text-xl font-bold text-gray-900 mb-2 text-center">No orders yet</Text>
-                <Text className="text-gray-500 text-center leading-6">
+                <Text className="text-2xl font-black text-gray-900 mb-2">No Orders</Text>
+                <Text className="text-gray-400 text-center font-bold text-sm leading-5">
                     {activeTab === 'active' 
-                        ? "You don't have any active orders. Why not explore our stores?" 
-                        : "Your order history is empty. Start your first order today!"}
+                        ? "You don't have any active orders right now." 
+                        : "Your order history is currently empty."}
                 </Text>
-                <Pressable className="mt-8 bg-gray-900 px-8 py-3 rounded-2xl shadow-lg shadow-gray-400">
-                    <Text className="text-white font-bold">Start Shopping</Text>
-                </Pressable>
+                <TouchableOpacity 
+                    onPress={() => navigation.navigate('Main')}
+                    className="mt-10 bg-gray-900 px-10 py-4 rounded-full shadow-xl shadow-gray-400"
+                >
+                    <Text className="text-white font-black uppercase tracking-widest text-xs">Start Shopping</Text>
+                </TouchableOpacity>
             </View>
           )}
       </ScrollView>
     </View>
   );
 }
+import { ActivityIndicator } from 'react-native';

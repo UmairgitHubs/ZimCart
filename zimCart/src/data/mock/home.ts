@@ -13,6 +13,7 @@ export const CATEGORY_CIRCLES = [
     { id: '3', name: 'Fashion', image: 'https://cdn-icons-png.flaticon.com/512/3050/3050253.png' },
     { id: '4', name: 'Beauty', image: 'https://cdn-icons-png.flaticon.com/512/3004/3004458.png' },
     { id: '5', name: 'Home', image: 'https://cdn-icons-png.flaticon.com/512/3047/3047928.png' },
+    { id: '6', name: 'Pet Care', image: 'https://cdn-icons-png.flaticon.com/512/1077/1077035.png' },
 ];
 
 export const PROMO_CARDS = [
@@ -93,12 +94,15 @@ export const AISLES = [
     { id: '2', name: 'Meats', color: '#fee2e2', image: 'https://cdn-icons-png.flaticon.com/512/1046/1046769.png' },
     { id: '3', name: 'Dairy', color: '#fff7ed', image: 'https://cdn-icons-png.flaticon.com/512/3050/3050253.png' },
     { id: '4', name: 'Bakery', color: '#fef9c3', image: 'https://cdn-icons-png.flaticon.com/512/992/992747.png' },
+    { id: '5', name: 'Pet Care', color: '#fff7ed', image: 'https://cdn-icons-png.flaticon.com/512/1077/1077035.png' },
 ];
 
 export const FRESH_ARRIVALS = [
-    { id: '1', name: 'Organic Honey 500g', store: 'Nature Store', price: 'Rs. 850', image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=400&auto=format&fit=crop' },
-    { id: '2', name: 'Greek Yogurt', store: 'Dairy King', price: 'Rs. 320', image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=400&auto=format&fit=crop' },
-    { id: '3', name: 'Sourdough Bread', store: 'Artisan Bakery', price: 'Rs. 400', image: 'https://images.unsplash.com/photo-1585476644321-b97621c8a16d?q=80&w=400&auto=format&fit=crop' },
+    { id: '1', name: 'Organic Honey 500g', store: 'Nature Store', price: 'Rs. 850', image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=400&auto=format&fit=crop', category: 'Organic' },
+    { id: '2', name: 'Greek Yogurt 1kg', store: 'Dairy King', price: 'Rs. 320', image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=400&auto=format&fit=crop', category: 'Dairy' },
+    { id: '3', name: 'Sourdough Bread', store: 'Artisan Bakery', price: 'Rs. 400', image: 'https://images.unsplash.com/photo-1585476644321-b97621c8a16d?q=80&w=400&auto=format&fit=crop', category: 'Bakery' },
+    { id: '4', name: 'Organic Kale 250g', store: 'Urban Farms', price: 'Rs. 150', image: 'https://images.unsplash.com/photo-1524179091875-bf99a9a6af57?q=80&w=400&auto=format&fit=crop', category: 'Organic' },
+    { id: '5', name: 'Almond Milk 1L', store: 'Healthy Life', price: 'Rs. 580', image: 'https://images.unsplash.com/photo-1550583726-226ff22580fc?q=80&w=400&auto=format&fit=crop', category: 'Dairy' },
 ];
 
 export const SHOP_CATEGORIES = [
@@ -106,6 +110,7 @@ export const SHOP_CATEGORIES = [
     { id: '2', name: 'Bakery & Cake', items: '8 Stores', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=400&auto=format&fit=crop' },
     { id: '3', name: 'Dairy & Eggs', items: '5 Stores', image: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?q=80&w=400&auto=format&fit=crop' },
     { id: '4', name: 'Fruits & Veg', items: '15 Stores', image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=400&auto=format&fit=crop' },
+    { id: '5', name: 'Pet Care', items: '7 Stores', image: 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?q=80&w=400&auto=format&fit=crop' },
 ];
 
 export const RECOMMENDED_PRODUCTS = [

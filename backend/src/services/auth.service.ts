@@ -53,41 +53,58 @@ export const register = async (data: any, deviceInfo?: any) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = await prisma.user.create({
-    data: {
-      email,
-      password: hashedPassword,
-      name,
-      phone,
-      country,
-      role: finalRole,
-      termsConsent: termsConsent || false,
-      privacyConsent: privacyConsent || false,
-      notifications: {
+  const newUser = await prisma.$transaction(async (tx) => {
+    // 1. Create the User primary record
+    const user = await tx.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+        phone,
+        country,
+        role: finalRole,
+        termsConsent: termsConsent || false,
+        privacyConsent: privacyConsent || false,
+        notifications: {
           create: {
-              pushEnabled: true,
-              emailEnabled: finalRole === 'CUSTOMER',
-              smsEnabled: finalRole === 'CUSTOMER' && !!phone,
-              soundEnabled: true,
-              vibrationEnabled: true,
-              orderUpdatesEnabled: true,
-              deliveryUpdatesEnabled: true,
-              promotionalEnabled: finalRole === 'CUSTOMER',
-              newArrivalsEnabled: finalRole === 'CUSTOMER',
+            pushEnabled: true,
+            emailEnabled: finalRole === 'CUSTOMER',
+            smsEnabled: finalRole === 'CUSTOMER' && !!phone,
+            soundEnabled: true,
+            vibrationEnabled: true,
+            orderUpdatesEnabled: true,
+            deliveryUpdatesEnabled: true,
+            promotionalEnabled: finalRole === 'CUSTOMER',
+            newArrivalsEnabled: finalRole === 'CUSTOMER',
           }
+        }
+      },
+      select: {
+          id: true,
+          email: true,
+          name: true,
+          role: true,
+          phone: true,
+          country: true,
+          avatar: true,
+          isPremium: true,
+          createdAt: true
       }
-    },
-    select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        phone: true,
-        country: true,
-        avatar: true,
-        isPremium: true,
-        createdAt: true
+    });
+
+    // 2. If the user is a STORE_MANAGER, automatically create their Mart
+    if (finalRole === 'STORE_MANAGER') {
+      await tx.store.create({
+        data: {
+          name: name, // Default to the manager's provided name
+          isActive: true, // Auto-activate for now, can be manual via Admin later
+          status: 'OPEN',
+          managerId: user.id
+        }
+      });
     }
+
+    return user;
   });
 
   let session = null;

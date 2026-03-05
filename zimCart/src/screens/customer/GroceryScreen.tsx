@@ -1,272 +1,213 @@
-import React, { useRef } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, TextInput, Dimensions, FlatList, Platform } from 'react-native';
+import React from 'react';
+import { View, Text, ScrollView, Image, TouchableOpacity, TextInput, Dimensions, FlatList } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { Mart } from '@/types/customer';
+import { STORES, DAILY_DEALS, PROMO_CARDS } from '@/data/mock/home';
 
 const { width } = Dimensions.get('window');
 
-// --- Mock Data ---
-
-const CATEGORIES = [
-  { id: '1', name: 'Groceries', image: 'https://cdn-icons-png.flaticon.com/512/3724/3724720.png', color: '#DCFCE7' }, // Green-ish
-  { id: '2', name: 'Fresh Bazaar', image: 'https://cdn-icons-png.flaticon.com/512/2909/2909808.png', color: '#F3E8FF' }, // Purple-ish
-  { id: '3', name: 'Health', image: 'https://cdn-icons-png.flaticon.com/512/3004/3004458.png', color: '#FEF2F2' }, // Red-ish
-  { id: '4', name: 'Electronics', image: 'https://cdn-icons-png.flaticon.com/512/3659/3659899.png', color: '#EFF6FF' }, // Blue-ish
-  { id: '5', name: 'Pet Care', image: 'https://cdn-icons-png.flaticon.com/512/3047/3047928.png', color: '#FFF7ED' }, // Orange-ish
+const GROCERY_CATEGORIES = [
+    { id: '1', name: 'Vegetables', icon: 'leaf', color: '#ecfccb', textColor: '#3f6212' },
+    { id: '2', name: 'Fruits', icon: 'food-apple', color: '#ffedd5', textColor: '#9a3412' },
+    { id: '3', name: 'Meat', icon: 'food-steak', color: '#fee2e2', textColor: '#991b1b' },
+    { id: '4', name: 'Dairy', icon: 'bottle-wine', color: '#eff6ff', textColor: '#1e40af' },
+    { id: '5', name: 'Bakery', icon: 'bread-slice', color: '#fef9c3', textColor: '#854d0e' },
 ];
-
-const DEALS = [
-    { id: '1', name: 'Metro Cash & Carry', discount: 'Flat 20% Off', image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=400&auto=format&fit=crop', rating: 4.8 },
-    { id: '2', name: 'Carrefour', discount: 'Up to 50% Off', image: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=400&auto=format&fit=crop', rating: 4.7 },
-    { id: '3', name: 'Imtiaz Super Market', discount: 'Free Delivery', image: 'https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?q=80&w=400&auto=format&fit=crop', rating: 4.6 },
-];
-
-const POPULAR_SHOPS: Mart[] = [
-    {
-      id: "1",
-      name: "Mega Mart",
-      image: "https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=400&auto=format&fit=crop",
-      rating: 4.8,
-      deliveryTime: "15-20 min",
-      deliveryFee: "Free",
-      minOrder: "$20",
-      tags: ["Groceries"],
-    },
-    {
-      id: "2",
-      name: "Tech Zone",
-      image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?q=80&w=400&auto=format&fit=crop",
-      deliveryTime: "30-45 min",
-      rating: 4.5,
-      deliveryFee: "$1.99",
-      minOrder: "$50",
-      tags: ["Electronics"],
-    },
-    {
-        id: "3",
-        name: "PharmaPlus",
-        image: "https://images.unsplash.com/photo-1585435557343-3b092031a831?q=80&w=400&auto=format&fit=crop",
-        deliveryTime: "20-30 min",
-        rating: 4.9,
-        deliveryFee: "$0.99",
-        minOrder: "$10",
-        tags: ["Meds"],
-    },
-];
-
-const ALL_SHOPS: Mart[] = [
-    ...POPULAR_SHOPS,
-    {
-      id: "4",
-      name: "Fresh Greens",
-      image: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?q=80&w=400&auto=format&fit=crop",
-      rating: 4.7,
-      deliveryTime: "25-40 min",
-      deliveryFee: "Free",
-      minOrder: "$15",
-      tags: ["Veg"],
-    },
-    {
-        id: "5",
-        name: "Alpha Stationery",
-        image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?q=80&w=400&auto=format&fit=crop",
-        rating: 4.6,
-        deliveryTime: "10-20 min",
-        deliveryFee: "$1.00",
-        minOrder: "$5",
-        tags: ["Stationery"],
-    }
-];
-
-// --- Components ---
-
-const CategoryItem = ({ item }: { item: any }) => (
-    <TouchableOpacity className="items-center mr-4 w-[85px]">
-        <View 
-            className="w-[85px] h-[85px] rounded-2xl items-center justify-center mb-2"
-            style={{ backgroundColor: item.color }}
-        >
-            <Image source={{ uri: item.image }} className="w-12 h-12" resizeMode="contain" />
-        </View>
-        <Text className="text-xs font-bold text-gray-800 text-center leading-4">{item.name}</Text>
-    </TouchableOpacity>
-);
-
-const DealCard = ({ item }: { item: any }) => (
-    <TouchableOpacity className="mr-4 w-40 relative">
-        <View className="w-40 h-48 rounded-2xl bg-gray-100 mb-2 overflow-hidden shadow-sm border border-gray-100 relative">
-             <Image source={{ uri: item.image }} className="w-full h-full object-cover" />
-             {/* Gradient Overlay */}
-             <View className="absolute inset-0 bg-black/40" />
-             
-             {/* Discount Text */}
-             <View className="absolute bottom-3 left-3 right-3">
-                 <Text className="text-white font-black text-2xl leading-6 mb-1">{item.discount}</Text>
-                 <Text className="text-white/90 text-xs font-bold" numberOfLines={1}>{item.name}</Text>
-             </View>
-
-             {/* Rating Badge */}
-             <View className="absolute top-3 right-3 bg-white/20 backdrop-blur-md px-1.5 py-0.5 rounded-md flex-row items-center">
-                 <MaterialCommunityIcons name="star" size={10} color="#FBBF24" />
-                 <Text className="text-[10px] font-bold text-white ml-0.5">{item.rating}</Text>
-             </View>
-        </View>
-    </TouchableOpacity>
-);
-
-const PopularShopCard = ({ item }: { item: Mart }) => (
-    <TouchableOpacity className="mr-4 w-36">
-        <View className="w-36 h-36 rounded-2xl bg-gray-100 mb-2 overflow-hidden relative shadow-sm border border-gray-100">
-             <Image source={{ uri: item.image }} className="w-full h-full object-cover" />
-             <View className="absolute bottom-2 left-2 bg-white/90 px-2 py-0.5 rounded-md">
-                 <Text className="text-[10px] font-bold text-black">{item.deliveryTime}</Text>
-             </View>
-        </View>
-        <Text className="font-bold text-gray-900 text-sm mb-0.5" numberOfLines={1}>{item.name}</Text>
-        <Text className="text-xs text-gray-500 font-medium">{item.tags?.[0] || 'Store'}</Text>
-    </TouchableOpacity>
-);
-
-const DailyEssentialCard = ({ item }: { item: Mart }) => (
-    <TouchableOpacity className="flex-row items-center bg-white mb-4 rounded-xl">
-        {/* Logo / Image */}
-        <View className="w-24 h-24 rounded-2xl bg-gray-100 overflow-hidden relative border border-gray-100 mr-4">
-             <Image source={{ uri: item.image }} className="w-full h-full object-cover" />
-             <View className="absolute top-0 left-0 bg-primary px-1.5 py-0.5 rounded-br-lg">
-                  <Text className="text-[9px] font-bold text-white">PRO</Text>
-             </View>
-        </View>
-        
-        {/* Details */}
-        <View className="flex-1 justify-center h-24 border-b border-gray-50">
-            <View className="flex-row justify-between items-start pr-2">
-                <Text className="text-base font-bold text-gray-900 mb-1 flex-1 mr-2" numberOfLines={1}>{item.name}</Text>
-                <TouchableOpacity>
-                     <MaterialCommunityIcons name="heart-outline" size={20} color="#9CA3AF" />
-                </TouchableOpacity>
-            </View>
-            
-            <View className="flex-row items-center mb-1">
-                 <MaterialCommunityIcons name="star" size={14} color="#F59E0B" />
-                 <Text className="text-xs font-bold text-gray-800 ml-1">{item.rating}</Text>
-                 <Text className="text-gray-300 mx-1">•</Text>
-                 <Text className="text-xs text-gray-500">{item.tags?.join(', ')}</Text>
-            </View>
-
-            <View className="flex-row items-center mt-2">
-                <MaterialCommunityIcons name="clock-outline" size={14} color="#6B7280" />
-                <Text className="text-xs text-gray-600 ml-1 mr-3">{item.deliveryTime}</Text>
-                
-                <MaterialCommunityIcons name="moped" size={14} color="#2e7d32" />
-                <Text className="text-xs text-primary font-bold ml-1">{item.deliveryFee === 'Free' ? 'Free Delivery' : item.deliveryFee}</Text>
-            </View>
-             {/* Promo text example */}
-            <Text className="text-[10px] text-red-500 font-bold mt-1.5">Rs. 169 Free for first order</Text>
-        </View>
-    </TouchableOpacity>
-);
 
 export default function GroceryScreen() {
-  const insets = useSafeAreaInsets();
-  const navigation = useNavigation<any>();
+    const insets = useSafeAreaInsets();
+    const navigation = useNavigation<any>();
 
-  const renderHeader = () => (
-      <View className="bg-[#2e7d32] pb-6 rounded-b-[24px] shadow-lg z-10" style={{ paddingTop: insets.top }}>
+    const renderHeader = () => (
+        <View className="bg-green-700 pb-6 rounded-b-[40px] shadow-xl" style={{ paddingTop: insets.top }}>
             <StatusBar style="light" />
-            
-            {/* Address Row */}
-            <View className="px-4 py-3 flex-row items-center">
-                 <View className="bg-white/20 p-2 rounded-full mr-3">
-                     <MaterialCommunityIcons name="map-marker" size={20} color="white" />
-                 </View>
-                 <View className="flex-1">
-                     <Text className="text-white/80 text-xs font-medium">Deliver to</Text>
-                     <View className="flex-row items-center">
-                         <Text className="text-white font-bold text-base mr-1">107 Street 65, NYC</Text>
-                         <MaterialCommunityIcons name="chevron-down" size={18} color="white" />
-                     </View>
-                 </View>
-                 <TouchableOpacity 
+            <View className="px-5 flex-row items-center justify-between mb-6 mt-2">
+                <View className="flex-row items-center">
+                    <View className="w-10 h-10 bg-white/20 rounded-full items-center justify-center mr-3">
+                        <MaterialCommunityIcons name="map-marker" size={20} color="white" />
+                    </View>
+                    <View>
+                        <Text className="text-white/70 text-[10px] font-black uppercase tracking-widest">Deliver to</Text>
+                        <View className="flex-row items-center">
+                            <Text className="text-white font-black text-sm">107 Street 65, Islamabad</Text>
+                            <MaterialCommunityIcons name="chevron-down" size={16} color="white" className="ml-1" />
+                        </View>
+                    </View>
+                </View>
+                <TouchableOpacity 
+                    className="w-10 h-10 bg-white/20 rounded-full items-center justify-center"
                     onPress={() => navigation.navigate('CartTab')}
-                    className="bg-white/20 p-2 rounded-full relative active:bg-white/30"
-                 >
-                      <MaterialCommunityIcons name="cart-outline" size={22} color="white" />
-                      <View className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-[#2e7d32]" />
-                 </TouchableOpacity>
-            </View>
-
-            {/* Search Bar */}
-            <View className="mx-4 mt-2 flex-row items-center bg-white rounded-xl px-3 py-3 shadow-sm">
-                <MaterialCommunityIcons name="magnify" size={22} color="#4B5563" />
-                <TextInput 
-                    placeholder="Search for shops and products"
-                    className="flex-1 ml-3 text-base font-medium text-gray-800"
-                    placeholderTextColor="#9CA3AF"
-                />
-                <View className="h-5 w-[1px] bg-gray-200 mx-3" />
-                <TouchableOpacity>
-                     <MaterialCommunityIcons name="tune-vertical" size={20} color="#2e7d32" />
+                >
+                    <MaterialCommunityIcons name="shopping-outline" size={20} color="white" />
                 </TouchableOpacity>
             </View>
-      </View>
-  );
 
-  return (
-    <View className="flex-1 bg-white">
-      {renderHeader()}
-      
-      <FlatList 
-        data={ALL_SHOPS}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-             <View className="px-5">
-                 <DailyEssentialCard item={item} />
-             </View>
-        )}
-        ListHeaderComponent={
-            <View className="pt-6 pb-2">
-                 {/* Categories */}
-                 <View className="mb-8">
-                     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20 }}>
-                         {CATEGORIES.map((cat) => (
-                             <CategoryItem key={cat.id} item={cat} />
-                         ))}
-                     </ScrollView>
-                 </View>
-
-                 {/* Popular Shops */}
-                 <View className="mb-8">
-                     <Text className="text-lg font-extrabold text-gray-900 px-5 mb-4">Popular Shops</Text>
-                     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20 }}>
-                         {POPULAR_SHOPS.map((shop) => (
-                             <PopularShopCard key={shop.id} item={shop} />
-                         ))}
-                     </ScrollView>
-                 </View>
-
-                 {/* Deals & Discounts */}
-                 <View className="mb-8">
-                     <View className="flex-row justify-between items-end px-5 mb-4">
-                         <Text className="text-lg font-extrabold text-gray-900">Deals & Discounts</Text>
-                         <TouchableOpacity><Text className="text-primary font-bold text-xs">See all</Text></TouchableOpacity>
-                     </View>
-                     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20 }}>
-                         {DEALS.map((deal) => (
-                             <DealCard key={deal.id} item={deal} />
-                         ))}
-                     </ScrollView>
-                 </View>
-
-                 {/* All Stores Title */}
-                 <Text className="text-lg font-extrabold text-gray-900 px-5 mb-4">All Stores</Text>
+            <View className="px-5">
+                <View className="bg-white rounded-2xl flex-row items-center px-4 py-3 shadow-sm">
+                    <MaterialCommunityIcons name="magnify" size={22} color="#9CA3AF" />
+                    <TextInput 
+                        placeholder="Search Groceries & Stores..."
+                        className="flex-1 ml-3 text-base font-medium text-gray-800"
+                        placeholderTextColor="#9CA3AF"
+                    />
+                    <TouchableOpacity className="pl-3 border-l border-gray-100">
+                        <MaterialCommunityIcons name="tune" size={20} color="#2e7d32" />
+                    </TouchableOpacity>
+                </View>
             </View>
-        }
-        contentContainerStyle={{ paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
-  );
+        </View>
+    );
+
+    return (
+        <View className="flex-1 bg-white">
+            {renderHeader()}
+
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
+                {/* Horizontal Categories */}
+                <View className="mt-8">
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-5">
+                        {GROCERY_CATEGORIES.map(cat => (
+                            <TouchableOpacity 
+                                key={cat.id} 
+                                className="items-center mr-6"
+                                onPress={() => navigation.navigate('CategoryDetail', { category: { ...cat, name: cat.name } })}
+                            >
+                                <View 
+                                    className="w-16 h-16 rounded-3xl items-center justify-center mb-2 shadow-sm"
+                                    style={{ backgroundColor: cat.color }}
+                                >
+                                    <MaterialCommunityIcons name={cat.icon as any} size={28} color={cat.textColor} />
+                                </View>
+                                <Text className="text-[11px] font-black text-gray-700 uppercase tracking-tighter">{cat.name}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                </View>
+
+                {/* Flash Sale Section */}
+                <View className="mt-10 px-5">
+                    <View className="flex-row justify-between items-end mb-4">
+                        <View>
+                            <Text className="text-2xl font-black text-gray-900 tracking-tighter">Grocery Flash Sale</Text>
+                            <Text className="text-gray-500 text-xs font-bold">Limited time deals on daily essentials</Text>
+                        </View>
+                        <TouchableOpacity><Text className="text-green-700 font-bold text-xs">View All</Text></TouchableOpacity>
+                    </View>
+                    
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-5 px-5">
+                        {DAILY_DEALS.map(deal => (
+                            <TouchableOpacity 
+                                key={deal.id}
+                                className="bg-white rounded-[32px] border border-gray-100 p-4 mr-4 w-[200px] shadow-sm"
+                                activeOpacity={0.9}
+                                onPress={() => navigation.navigate('ProductDetail', { product: deal })}
+                            >
+                                <View className="relative mb-3">
+                                    <Image source={{ uri: deal.image }} className="w-full h-32 rounded-2xl" />
+                                    <View className="absolute top-2 left-2 bg-red-500 px-2 py-1 rounded-lg">
+                                        <Text className="text-white text-[9px] font-black">{deal.discount} OFF</Text>
+                                    </View>
+                                </View>
+                                <Text className="text-gray-400 text-[9px] font-bold uppercase mb-0.5">{deal.mart}</Text>
+                                <Text className="text-gray-900 font-bold text-sm mb-2" numberOfLines={1}>{deal.name}</Text>
+                                <View className="flex-row items-center justify-between">
+                                    <View>
+                                        <Text className="text-green-700 font-black text-base">{deal.price}</Text>
+                                        <Text className="text-gray-400 text-[10px] line-through">{deal.oldPrice}</Text>
+                                    </View>
+                                    <TouchableOpacity className="bg-gray-100 p-2 rounded-full">
+                                        <MaterialCommunityIcons name="plus" size={20} color="#111827" />
+                                    </TouchableOpacity>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                </View>
+
+                {/* Organic Promo Banner */}
+                <View className="px-5 mt-10">
+                    <TouchableOpacity className="bg-orange-500 rounded-[32px] p-6 flex-row items-center overflow-hidden">
+                        <View className="flex-1 z-10">
+                            <Text className="text-white font-black text-2xl leading-7">100% Organic{"\n"}Direct from Farm</Text>
+                            <Text className="text-orange-100 font-bold mt-2 text-xs">Get fresh produce within 30 mins</Text>
+                        </View>
+                        <Image 
+                            source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2329/2329865.png' }} 
+                            className="w-32 h-32 absolute -right-4 -bottom-4 opacity-30" 
+                        />
+                    </TouchableOpacity>
+                </View>
+
+                {/* Popular Grocery Marts */}
+                <View className="mt-10 px-5">
+                    <Text className="text-xl font-black text-gray-900 mb-6 tracking-tighter">Most Trusted Marts</Text>
+                    {STORES.map(mart => (
+                        <TouchableOpacity 
+                            key={mart.id}
+                            onPress={() => navigation.navigate('StoreDetail', { mart })}
+                            className="bg-white rounded-3xl mb-6 flex-row items-center border border-gray-100 shadow-sm"
+                            activeOpacity={0.9}
+                        >
+                            <Image source={{ uri: mart.image }} className="w-24 h-24 rounded-2xl m-2" />
+                            <View className="flex-1 pr-4 ml-2">
+                                <View className="flex-row justify-between items-start">
+                                    <Text className="text-lg font-black text-gray-900" numberOfLines={1}>{mart.name}</Text>
+                                    <View className="flex-row items-center">
+                                        <MaterialCommunityIcons name="star" size={14} color="#FBBF24" />
+                                        <Text className="text-xs font-bold text-gray-900 ml-1">{mart.rating}</Text>
+                                    </View>
+                                </View>
+                                <Text className="text-gray-500 text-xs font-medium mb-2">{mart.tags.join(', ')}</Text>
+                                <View className="flex-row items-center">
+                                    <View className="bg-green-50 px-2 py-1 rounded-md flex-row items-center mr-2">
+                                        <MaterialCommunityIcons name="moped" size={14} color="#2e7d32" />
+                                        <Text className="text-green-700 text-[10px] font-black ml-1">{mart.deliveryFee === 'Free' ? 'FREE' : mart.deliveryFee}</Text>
+                                    </View>
+                                    <View className="bg-gray-50 px-2 py-1 rounded-md flex-row items-center">
+                                        <MaterialCommunityIcons name="clock-outline" size={14} color="#6B7280" />
+                                        <Text className="text-gray-500 text-[10px] font-bold ml-1">{mart.deliveryTime}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            </ScrollView>
+
+            {/* Premium Professional-Grade Cart Bar */}
+            <View 
+                className="absolute left-0 right-0 items-center z-50 px-5" 
+                style={{ bottom: Math.max(insets.bottom, 20) }}
+            >
+                <TouchableOpacity 
+                    className="bg-green-700 h-[70px] rounded-[30px] flex-row items-center px-6 shadow-2xl shadow-green-900/60 border border-white/10"
+                    style={{ width: '100%', maxWidth: 550 }}
+                    activeOpacity={0.9}
+                    onPress={() => navigation.navigate('CartTab')}
+                >
+                    {/* Item Count Badge */}
+                    <View className="bg-white rounded-2xl w-12 h-12 items-center justify-center mr-4 shadow-sm">
+                        <Text className="text-green-700 font-black text-lg">3</Text>
+                    </View>
+                    
+                    {/* Label & Context */}
+                    <View className="flex-1">
+                        <Text className="text-white font-black text-lg tracking-tight">View your Cart</Text>
+                        <Text className="text-green-50/60 text-[10px] font-bold uppercase tracking-widest">3 Items • ZimCart Fresh</Text>
+                    </View>
+
+                    {/* Pro Separator */}
+                    <View className="h-10 w-[1.5px] bg-white/10 mx-4 rounded-full" />
+                    
+                    {/* Price Summary */}
+                    <View className="items-end">
+                        <Text className="text-white font-black text-lg">Rs. 890</Text>
+                        <Text className="text-green-50/60 text-[8px] font-bold uppercase">Estimated Total</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 }

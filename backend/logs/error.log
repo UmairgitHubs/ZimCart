@@ -3527,3 +3527,57 @@
 2026-03-03 04:48:09:489 [31merror[39m: [31mUnauthorized request[39m
 2026-03-03 04:59:55:5955 [31merror[39m: [31mUnauthorized request[39m
 2026-03-03 05:04:11:411 [31merror[39m: [31mUnauthorized request[39m
+2026-03-03 21:17:20:1720 [31merror[39m: [31mUnauthorized request[39m
+2026-03-03 21:17:32:1732 [31merror[39m: [31mInvalid session or token expired[39m
+2026-03-03 21:17:32:1732 [31merror[39m: [31mConnection terminated due to connection timeout[39m
+2026-03-03 21:17:37:1737 [31merror[39m: [31mConnection terminated due to connection timeout[39m
+2026-03-03 21:32:49:3249 [31merror[39m: [31mUnauthorized request[39m
+2026-03-03 21:52:53:5253 [31merror[39m: [31mInvalid credentials[39m
+2026-03-03 21:53:26:5326 [31merror[39m: [31mValidation Error: body.termsConsent: Invalid input: expected boolean, received undefined, body.privacyConsent: Invalid input: expected boolean, received undefined[39m
+2026-03-03 22:49:16:4916 [31merror[39m: [31mUnauthorized request[39m
+2026-03-04 01:14:00:140 [31merror[39m: [31mUnauthorized request[39m
+2026-03-04 03:25:06:256 [31merror[39m: [31mUnauthorized request[39m
+2026-03-04 03:52:43:5243 [31merror[39m: [31mUnauthorized request[39m
+2026-03-04 23:10:53:1053 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 01:24:24:2424 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 01:37:41:3741 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 02:01:26:126 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 02:03:48:348 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 02:03:48:348 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:03:57:357 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 02:03:57:357 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:43:56:4356 [31merror[39m: [31m[39m
+[31mInvalid `tx.store.create()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\auth.service.ts:97:22[39m
+
+[31m  94 [39m
+[31m  95 // 2. If the user is a STORE_MANAGER, automatically create their Mart[39m
+[31m  96 if (finalRole === 'STORE_MANAGER') {[39m
+[31m→ 97   await tx.store.create([39m
+[31mThe column `status` does not exist in the current database.[39m
+2026-03-05 02:51:29:5129 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 02:51:29:5129 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:51:33:5133 [31merror[39m: [31mInvalid credentials[39m
+2026-03-05 02:51:33:5133 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:51:36:5136 [31merror[39m: [31mInvalid credentials[39m
+2026-03-05 02:51:36:5136 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:52:21:5221 [31merror[39m: [31mInvalid credentials[39m
+2026-03-05 02:52:21:5221 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:56:19:5619 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 02:56:19:5619 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 02:56:22:5622 [31merror[39m: [31mInvalid credentials[39m
+2026-03-05 02:56:22:5622 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:10:53:1053 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:10:53:1053 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:14:19:1419 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:14:19:1419 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:14:25:1425 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:14:25:1425 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:14:26:1426 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:14:26:1426 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:14:39:1439 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:14:39:1439 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:14:40:1440 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:14:40:1440 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:57:54:5754 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:57:54:5754 [31merror[39m: [31mUnauthorized request[39m

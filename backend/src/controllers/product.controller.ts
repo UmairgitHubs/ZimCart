@@ -17,7 +17,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     costPrice, taxPercentage, sku, barcode, category,
     subCategory, inventory, status, isDeal, discountPercentage,
     weight, sales, variants
-  });
+  }, req.user?.id);
   
   if (!product) {
     throw new ApiError(500, "Failed to create product");
@@ -43,7 +43,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
     costPrice, taxPercentage, sku, barcode, category,
     subCategory, inventory, status, isDeal, discountPercentage,
     weight, sales, variants
-  });
+  }, req.user?.id);
   
   if (!product) {
     throw new ApiError(404, "Product not found or update failed");
@@ -60,7 +60,10 @@ export const getProducts = asyncHandler(async (req, res) => {
   const limit = parseInt(String(req.query.limit || '20')) || 20;
   const { search, category, status } = req.query as { search?: string, category?: string, status?: string };
   
-  const data = await productService.getProducts(page, limit, { search, category, status });
+  const data = await productService.getProducts(page, limit, { 
+    search, category, status, 
+    managerId: req.user?.id // Dashboard view: use logged in manager's context
+  });
 
   return res.status(200).json(
     new ApiResponse(200, {

@@ -44,26 +44,36 @@ export const getCategories = async (params: { search?: string; status?: string; 
       _count: {
         select: { products: true }
       },
+      children: {
+        include: {
+          _count: { select: { products: true } }
+        }
+      },
       parentCategory: { select: { id: true, name: true } },
     },
     orderBy: { displayOrder: 'asc' },
   });
 
   // Map to match frontend Category object
-  const mapped = categories.map(cat => ({
-    id: cat.id,
-    name: cat.name,
-    slug: cat.slug || cat.id,
-    description: cat.description || '',
-    image: cat.image,
-    productCount: cat._count.products,
-    status: cat.status as any,
-    parentCategoryId: cat.parentCategoryId || undefined,
-    parentCategory: cat.parentCategory?.name || undefined,
-    lastUpdated: cat.updatedAt ? cat.updatedAt.toISOString() : cat.createdAt.toISOString(),
-    displayOrder: cat.displayOrder,
-    isFeatured: cat.isFeatured,
-  }));
+  const mapped = categories.map(cat => {
+    // Aggregate recursive product count (direct + children) for a more professional dashboard feel
+    const childrenCount = cat.children?.reduce((sum, child) => sum + child._count.products, 0) || 0;
+    
+    return {
+      id: cat.id,
+      name: cat.name,
+      slug: cat.slug || cat.id,
+      description: cat.description || '',
+      image: cat.image,
+      productCount: cat._count.products + childrenCount,
+      status: cat.status as any,
+      parentCategoryId: cat.parentCategoryId || undefined,
+      parentCategory: cat.parentCategory?.name || undefined,
+      lastUpdated: cat.updatedAt ? cat.updatedAt.toISOString() : cat.createdAt.toISOString(),
+      displayOrder: cat.displayOrder,
+      isFeatured: cat.isFeatured,
+    };
+  });
 
   return {
     items: mapped,

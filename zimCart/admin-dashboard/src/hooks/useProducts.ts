@@ -23,6 +23,7 @@ export const useAddProduct = () => {
     mutationFn: (data: Partial<Product>) => productService.createProduct(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
   });
 };
@@ -34,6 +35,7 @@ export const useUpdateProduct = () => {
       productService.updateProduct(id, data),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       queryClient.invalidateQueries({ queryKey: ['product', variables.id] });
     },
   });
@@ -45,6 +47,7 @@ export const useDeleteProduct = () => {
     mutationFn: (id: string) => productService.deleteProduct(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
   });
 };

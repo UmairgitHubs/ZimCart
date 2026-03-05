@@ -8197,3 +8197,330 @@
 2026-03-03 05:05:42:542 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&status=In+Stock&search= 304 - - 197.048 ms[39m
 2026-03-03 05:05:44:544 [35mhttp[39m: [35mGET /api/v1/categories 200 2173 - 224.958 ms[39m
 2026-03-03 05:05:59:559 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 304 - - 106.424 ms[39m
+2026-03-03 21:17:16:1716 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-03 21:17:16:1716 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-03 21:17:16:1716 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-03 21:17:20:1720 [31merror[39m: [31mUnauthorized request[39m
+2026-03-03 21:17:20:1720 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 30.898 ms[39m
+2026-03-03 21:17:32:1732 [31merror[39m: [31mInvalid session or token expired[39m
+2026-03-03 21:17:32:1732 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 403 421 - 10032.127 ms[39m
+2026-03-03 21:17:32:1732 [31merror[39m: [31mConnection terminated due to connection timeout[39m
+2026-03-03 21:17:32:1732 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 1400 - 2524.055 ms[39m
+2026-03-03 21:17:37:1737 [31merror[39m: [31mConnection terminated due to connection timeout[39m
+2026-03-03 21:17:37:1737 [35mhttp[39m: [35mPOST /api/v1/auth/login 400 1400 - 2151.906 ms[39m
+2026-03-03 21:17:49:1749 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 515 - 3737.809 ms[39m
+2026-03-03 21:18:07:187 [35mhttp[39m: [35mGET /api/v1/inventory?search=&page=1&limit=10 304 - - 1110.582 ms[39m
+2026-03-03 21:18:18:1818 [35mhttp[39m: [35mGET /api/v1/categories 304 - - 1385.776 ms[39m
+2026-03-03 21:18:18:1818 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 304 - - 1539.607 ms[39m
+2026-03-03 21:18:29:1829 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 200 5382 - 218.213 ms[39m
+2026-03-03 21:19:33:1933 [35mhttp[39m: [35mPOST /api/v1/upload/multiple 200 198 - 2383.115 ms[39m
+2026-03-03 21:20:08:208 [35mhttp[39m: [35mPOST /api/v1/products 201 759 - 405.008 ms[39m
+2026-03-03 21:20:08:208 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 200 6429 - 189.698 ms[39m
+2026-03-03 21:20:15:2015 [35mhttp[39m: [35mGET /api/v1/categories 200 2173 - 642.030 ms[39m
+2026-03-03 21:20:15:2015 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 200 2173 - 641.737 ms[39m
+2026-03-03 21:20:21:2021 [35mhttp[39m: [35mGET /api/v1/auth/me 200 245 - 127.372 ms[39m
+2026-03-03 21:20:21:2021 [35mhttp[39m: [35mGET /api/v1/categories 304 - - 442.161 ms[39m
+2026-03-03 21:20:22:2022 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 304 - - 529.361 ms[39m
+2026-03-03 21:24:36:2436 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 304 - - 750.067 ms[39m
+2026-03-03 21:28:31:2831 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-03 21:28:31:2831 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-03 21:28:31:2831 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-03 21:28:44:2844 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-03 21:28:44:2844 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-03 21:28:44:2844 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-03 21:29:24:2924 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-03 21:29:24:2924 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-03 21:29:24:2924 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-03 21:30:25:3025 [35mhttp[39m: [35mGET /api/v1/categories 304 - - 2202.758 ms[39m
+2026-03-03 21:30:25:3025 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 304 - - 3469.221 ms[39m
+2026-03-03 21:31:07:317 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 304 - - 637.708 ms[39m
+2026-03-03 21:31:44:3144 [35mhttp[39m: [35mPOST /api/v1/upload/multiple 200 198 - 3348.976 ms[39m
+2026-03-03 21:32:13:3213 [35mhttp[39m: [35mPOST /api/v1/products 201 776 - 709.091 ms[39m
+2026-03-03 21:32:13:3213 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 200 7581 - 462.776 ms[39m
+2026-03-03 21:32:14:3214 [35mhttp[39m: [35mGET /api/v1/categories 200 2173 - 1322.504 ms[39m
+2026-03-03 21:32:18:3218 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 200 2173 - 745.701 ms[39m
+2026-03-03 21:32:49:3249 [31merror[39m: [31mUnauthorized request[39m
+2026-03-03 21:32:49:3249 [35mhttp[39m: [35mDELETE /api/v1/categories/be135d20-6b6e-41a8-9636-e185c68884d5 401 952 - 26.370 ms[39m
+2026-03-03 21:32:50:3250 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 267.840 ms[39m
+2026-03-03 21:32:50:3250 [35mhttp[39m: [35mDELETE /api/v1/categories/be135d20-6b6e-41a8-9636-e185c68884d5 200 85 - 250.830 ms[39m
+2026-03-03 21:32:51:3251 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 200 1823 - 706.023 ms[39m
+2026-03-03 21:32:51:3251 [35mhttp[39m: [35mGET /api/v1/categories 200 1823 - 892.943 ms[39m
+2026-03-03 21:33:27:3327 [35mhttp[39m: [35mPOST /api/v1/upload/multiple 200 198 - 4480.751 ms[39m
+2026-03-03 21:33:54:3354 [35mhttp[39m: [35mPOST /api/v1/products 201 778 - 480.748 ms[39m
+2026-03-03 21:33:55:3355 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 200 8735 - 407.955 ms[39m
+2026-03-03 21:33:55:3355 [35mhttp[39m: [35mGET /api/v1/categories 200 1823 - 1225.046 ms[39m
+2026-03-03 21:33:59:3359 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 200 1823 - 535.613 ms[39m
+2026-03-03 21:41:58:4158 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 304 - - 787.959 ms[39m
+2026-03-03 21:41:59:4159 [35mhttp[39m: [35mGET /api/v1/categories 304 - - 978.518 ms[39m
+2026-03-03 21:42:00:420 [35mhttp[39m: [35mGET /api/v1/inventory?search=&page=1&limit=10 200 4111 - 475.115 ms[39m
+2026-03-03 21:50:06:506 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 404 166 - 1.864 ms[39m
+2026-03-03 21:51:57:5157 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 404 166 - 0.638 ms[39m
+2026-03-03 21:52:00:520 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 1.290 ms[39m
+2026-03-03 21:52:01:521 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.626 ms[39m
+2026-03-03 21:52:03:523 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.505 ms[39m
+2026-03-03 21:52:07:527 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.732 ms[39m
+2026-03-03 21:52:32:5232 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.710 ms[39m
+2026-03-03 21:52:33:5233 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.667 ms[39m
+2026-03-03 21:52:35:5235 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.697 ms[39m
+2026-03-03 21:52:39:5239 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.579 ms[39m
+2026-03-03 21:52:53:5253 [31merror[39m: [31mInvalid credentials[39m
+2026-03-03 21:52:53:5253 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 387 - 194.534 ms[39m
+2026-03-03 21:53:26:5326 [31merror[39m: [31mValidation Error: body.termsConsent: Invalid input: expected boolean, received undefined, body.privacyConsent: Invalid input: expected boolean, received undefined[39m
+2026-03-03 21:53:26:5326 [35mhttp[39m: [35mPOST /api/v1/auth/register 400 588 - 5.219 ms[39m
+2026-03-03 22:02:36:236 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-03 22:02:36:236 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-03 22:02:36:236 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-03 22:03:00:30 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-03 22:03:00:30 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-03 22:03:00:30 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-03 22:04:52:452 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-03 22:04:52:452 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-03 22:04:52:452 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-03 22:05:57:557 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-03 22:05:57:557 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-03 22:05:57:557 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-03 22:27:03:273 [35mhttp[39m: [35mPOST /api/v1/auth/register 201 1082 - 1461.454 ms[39m
+2026-03-03 22:27:04:274 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 3.510 ms[39m
+2026-03-03 22:27:04:274 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 404 166 - 3.486 ms[39m
+2026-03-03 22:27:04:274 [35mhttp[39m: [35mPOST /api/v1/customer/push-token 404 166 - 3.062 ms[39m
+2026-03-03 22:27:05:275 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.790 ms[39m
+2026-03-03 22:27:07:277 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.515 ms[39m
+2026-03-03 22:27:11:2711 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.464 ms[39m
+2026-03-03 22:33:47:3347 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 512 - 1153.964 ms[39m
+2026-03-03 22:33:51:3351 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 1.296 ms[39m
+2026-03-03 22:33:53:3353 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.573 ms[39m
+2026-03-03 22:33:55:3355 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.865 ms[39m
+2026-03-03 22:33:59:3359 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.618 ms[39m
+2026-03-03 22:34:18:3418 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.614 ms[39m
+2026-03-03 22:34:19:3419 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.752 ms[39m
+2026-03-03 22:34:21:3421 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.559 ms[39m
+2026-03-03 22:34:25:3425 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 1.036 ms[39m
+2026-03-03 22:45:49:4549 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 1.061 ms[39m
+2026-03-03 22:45:50:4550 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.834 ms[39m
+2026-03-03 22:45:52:4552 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.534 ms[39m
+2026-03-03 22:45:56:4556 [35mhttp[39m: [35mGET /api/v1/customer/profile 404 162 - 0.872 ms[39m
+2026-03-03 22:48:51:4851 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-03 22:48:51:4851 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-03 22:48:51:4851 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-03 22:49:16:4916 [31merror[39m: [31mUnauthorized request[39m
+2026-03-03 22:49:16:4916 [35mhttp[39m: [35mGET /api/v1/customer/profile 401 952 - 20.535 ms[39m
+2026-03-03 22:49:17:4917 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 923.553 ms[39m
+2026-03-03 22:49:18:4918 [35mhttp[39m: [35mGET /api/v1/customer/profile 200 1213 - 360.387 ms[39m
+2026-03-03 22:49:45:4945 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 88.417 ms[39m
+2026-03-03 22:49:50:4950 [35mhttp[39m: [35mGET /api/v1/customer/profile 304 - - 52.905 ms[39m
+2026-03-03 22:50:00:500 [35mhttp[39m: [35mGET /api/v1/customer/orders?status=active 304 - - 55.423 ms[39m
+2026-03-03 22:50:47:5047 [35mhttp[39m: [35mGET /api/v1/customer/notifications 200 1237 - 83.200 ms[39m
+2026-03-03 22:58:37:5837 [35mhttp[39m: [35mGET /api/v1/customers/vouchers 200 85 - 377.916 ms[39m
+2026-03-04 01:14:00:140 [31merror[39m: [31mUnauthorized request[39m
+2026-03-04 01:14:00:140 [35mhttp[39m: [35mGET /api/v1/customers/profile 401 952 - 108.273 ms[39m
+2026-03-04 01:14:00:140 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 608.005 ms[39m
+2026-03-04 01:14:01:141 [35mhttp[39m: [35mGET /api/v1/customers/profile 200 1213 - 180.357 ms[39m
+2026-03-04 01:25:18:2518 [35mhttp[39m: [35mGET /api/v1/customers/profile 304 - - 670.505 ms[39m
+2026-03-04 03:25:06:256 [31merror[39m: [31mUnauthorized request[39m
+2026-03-04 03:25:07:257 [35mhttp[39m: [35mGET /api/v1/customers/vouchers 401 952 - 105.317 ms[39m
+2026-03-04 03:25:07:257 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 678.390 ms[39m
+2026-03-04 03:25:08:258 [35mhttp[39m: [35mGET /api/v1/customers/vouchers 304 - - 66.549 ms[39m
+2026-03-04 03:34:07:347 [35mhttp[39m: [35mGET /api/v1/customers/notifications 200 1237 - 180.445 ms[39m
+2026-03-04 03:39:25:3925 [35mhttp[39m: [35mGET /api/v1/customers/vouchers 304 - - 200.694 ms[39m
+2026-03-04 03:52:43:5243 [31merror[39m: [31mUnauthorized request[39m
+2026-03-04 03:52:43:5243 [35mhttp[39m: [35mGET /api/v1/customers/profile 401 952 - 18.441 ms[39m
+2026-03-04 03:52:43:5243 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 420.538 ms[39m
+2026-03-04 03:52:44:5244 [35mhttp[39m: [35mGET /api/v1/customers/profile 200 1213 - 396.527 ms[39m
+2026-03-04 03:52:46:5246 [35mhttp[39m: [35mGET /api/v1/customers/profile 304 - - 42.961 ms[39m
+2026-03-04 03:52:49:5249 [35mhttp[39m: [35mGET /api/v1/customers/orders?status=active 200 83 - 187.784 ms[39m
+2026-03-04 03:52:51:5251 [35mhttp[39m: [35mGET /api/v1/customers/addresses 200 86 - 65.339 ms[39m
+2026-03-04 03:53:01:531 [35mhttp[39m: [35mPOST /api/v1/customers/addresses 201 329 - 232.487 ms[39m
+2026-03-04 03:53:01:531 [35mhttp[39m: [35mGET /api/v1/customers/addresses 200 335 - 21.512 ms[39m
+2026-03-04 03:53:10:5310 [35mhttp[39m: [35mGET /api/v1/customers/notifications 304 - - 40.570 ms[39m
+2026-03-04 03:53:11:5311 [35mhttp[39m: [35mPATCH /api/v1/customers/notifications/377f44d6-740d-4214-af5c-7bdf433b63a2/read 200 461 - 38.754 ms[39m
+2026-03-04 03:53:11:5311 [35mhttp[39m: [35mGET /api/v1/customers/notifications 200 1236 - 23.912 ms[39m
+2026-03-04 03:53:13:5313 [35mhttp[39m: [35mGET /api/v1/customers/notifications 304 - - 11.822 ms[39m
+2026-03-04 03:53:19:5319 [35mhttp[39m: [35mGET /api/v1/customers/profile 304 - - 59.120 ms[39m
+2026-03-04 03:53:22:5322 [35mhttp[39m: [35mGET /api/v1/help/faqs 200 81 - 67.379 ms[39m
+2026-03-04 03:53:24:5324 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 4.357 ms[39m
+2026-03-04 03:53:25:5325 [35mhttp[39m: [35mGET /api/v1/help/faqs 304 - - 4.518 ms[39m
+2026-03-04 21:06:58:658 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-04 21:06:58:658 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-04 21:06:58:658 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-04 23:00:59:059 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-04 23:00:59:059 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-04 23:00:59:059 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-04 23:10:53:1053 [31merror[39m: [31mUnauthorized request[39m
+2026-03-04 23:10:53:1053 [35mhttp[39m: [35mGET /api/v1/customers/profile 401 952 - 14.632 ms[39m
+2026-03-04 23:10:55:1055 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 1269.259 ms[39m
+2026-03-04 23:10:55:1055 [35mhttp[39m: [35mGET /api/v1/customers/profile 200 1213 - 168.305 ms[39m
+2026-03-05 01:15:21:1521 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-05 01:15:21:1521 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-05 01:15:21:1521 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-05 01:24:24:2424 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 01:24:24:2424 [35mhttp[39m: [35mGET /api/v1/customers/profile 401 952 - 9.606 ms[39m
+2026-03-05 01:24:26:2426 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 1567.453 ms[39m
+2026-03-05 01:24:27:2427 [35mhttp[39m: [35mGET /api/v1/customers/profile 200 1213 - 386.405 ms[39m
+2026-03-05 01:24:55:2455 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 512 - 310.876 ms[39m
+2026-03-05 01:24:56:2456 [35mhttp[39m: [35mGET /api/v1/customers/profile 200 1213 - 34.773 ms[39m
+2026-03-05 01:24:58:2458 [35mhttp[39m: [35mGET /api/v1/customers/profile 304 - - 19.935 ms[39m
+2026-03-05 01:26:28:2628 [35mhttp[39m: [35mGET /api/v1/customers/profile 304 - - 269.206 ms[39m
+2026-03-05 01:27:02:272 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 512 - 313.765 ms[39m
+2026-03-05 01:27:03:273 [35mhttp[39m: [35mGET /api/v1/customers/profile 200 1213 - 29.486 ms[39m
+2026-03-05 01:37:41:3741 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 01:37:41:3741 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 64.613 ms[39m
+2026-03-05 01:37:43:3743 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 2429.291 ms[39m
+2026-03-05 01:37:45:3745 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 249.088 ms[39m
+2026-03-05 01:59:49:5949 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-05 01:59:49:5949 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-05 01:59:49:5949 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-05 02:01:26:126 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 02:01:26:126 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 13.220 ms[39m
+2026-03-05 02:01:27:127 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 927.701 ms[39m
+2026-03-05 02:01:27:127 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 14.592 ms[39m
+2026-03-05 02:03:46:346 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 437.225 ms[39m
+2026-03-05 02:03:48:348 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 02:03:48:348 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 7.504 ms[39m
+2026-03-05 02:03:48:348 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:03:48:348 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 9.581 ms[39m
+2026-03-05 02:03:51:351 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 515 - 683.492 ms[39m
+2026-03-05 02:03:56:356 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 19.047 ms[39m
+2026-03-05 02:03:57:357 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 02:03:57:357 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 29.580 ms[39m
+2026-03-05 02:03:57:357 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:03:57:357 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 1.977 ms[39m
+2026-03-05 02:19:11:1911 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-05 02:19:11:1911 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-05 02:19:11:1911 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-05 02:19:42:1942 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-05 02:19:42:1942 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-05 02:19:42:1942 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-05 02:21:48:2148 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-05 02:21:48:2148 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-05 02:21:48:2148 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-05 02:22:23:2223 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-05 02:22:23:2223 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-05 02:22:23:2223 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-05 02:22:34:2234 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-05 02:22:34:2234 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-05 02:22:34:2234 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-05 02:28:21:2821 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-05 02:28:21:2821 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-05 02:28:21:2821 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-05 02:28:55:2855 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-05 02:28:55:2855 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-05 02:28:55:2855 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-05 02:43:56:4356 [31merror[39m: [31m[39m
+[31mInvalid `tx.store.create()` invocation in[39m
+[31mD:\ZimCart\backend\src\services\auth.service.ts:97:22[39m
+
+[31m  94 [39m
+[31m  95 // 2. If the user is a STORE_MANAGER, automatically create their Mart[39m
+[31m  96 if (finalRole === 'STORE_MANAGER') {[39m
+[31m→ 97   await tx.store.create([39m
+[31mThe column `status` does not exist in the current database.[39m
+2026-03-05 02:43:56:4356 [35mhttp[39m: [35mPOST /api/v1/auth/register 400 1735 - 1402.160 ms[39m
+2026-03-05 02:49:34:4934 [35mhttp[39m: [35mPOST /api/v1/auth/register 201 1110 - 319.209 ms[39m
+2026-03-05 02:51:28:5128 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 167.600 ms[39m
+2026-03-05 02:51:29:5129 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 02:51:29:5129 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 8.901 ms[39m
+2026-03-05 02:51:29:5129 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:51:29:5129 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 27.820 ms[39m
+2026-03-05 02:51:33:5133 [31merror[39m: [31mInvalid credentials[39m
+2026-03-05 02:51:33:5133 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 387 - 10.984 ms[39m
+2026-03-05 02:51:33:5133 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:51:33:5133 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 1.408 ms[39m
+2026-03-05 02:51:36:5136 [31merror[39m: [31mInvalid credentials[39m
+2026-03-05 02:51:36:5136 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 387 - 8.264 ms[39m
+2026-03-05 02:51:36:5136 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:51:36:5136 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 5.247 ms[39m
+2026-03-05 02:52:21:5221 [31merror[39m: [31mInvalid credentials[39m
+2026-03-05 02:52:21:5221 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 387 - 174.337 ms[39m
+2026-03-05 02:52:21:5221 [31merror[39m: [31mRefresh token is missing[39m
+2026-03-05 02:52:21:5221 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 651 - 5.555 ms[39m
+2026-03-05 02:52:28:5228 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 524 - 331.952 ms[39m
+2026-03-05 02:55:01:551 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-03-05 02:55:01:551 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-03-05 02:55:01:551 [32minfo[39m: [32mEnvironment: development[39m
+2026-03-05 02:55:55:5555 [35mhttp[39m: [35mGET /api/v1/auth/me 200 253 - 1705.686 ms[39m
+2026-03-05 02:55:55:5555 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 200 142 - 162.121 ms[39m
+2026-03-05 02:56:18:5618 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 234.744 ms[39m
+2026-03-05 02:56:19:5619 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 02:56:19:5619 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 18.401 ms[39m
+2026-03-05 02:56:19:5619 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 02:56:19:5619 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 641 - 32.341 ms[39m
+2026-03-05 02:56:22:5622 [31merror[39m: [31mInvalid credentials[39m
+2026-03-05 02:56:22:5622 [35mhttp[39m: [35mPOST /api/v1/auth/login 401 387 - 7.341 ms[39m
+2026-03-05 02:56:22:5622 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 02:56:22:5622 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 641 - 2.379 ms[39m
+2026-03-05 02:56:27:5627 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 524 - 296.902 ms[39m
+2026-03-05 02:56:34:5634 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 304 - - 194.141 ms[39m
+2026-03-05 02:56:37:5637 [35mhttp[39m: [35mGET /api/v1/categories 200 152 - 263.520 ms[39m
+2026-03-05 02:57:15:5715 [35mhttp[39m: [35mPOST /api/v1/upload/multiple 200 198 - 3035.134 ms[39m
+2026-03-05 02:58:42:5842 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 200 152 - 776.931 ms[39m
+2026-03-05 02:58:42:5842 [35mhttp[39m: [35mGET /api/v1/categories 304 - - 1066.471 ms[39m
+2026-03-05 03:00:45:045 [35mhttp[39m: [35mPOST /api/v1/upload/single 200 194 - 3730.247 ms[39m
+2026-03-05 03:00:50:050 [35mhttp[39m: [35mPOST /api/v1/categories 201 525 - 316.861 ms[39m
+2026-03-05 03:00:51:051 [35mhttp[39m: [35mGET /api/v1/categories 200 501 - 279.125 ms[39m
+2026-03-05 03:00:51:051 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 200 501 - 428.777 ms[39m
+2026-03-05 03:00:55:055 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 304 - - 75.091 ms[39m
+2026-03-05 03:01:31:131 [35mhttp[39m: [35mPOST /api/v1/upload/multiple 200 198 - 2448.445 ms[39m
+2026-03-05 03:01:59:159 [35mhttp[39m: [35mPOST /api/v1/products 201 767 - 304.202 ms[39m
+2026-03-05 03:01:59:159 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 200 1281 - 120.680 ms[39m
+2026-03-05 03:01:59:159 [35mhttp[39m: [35mGET /api/v1/categories 200 501 - 257.134 ms[39m
+2026-03-05 03:02:06:26 [35mhttp[39m: [35mGET /api/v1/products/fafa389d-61c6-4f15-98c6-315a6ebdf6ce 200 1470 - 16.187 ms[39m
+2026-03-05 03:02:32:232 [35mhttp[39m: [35mPATCH /api/v1/products/fafa389d-61c6-4f15-98c6-315a6ebdf6ce 200 767 - 131.034 ms[39m
+2026-03-05 03:02:32:232 [35mhttp[39m: [35mGET /api/v1/products/fafa389d-61c6-4f15-98c6-315a6ebdf6ce 200 1727 - 183.926 ms[39m
+2026-03-05 03:02:32:232 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 200 1281 - 208.739 ms[39m
+2026-03-05 03:02:32:232 [35mhttp[39m: [35mGET /api/v1/categories 304 - - 266.391 ms[39m
+2026-03-05 03:02:37:237 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 200 501 - 472.468 ms[39m
+2026-03-05 03:04:06:46 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 304 - - 411.320 ms[39m
+2026-03-05 03:04:53:453 [35mhttp[39m: [35mGET /api/v1/inventory?search=&page=1&limit=10 200 727 - 659.678 ms[39m
+2026-03-05 03:06:02:62 [35mhttp[39m: [35mGET /api/v1/categories 304 - - 519.336 ms[39m
+2026-03-05 03:06:02:62 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 304 - - 519.860 ms[39m
+2026-03-05 03:06:04:64 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 304 - - 59.958 ms[39m
+2026-03-05 03:08:11:811 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 304 - - 205.826 ms[39m
+2026-03-05 03:08:14:814 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 304 - - 625.186 ms[39m
+2026-03-05 03:08:14:814 [35mhttp[39m: [35mGET /api/v1/categories 304 - - 639.880 ms[39m
+2026-03-05 03:08:15:815 [35mhttp[39m: [35mGET /api/v1/inventory?search=&page=1&limit=10 304 - - 45.159 ms[39m
+2026-03-05 03:10:43:1043 [35mhttp[39m: [35mGET /api/v1/auth/me 200 253 - 617.304 ms[39m
+2026-03-05 03:10:44:1044 [35mhttp[39m: [35mGET /api/v1/inventory?search=&page=1&limit=10 304 - - 196.935 ms[39m
+2026-03-05 03:10:51:1051 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 4002.778 ms[39m
+2026-03-05 03:10:53:1053 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:10:53:1053 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 8.627 ms[39m
+2026-03-05 03:10:53:1053 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:10:53:1053 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 641 - 4.737 ms[39m
+2026-03-05 03:11:21:1121 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 524 - 344.449 ms[39m
+2026-03-05 03:11:31:1131 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 304 - - 115.373 ms[39m
+2026-03-05 03:11:36:1136 [35mhttp[39m: [35mGET /api/v1/categories 304 - - 350.796 ms[39m
+2026-03-05 03:11:36:1136 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 304 - - 318.396 ms[39m
+2026-03-05 03:13:17:1317 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 304 - - 284.041 ms[39m
+2026-03-05 03:13:22:1322 [35mhttp[39m: [35mGET /api/v1/inventory?search=&page=1&limit=10 304 - - 221.301 ms[39m
+2026-03-05 03:13:23:1323 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 304 - - 226.172 ms[39m
+2026-03-05 03:13:23:1323 [35mhttp[39m: [35mGET /api/v1/categories 304 - - 262.215 ms[39m
+2026-03-05 03:14:17:1417 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 116.441 ms[39m
+2026-03-05 03:14:19:1419 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:14:19:1419 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 59.038 ms[39m
+2026-03-05 03:14:19:1419 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:14:19:1419 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 641 - 50.380 ms[39m
+2026-03-05 03:14:25:1425 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:14:25:1425 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 15.452 ms[39m
+2026-03-05 03:14:25:1425 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:14:25:1425 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 641 - 42.866 ms[39m
+2026-03-05 03:14:26:1426 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:14:26:1426 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 33.090 ms[39m
+2026-03-05 03:14:26:1426 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:14:26:1426 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 641 - 8.545 ms[39m
+2026-03-05 03:14:39:1439 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:14:39:1439 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 36.357 ms[39m
+2026-03-05 03:14:39:1439 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:14:39:1439 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 641 - 11.374 ms[39m
+2026-03-05 03:14:40:1440 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:14:40:1440 [35mhttp[39m: [35mGET /api/v1/auth/me 401 961 - 15.435 ms[39m
+2026-03-05 03:14:40:1440 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-05 03:14:40:1440 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 641 - 13.114 ms[39m
+2026-03-05 03:14:44:1444 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 524 - 493.926 ms[39m
+2026-03-05 03:14:56:1456 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 304 - - 442.067 ms[39m
+2026-03-05 03:57:54:5754 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:57:54:5754 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 401 952 - 86.543 ms[39m
+2026-03-05 03:57:54:5754 [31merror[39m: [31mUnauthorized request[39m
+2026-03-05 03:57:54:5754 [35mhttp[39m: [35mGET /api/v1/categories 401 952 - 9.323 ms[39m
+2026-03-05 03:57:55:5755 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 533.598 ms[39m
+2026-03-05 03:57:55:5755 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 84 - 426.484 ms[39m
+2026-03-05 03:57:55:5755 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 304 - - 397.117 ms[39m
+2026-03-05 03:57:55:5755 [35mhttp[39m: [35mGET /api/v1/categories 304 - - 448.323 ms[39m

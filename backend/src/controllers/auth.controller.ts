@@ -4,6 +4,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
 import { getDeviceInfo } from '../utils/device.utils.js';
+import logger from '../utils/logger.js';
 
 const cookieOptions = {
     httpOnly: true,
@@ -68,7 +69,8 @@ export const refresh = asyncHandler(async (req, res) => {
     const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
     if (!incomingRefreshToken) {
-        throw new ApiError(401, "Refresh token is missing");
+        console.log("Refresh token is missing")
+        throw new ApiError(401, "Invalid Credentials");
     }
 
     const data = await authService.refreshTokens(incomingRefreshToken);

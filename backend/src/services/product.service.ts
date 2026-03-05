@@ -3,22 +3,61 @@ import type { ProductInput } from '../validators/product.schema.js';
 import logger from '../utils/logger.js';
 import { ApiError } from '../utils/ApiError.js';
 
-const DEFAULT_STORE_ID = 'f8d7b3a9-1c9d-4e2b-8a1d-9c3f4e5d6a7b';
+const getEffectiveStoreId = async (providedId?: string, managerId?: string) => {
+  if (providedId) return providedId;
+  
+  // High-fidelity resolution for STORE_MANAGERS: Find their specific linked store
+  if (managerId) {
+    const store = await prisma.store.findFirst({
+      where: { managerId }
+    });
+    if (store) return store.id;
+  }
 
-export const createProduct = async (data: ProductInput) => {
+  // Fallback for system-wide operations (Beta/Admin mode)
+  const store = await prisma.store.findFirst();
+  if (!store) throw new ApiError(400, "Store context not found. Please create a store first.");
+  return store.id;
+};
+
+export const createProduct = async (data: ProductInput, managerId?: string) => {
   try {
-    let category = await prisma.category.findFirst({
-      where: { name: data.category, storeId: DEFAULT_STORE_ID }
+    const storeId = await getEffectiveStoreId(undefined, managerId);
+
+    // 1. Resolve Hierarchy: Find the most specific category
+    let targetCategoryId: string;
+
+    // First find parent category
+    let parentCategory = await prisma.category.findFirst({
+      where: { name: data.category, storeId }
     });
 
-    if (!category) {
-      category = await prisma.category.create({
+    if (!parentCategory) {
+      parentCategory = await prisma.category.create({
         data: {
           name: data.category,
-          storeId: DEFAULT_STORE_ID,
-          image: data.images[0] || null
+          storeId,
+          image: data.images[0] || null,
+          status: 'Published'
         }
       });
+    }
+
+    targetCategoryId = parentCategory.id;
+
+    // Check if subCategory is actually a real Category in DB
+    if (data.subCategory) {
+      let subCategory = await prisma.category.findFirst({
+        where: { 
+          name: data.subCategory, 
+          parentCategoryId: parentCategory.id,
+          storeId
+        }
+      });
+
+      if (subCategory) {
+        targetCategoryId = subCategory.id;
+      }
     }
 
     const product = await prisma.product.create({
@@ -41,8 +80,8 @@ export const createProduct = async (data: ProductInput) => {
         weight: data.weight,
         sales: data.sales,
         variants: data.variants as any,
-        categoryId: category.id,
-        storeId: DEFAULT_STORE_ID,
+        categoryId: targetCategoryId,
+        storeId,
         history: {
           create: {
             event: "Protocol Initiated",
@@ -62,25 +101,32 @@ export const createProduct = async (data: ProductInput) => {
   }
 };
 
-export const updateProduct = async (id: string, data: Partial<ProductInput>) => {
+export const updateProduct = async (id: string, data: Partial<ProductInput>, managerId?: string) => {
   try {
-    let categoryId: string | undefined;
+    const storeId = await getEffectiveStoreId(undefined, managerId);
+    let targetCategoryId: string | undefined;
 
-    // 1. Resolve Category if provided
+    // 1. Resolve Hierarchy if category changed
     if (data.category) {
-      let category = await prisma.category.findFirst({
-        where: { name: data.category, storeId: DEFAULT_STORE_ID }
+      let parentCategory = await prisma.category.findFirst({
+        where: { name: data.category, storeId }
       });
 
-      if (!category) {
-        category = await prisma.category.create({
-          data: {
-            name: data.category,
-            storeId: DEFAULT_STORE_ID
-          }
+      if (!parentCategory) {
+        parentCategory = await prisma.category.create({
+          data: { name: data.category, storeId, status: 'Published' }
         });
       }
-      categoryId = category.id;
+      
+      targetCategoryId = parentCategory.id;
+
+      // Handle sub-category if provided
+      if (data.subCategory) {
+        const subCat = await prisma.category.findFirst({
+          where: { name: data.subCategory, parentCategoryId: parentCategory.id, storeId }
+        });
+        if (subCat) targetCategoryId = subCat.id;
+      }
     }
 
     // 2. Build sanitized update payload (Skip 'category' string, use 'categoryId')
@@ -90,8 +136,8 @@ export const updateProduct = async (id: string, data: Partial<ProductInput>) => 
       Object.entries(rest).filter(([_, v]) => v !== undefined)
     );
 
-    if (categoryId) {
-      updateData.categoryId = categoryId;
+    if (targetCategoryId) {
+      updateData.categoryId = targetCategoryId;
     }
 
     // 3. Get old data for history comparison
@@ -101,7 +147,7 @@ export const updateProduct = async (id: string, data: Partial<ProductInput>) => 
     const product = await prisma.product.update({
       where: { 
         id,
-        storeId: DEFAULT_STORE_ID 
+        storeId 
       },
       data: updateData
     });
@@ -137,10 +183,11 @@ export const updateProduct = async (id: string, data: Partial<ProductInput>) => 
   }
 };
 
-export const getProducts = async (page: number = 1, limit: number = 20, filters?: { search?: string | undefined; category?: string | undefined; status?: string | undefined }) => {
+export const getProducts = async (page: number = 1, limit: number = 20, filters?: { search?: string | undefined; category?: string | undefined; status?: string | undefined; storeId?: string; managerId?: string | undefined }) => {
   const skip = (page - 1) * limit;
+  const storeId = await getEffectiveStoreId(filters?.storeId, filters?.managerId);
   
-  const where: any = { storeId: DEFAULT_STORE_ID };
+  const where: any = { storeId };
   
   if (filters?.status && filters.status !== 'All') {
     where.status = filters.status;

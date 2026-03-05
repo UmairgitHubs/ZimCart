@@ -42,6 +42,8 @@ model User {
   twoFactorCode          String?
   twoFactorExpires       DateTime?
   
+  managedStore           Store?
+  
   // Notification Tokens
   pushToken              String?  @unique // Primary push token
   
@@ -164,11 +166,26 @@ model Store { // Mart
   deliveryTime String?   // "30-45 min"
   minOrder     Float     @default(0)
   deliveryFee  Float     @default(0)
-  isActive     Boolean   @default(true)
+  isActive     Boolean   @default(true) 
+  
+  // Real-time Operational Logic
+  status       StoreStatus @default(OPEN)
+  openingHours Json?       // Format: { monday: { open: "09:00", close: "22:00", closed: false }, ... }
   
   categories   Category[]
   products     Product[]
   orders       Order[]
+
+  // Multi-tenancy Isolation
+  managerId    String?    @unique
+  manager      User?      @relation(fields: [managerId], references: [id])
+}
+
+enum StoreStatus {
+  OPEN
+  CLOSED      // Manually closed by manager
+  BUSY        // High order volume
+  HIDDEN      // Under maintenance or review
 }
 
 model Category {

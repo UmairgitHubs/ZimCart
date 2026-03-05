@@ -24,6 +24,21 @@ import PremiumScreen from '@/screens/customer/PremiumScreen';
 import OrdersScreen from '@/screens/customer/OrdersScreen';
 import VouchersScreen from '@/screens/customer/VouchersScreen';
 import FavouritesScreen from '@/screens/customer/FavouritesScreen';
+import OffersScreen from '@/screens/customer/OffersScreen';
+import MartsScreen from '@/screens/customer/MartsScreen';
+import NewInScreen from '@/screens/customer/NewInScreen';
+import PickupScreen from '@/screens/customer/PickupScreen';
+import TechScreen from '@/screens/customer/TechScreen';
+import FashionScreen from '@/screens/customer/FashionScreen';
+import BeautyScreen from '@/screens/customer/BeautyScreen';
+import HomeDecorScreen from '@/screens/customer/HomeDecorScreen';
+import TechSaleScreen from '@/screens/customer/TechSaleScreen';
+import GroceryBundleScreen from '@/screens/customer/GroceryBundleScreen';
+import FashionWeekScreen from '@/screens/customer/FashionWeekScreen';
+import StoreDetailScreen from '@/screens/customer/StoreDetailScreen';
+import CategoryDetailScreen from '@/screens/customer/CategoryDetailScreen';
+import ProductDetailScreen from '@/screens/customer/ProductDetailScreen';
+import PetCareScreen from '@/screens/customer/PetCareScreen';
 
 const Stack = createStackNavigator();
 
@@ -54,6 +69,21 @@ export default function CustomerNavigator() {
       <Stack.Screen name="Orders" component={OrdersScreen} />
       <Stack.Screen name="Vouchers" component={VouchersScreen} />
       <Stack.Screen name="Favourites" component={FavouritesScreen} />
+      <Stack.Screen name="Offers" component={OffersScreen} />
+      <Stack.Screen name="Marts" component={MartsScreen} />
+      <Stack.Screen name="NewIn" component={NewInScreen} />
+      <Stack.Screen name="Pickup" component={PickupScreen} />
+      <Stack.Screen name="Tech" component={TechScreen} />
+      <Stack.Screen name="Fashion" component={FashionScreen} />
+      <Stack.Screen name="Beauty" component={BeautyScreen} />
+      <Stack.Screen name="HomeDecor" component={HomeDecorScreen} />
+      <Stack.Screen name="TechSale" component={TechSaleScreen} />
+      <Stack.Screen name="GroceryBundle" component={GroceryBundleScreen} />
+      <Stack.Screen name="FashionWeek" component={FashionWeekScreen} />
+      <Stack.Screen name="StoreDetail" component={StoreDetailScreen} />
+      <Stack.Screen name="CategoryDetail" component={CategoryDetailScreen} />
+      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+      <Stack.Screen name="PetCare" component={PetCareScreen} />
     </Stack.Navigator>
   );
 }

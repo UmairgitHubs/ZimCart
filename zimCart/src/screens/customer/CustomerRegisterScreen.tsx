@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Image, Alert, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, FieldValues } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, RegisterFormData } from '@/schemas/auth.schema';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { parseApiError } from '@/utils/errorUtils';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 // Simplified type for navigation prop
 type AuthStackParamList = {
@@ -34,6 +35,9 @@ export default function CustomerRegisterScreen() {
             email: '',
             password: '',
             confirmPassword: '',
+            termsConsent: false,
+            privacyConsent: false,
+            role: 'CUSTOMER',
         }
     });
 
@@ -63,16 +67,24 @@ export default function CustomerRegisterScreen() {
     return (
         <SafeAreaView className="flex-1 bg-white">
             <StatusBar style="dark" />
-            <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 100 }}>
-                
-                {/* Header / Logo Area */}
-                <View className="items-center mb-10 mt-6">
-                    <View className="w-20 h-20 bg-green-100 rounded-full items-center justify-center mb-4">
-                        <MaterialCommunityIcons name="account-plus" size={40} color="#2e7d32" />
+            <KeyboardAwareScrollView
+                style={{ flex: 1 }}
+                contentContainerStyle={{ flexGrow: 1, padding: 24, paddingBottom: 60 }}
+                showsVerticalScrollIndicator={false}
+                enableOnAndroid
+                keyboardShouldPersistTaps="handled"
+                extraScrollHeight={80}
+            >
+                <View className="w-full max-w-[450px] self-center">
+                    
+                    {/* Header / Logo Area */}
+                    <View className="items-center mb-10 mt-6">
+                        <View className="w-20 h-20 bg-green-100 rounded-full items-center justify-center mb-4 shadow-sm shadow-green-200">
+                            <MaterialCommunityIcons name="account-plus" size={40} color="#2e7d32" />
+                        </View>
+                        <Text className="text-3xl font-bold text-gray-900 tracking-tight">Create Account</Text>
+                        <Text className="text-gray-500 mt-2 text-center font-medium">Join ZimCart for exclusive deals</Text>
                     </View>
-                    <Text className="text-3xl font-bold text-gray-900">Create Account</Text>
-                    <Text className="text-gray-500 mt-2 text-center">Join ZimCart for exclusive deals</Text>
-                </View>
 
                 {/* API Error Display */}
                 {apiError && (
@@ -96,7 +108,7 @@ export default function CustomerRegisterScreen() {
                                     <MaterialCommunityIcons name="account-outline" size={20} color={errors.name ? "#EF4444" : "#9CA3AF"} />
                                     <TextInput
                                         className="flex-1 ml-3 text-gray-900 font-medium text-base h-full"
-                                        placeholder="John Doe"
+                                        placeholder="Enter your name"
                                         placeholderTextColor="#9CA3AF"
                                         onBlur={onBlur}
                                         onChangeText={onChange}
@@ -106,7 +118,7 @@ export default function CustomerRegisterScreen() {
                                 </View>
                             )}
                         />
-                        {errors.name && <Text className="text-red-500 text-xs mt-1 ml-1">{errors.name.message}</Text>}
+                        {errors.name && <Text className="text-red-500 text-xs mt-1 ml-1 font-bold">{errors.name.message}</Text>}
                     </View>
 
                     {/* Email Input */}
@@ -131,7 +143,7 @@ export default function CustomerRegisterScreen() {
                                 </View>
                             )}
                         />
-                        {errors.email && <Text className="text-red-500 text-xs mt-1 ml-1">{errors.email.message}</Text>}
+                        {errors.email && <Text className="text-red-500 text-xs mt-1 ml-1 font-bold">{errors.email.message}</Text>}
                     </View>
 
                     {/* Password Input */}
@@ -162,7 +174,7 @@ export default function CustomerRegisterScreen() {
                                 </View>
                             )}
                         />
-                        {errors.password && <Text className="text-red-500 text-xs mt-1 ml-1">{errors.password.message}</Text>}
+                        {errors.password && <Text className="text-red-500 text-xs mt-1 ml-1 font-bold">{errors.password.message}</Text>}
                     </View>
 
                     {/* Confirm Password Input */}
@@ -193,7 +205,68 @@ export default function CustomerRegisterScreen() {
                                 </View>
                             )}
                         />
-                        {errors.confirmPassword && <Text className="text-red-500 text-xs mt-1 ml-1">{errors.confirmPassword.message}</Text>}
+                        {errors.confirmPassword && <Text className="text-red-500 text-xs mt-1 ml-1 font-bold">{errors.confirmPassword.message}</Text>}
+                    </View>
+
+                    {/* Consents Section */}
+                    <View className="bg-gray-50/60 p-4 rounded-2xl border border-gray-100 space-y-4 mt-2">
+                         {/* Terms Consent */}
+                         <View>
+                            <Controller
+                                control={control}
+                                name="termsConsent"
+                                render={({ field: { onChange, value } }) => (
+                                    <TouchableOpacity 
+                                        onPress={() => onChange(!value)}
+                                        className="flex-row items-start"
+                                        activeOpacity={0.6}
+                                    >
+                                        <View className={`w-5 h-5 rounded-md items-center justify-center border ${value ? 'bg-green-600 border-green-600' : 'bg-white border-gray-300'} mt-0.5`}>
+                                            {value && <MaterialCommunityIcons name="check" size={14} color="white" />}
+                                        </View>
+                                        <View className="flex-1 ml-3">
+                                            <Text className="text-gray-600 text-[13px] leading-5 font-medium">
+                                                I agree to the <Text className="text-green-700 font-bold underline">Terms of Service</Text> and confirm that I have read them carefully.
+                                            </Text>
+                                            {errors.termsConsent && (
+                                                <Text className="text-red-500 text-[10px] mt-1 font-bold">
+                                                    {errors.termsConsent.message}
+                                                </Text>
+                                            )}
+                                        </View>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                         </View>
+
+                         {/* Privacy Consent */}
+                         <View>
+                            <Controller
+                                control={control}
+                                name="privacyConsent"
+                                render={({ field: { onChange, value } }) => (
+                                    <TouchableOpacity 
+                                        onPress={() => onChange(!value)}
+                                        className="flex-row items-start"
+                                        activeOpacity={0.6}
+                                    >
+                                        <View className={`w-5 h-5 rounded-md items-center justify-center border ${value ? 'bg-green-600 border-green-600' : 'bg-white border-gray-300'} mt-0.5`}>
+                                            {value && <MaterialCommunityIcons name="check" size={14} color="white" />}
+                                        </View>
+                                        <View className="flex-1 ml-3">
+                                            <Text className="text-gray-600 text-[13px] leading-5 font-medium">
+                                                I accept the <Text className="text-green-700 font-bold underline">Privacy Policy</Text> regarding the use of my personal data.
+                                            </Text>
+                                            {errors.privacyConsent && (
+                                                <Text className="text-red-500 text-[10px] mt-1 font-bold">
+                                                    {errors.privacyConsent.message}
+                                                </Text>
+                                            )}
+                                        </View>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                         </View>
                     </View>
 
                     {/* Submit Button */}
@@ -211,15 +284,16 @@ export default function CustomerRegisterScreen() {
 
                 </View>
 
-                {/* Footer */}
-                <View className="flex-row justify-center mt-8">
-                    <Text className="text-gray-500 font-medium">Already have an account? </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('CustomerLogin')}>
-                        <Text className="text-green-700 font-bold">Log In</Text>
-                    </TouchableOpacity>
-                </View>
+                    {/* Footer */}
+                    <View className="flex-row justify-center mt-8 mb-6">
+                        <Text className="text-gray-500 font-medium">Already have an account? </Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('CustomerLogin')}>
+                            <Text className="text-green-700 font-bold">Log In</Text>
+                        </TouchableOpacity>
+                    </View>
 
-            </ScrollView>
+                </View>
+            </KeyboardAwareScrollView>
         </SafeAreaView>
     );
 }
