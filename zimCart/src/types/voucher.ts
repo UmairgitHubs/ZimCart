@@ -2,8 +2,8 @@ export interface Voucher {
     id: string;
     code: string;
     description: string;
-    discountType: 'percentage' | 'fixed'; // "10%", "$5"
-    discountValue: number; // 0.10, 500 etc.
+    discountType: 'PERCENTAGE' | 'FIXED';
+    value: number;
     minSpend?: number;
     maxDiscount?: number;
     expiryDate: string; // ISO 8601

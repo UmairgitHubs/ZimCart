@@ -2,15 +2,17 @@ import prisma from '../config/db.js';
 import { ApiError } from '../utils/ApiError.js';
 import { slugify } from '../utils/slugify.js';
 
-export const getCategories = async (params: { search?: string; status?: string; storeId?: string }) => {
-  const { search, status, storeId } = params;
+export const getCategories = async (params: { search?: string; status?: string; storeId?: string, user: any }) => {
+  const { search, status, storeId, user } = params;
 
   const where: any = {};
-  if (storeId) where.storeId = storeId;
-  else {
-    // Fallback: If no store ID, just grab the first store (since mostly a single-tenant dash for now)
-    const firstStore = await prisma.store.findFirst();
-    if (firstStore) where.storeId = firstStore.id;
+  
+  if (user.role === 'STORE_MANAGER') {
+    const store = await prisma.store.findFirst({ where: { managerId: user.id } });
+    if (!store) return { items: [], stats: { total: 0, published: 0, draft: 0, hidden: 0 } };
+    where.storeId = store.id;
+  } else if (storeId) {
+    where.storeId = storeId;
   }
 
   if (status && status !== 'All') {
@@ -86,11 +88,15 @@ export const getCategories = async (params: { search?: string; status?: string; 
   };
 };
 
-export const createCategory = async (data: any) => {
+export const createCategory = async (data: any, user: any) => {
+  if (user.role === 'STORE_MANAGER') {
+    const store = await prisma.store.findFirst({ where: { managerId: user.id } });
+    if (!store) throw new ApiError(403, "Store context not found. Cannot create category.");
+    data.storeId = store.id;
+  }
+
   if (!data.storeId) {
-    const defaultStore = await prisma.store.findFirst();
-    if (!defaultStore) throw new ApiError(400, "Store context not found");
-    data.storeId = defaultStore.id;
+    throw new ApiError(400, "Store ID is required");
   }
 
   const slug = data.slug || slugify(data.name);
@@ -114,9 +120,17 @@ export const createCategory = async (data: any) => {
   });
 };
 
-export const updateCategory = async (id: string, data: any) => {
-  const existing = await prisma.category.findUnique({ where: { id } });
-  if (!existing) throw new ApiError(404, "Category not found");
+export const updateCategory = async (id: string, data: any, user: any) => {
+  const where: any = { id };
+  
+  if (user.role === 'STORE_MANAGER') {
+    const store = await prisma.store.findFirst({ where: { managerId: user.id } });
+    if (!store) throw new ApiError(403, "Access denied");
+    where.storeId = store.id;
+  }
+
+  const existing = await prisma.category.findFirst({ where });
+  if (!existing) throw new ApiError(404, "Category not found or access denied");
 
   if (data.name && !data.slug) {
     data.slug = slugify(data.name);
@@ -144,52 +158,57 @@ export const updateCategory = async (id: string, data: any) => {
   });
 };
 
-export const deleteCategory = async (id: string) => {
-  const existing = await prisma.category.findUnique({ 
-    where: { id }, 
+export const deleteCategory = async (id: string, user: any) => {
+  const where: any = { id };
+  
+  if (user.role === 'STORE_MANAGER') {
+    const store = await prisma.store.findFirst({ where: { managerId: user.id } });
+    if (!store) throw new ApiError(403, "Access denied");
+    where.storeId = store.id;
+  }
+
+  const existing = await prisma.category.findFirst({ 
+    where, 
     include: { _count: { select: { products: true, children: true } } } 
   });
-  if (!existing) throw new ApiError(404, "Category not found");
+  if (!existing) throw new ApiError(404, "Category not found or access denied");
   
   // High-Level Data Integrity: Instead of blocking, we reassign.
   // This is the "Senior Dev" approach - solve the problem for the user.
   
-  if (existing._count.products > 0) {
-    // 1. Find or create a fallback 'General' category for this specific store
-    let generalCat = await prisma.category.findFirst({
-      where: { 
-        storeId: existing.storeId, 
-        name: { contains: 'General', mode: 'insensitive' } 
+  // 1. Find or create a stable fallback category
+  let generalCat = await prisma.category.findFirst({
+    where: { 
+      storeId: existing.storeId, 
+      name: { contains: 'General', mode: 'insensitive' },
+      id: { not: id } 
+    }
+  });
+
+  if (!generalCat) {
+    generalCat = await prisma.category.create({
+      data: {
+        name: "General Ledger",
+        slug: `general-fallback-${id.slice(0, 5)}-${Date.now()}`,
+        description: "Automated fallback to preserve catalog integrity.",
+        storeId: existing.storeId,
+        status: 'Published',
+        displayOrder: 999
       }
     });
+  }
 
-    if (!generalCat) {
-      generalCat = await prisma.category.create({
-        data: {
-          name: "General",
-          slug: `general-${existing.id.slice(0, 8)}`,
-          description: "Default fallback category for orphaned items.",
-          storeId: existing.storeId,
-          status: 'Published',
-          displayOrder: 999
-        }
-      });
-    }
-
-    // 2. Reassign all products to the General category
-    await prisma.product.updateMany({
+  // 2. Clear all dependencies unconditionally to satisfy foreign key constraints
+  await Promise.all([
+    prisma.product.updateMany({
       where: { categoryId: id },
       data: { categoryId: generalCat.id }
-    });
-  }
-
-  // 3. Handle subcategories: Move them to top level so they aren't lost
-  if (existing._count.children > 0) {
-    await prisma.category.updateMany({
+    }),
+    prisma.category.updateMany({
       where: { parentCategoryId: id },
       data: { parentCategoryId: null }
-    });
-  }
+    })
+  ]);
 
   // 4. Finally safe to delete
   await prisma.category.delete({ where: { id } });

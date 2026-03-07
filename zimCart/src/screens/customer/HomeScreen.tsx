@@ -21,21 +21,23 @@ import {
     QUICK_LINKS, 
     CATEGORY_CIRCLES, 
     PROMO_CARDS, 
-    STORES, 
     DAILY_DEALS, 
     TOP_BRANDS, 
     AISLES, 
     FRESH_ARRIVALS,
-    SHOP_CATEGORIES,
-    EXPLORE_MARTS
+    SHOP_CATEGORIES
 } from '@/data/mock/home';
 
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useMarts } from '@/hooks/useMarketplace';
+import { ActivityIndicator } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { data: marts = [], isLoading } = useMarts();
 
   return (
     <View className="flex-1 bg-white">
@@ -107,18 +109,27 @@ export default function HomeScreen() {
              <View className="mb-6">
                  <View className="flex-row justify-between items-end mb-4 px-1">
                      <Text className="text-xl font-black text-gray-900">Popular Marts</Text>
-                     <TouchableOpacity><Text className="text-primary font-bold text-xs">View all</Text></TouchableOpacity>
+                     <TouchableOpacity onPress={() => navigation.navigate('Marts')}><Text className="text-primary font-bold text-xs">View all</Text></TouchableOpacity>
                  </View>
                  
-                 <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4 pb-4">
-                     {STORES.map(mart => (
-                         <ModernMartCard 
-                            key={mart.id} 
-                            mart={mart} 
-                            onPress={() => navigation.navigate('StoreDetail', { mart })}
-                          />
-                     ))}
-                 </ScrollView>
+                 {isLoading ? (
+                     <View className="h-40 items-center justify-center">
+                         <ActivityIndicator color="#2e7d32" />
+                     </View>
+                 ) : (
+                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4 pb-4">
+                         {marts.slice(0, 5).map((mart: any) => (
+                             <ModernMartCard 
+                                key={mart.id} 
+                                mart={mart} 
+                                onPress={() => navigation.navigate('StoreDetail', { mart })}
+                              />
+                         ))}
+                         {marts.length === 0 && (
+                             <Text className="text-gray-400 font-bold px-4">No popular marts yet</Text>
+                         )}
+                     </ScrollView>
+                 )}
              </View>
 
              {/* Weekly Best Buys */}
@@ -210,13 +221,25 @@ export default function HomeScreen() {
              <View className="mb-4">
                  <Text className="text-xl font-black text-gray-900 mb-4 px-1">Explore Marts Nearby</Text>
                  <View className="px-0">
-                     {EXPLORE_MARTS.map(mart => (
-                        <LargeMartCard 
-                           key={mart.id} 
-                           item={mart} 
-                           onPress={() => navigation.navigate('StoreDetail', { store: mart })}
-                        />
-                     ))}
+                    {isLoading ? (
+                        <ActivityIndicator color="#2e7d32" className="my-10" />
+                    ) : (
+                        <>
+                            {marts.slice(0, 3).map((mart: any) => (
+                                <LargeMartCard 
+                                    key={mart.id} 
+                                    item={mart} 
+                                    onPress={() => navigation.navigate('StoreDetail', { mart })}
+                                />
+                            ))}
+                            {marts.length === 0 && (
+                                <View className="items-center py-10">
+                                    <MaterialCommunityIcons name="store-alert-outline" size={48} color="#D1D5DB" />
+                                    <Text className="text-gray-400 font-bold mt-2">No marts nearby currently</Text>
+                                </View>
+                             )}
+                        </>
+                    )}
                  </View>
              </View>
 

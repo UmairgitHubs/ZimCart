@@ -10,6 +10,13 @@ router.use(verifyJWT);
 
 import { validateRequest } from '../middlewares/validate.middleware.js';
 import * as schemas from '../validators/customer.schema.js';
+import { restrictTo } from '../middlewares/auth.middleware.js';
+
+// --- ADMIN DASHBOARD ROUTES ---
+router.get('/admin/all', restrictTo('ADMIN', 'STORE_MANAGER'), customerController.getAllCustomersForAdmin);
+router.post('/admin/create', restrictTo('ADMIN'), customerController.createCustomerForAdmin);
+router.patch('/admin/:id', restrictTo('ADMIN', 'STORE_MANAGER'), customerController.updateCustomerForAdmin);
+router.delete('/admin/:id', restrictTo('ADMIN', 'STORE_MANAGER'), customerController.deleteCustomerForAdmin);
 
 // Profile
 router.get('/profile', customerController.getProfile);
@@ -22,6 +29,7 @@ router.post('/orders', customerController.placeOrder);
 
 // Vouchers
 router.get('/vouchers', validateRequest(schemas.getVouchersSchema), customerController.getVouchers);
+router.post('/vouchers/validate', customerController.validateVoucher);
 
 // Favourites
 router.get('/favourites', customerController.getFavourites); 
@@ -32,6 +40,12 @@ router.get('/addresses', customerController.getAddresses);
 router.post('/addresses', validateRequest(schemas.addAddressSchema), customerController.addAddress);
 router.put('/addresses/:id', validateRequest(schemas.updateAddressSchema), customerController.updateAddress);
 router.delete('/addresses/:id', customerController.deleteAddress);
+
+// Payment Methods
+router.get('/payment-methods', customerController.getPaymentMethods);
+router.post('/payment-methods', validateRequest(schemas.addPaymentMethodSchema), customerController.addPaymentMethod);
+router.patch('/payment-methods/:id/default', customerController.setDefaultPaymentMethod);
+router.delete('/payment-methods/:id', customerController.deletePaymentMethod);
 
 // Security & Data
 router.get('/notifications', customerController.getNotifications);

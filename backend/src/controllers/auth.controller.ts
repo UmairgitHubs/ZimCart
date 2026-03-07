@@ -25,7 +25,11 @@ const generateTokensAndSetCookies = async (res: Response, user: any, deviceInfo:
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return { user: data.user };
+    return { 
+        user: data.user, 
+        accessToken: data.accessToken, 
+        refreshToken: data.refreshToken 
+    };
 };
 
 export const register = asyncHandler(async (req, res) => {
@@ -79,7 +83,7 @@ export const refresh = asyncHandler(async (req, res) => {
     res.cookie('refreshToken', data.refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
     return res.status(200).json(
-        new ApiResponse(200, {}, "Token refreshed successfully")
+        new ApiResponse(200, { accessToken: data.accessToken, refreshToken: data.refreshToken }, "Token refreshed successfully")
     );
 });
 
@@ -159,9 +163,15 @@ export const resend2FA = asyncHandler(async (req, res) => {
 });
 
 export const getMe = asyncHandler(async (req, res) => {
-    const user = req.user;
-    if (!user) {
+    const userPayload = req.user;
+    if (!userPayload) {
         throw new ApiError(401, "Unauthorized");
+    }
+
+    const user = await authService.getUserById(userPayload.id);
+
+    if (!user) {
+         throw new ApiError(401, "User not found");
     }
 
     return res.status(200).json(

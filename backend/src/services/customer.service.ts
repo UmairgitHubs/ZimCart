@@ -127,6 +127,35 @@ export const getVouchers = async (userId: string, status: string = 'active') => 
   return userVouchers;
 };
 
+export const validateVoucher = async (userId: string, code: string) => {
+  // 1. Find the voucher
+  const voucher = await prisma.voucher.findUnique({
+    where: { code: code.toUpperCase() }
+  });
+
+  if (!voucher) {
+    throw new ApiError(404, 'Invalid voucher code');
+  }
+
+  // 2. Check if active and not expired
+  if (!voucher.isActive || new Date(voucher.expiryDate) < new Date()) {
+    throw new ApiError(400, 'This voucher has expired or is no longer active');
+  }
+
+  // 3. User specific checks (only if it's meant for claimed vouchers)
+  const userVoucher = await prisma.userVoucher.findUnique({
+    where: {
+      userId_voucherId: { userId, voucherId: voucher.id }
+    }
+  });
+
+  if (userVoucher && userVoucher.isUsed) {
+    throw new ApiError(400, 'You have already used this voucher');
+  }
+
+  return voucher;
+};
+
 export const getFavourites = async (userId: string) => {
   const favourites = await prisma.favourite.findMany({
     where: { userId },
@@ -344,6 +373,7 @@ export const deleteAccount = async (userId: string, passwordConfirmation: string
     await tx.viewHistory.deleteMany({ where: { userId } });
     await tx.favourite.deleteMany({ where: { userId } });
     await tx.address.deleteMany({ where: { userId } });
+    await tx.paymentMethod.deleteMany({ where: { userId } });
     await tx.userVoucher.deleteMany({ where: { userId } });
     await tx.notificationPreference.delete({ where: { userId } }).catch(() => {});
 
@@ -352,3 +382,277 @@ export const deleteAccount = async (userId: string, passwordConfirmation: string
     });
   });
 };
+
+
+
+// --- ADMIN DASHBOARD EXPORTS ---
+export const getAllCustomersForAdmin = async (query: any, user: any) => {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
+    let where: any = { role: 'CUSTOMER' };
+
+    // 1. Status Filter
+    if (query.status && query.status !== 'All') {
+        where.status = query.status.toUpperCase();
+    }
+
+    // 2. Search Logic (Name, Email, Phone, or ID)
+    if (query.search) {
+        where.OR = [
+            { name: { contains: query.search, mode: 'insensitive' } },
+            { email: { contains: query.search, mode: 'insensitive' } },
+            { phone: { contains: query.search, mode: 'insensitive' } },
+            { id: { contains: query.search, mode: 'insensitive' } },
+        ];
+    }
+
+    // 3. Strict Multi-tenancy Isolation for Store Managers
+    if (user.role === 'STORE_MANAGER') {
+        const store = await prisma.store.findFirst({
+            where: { managerId: user.id }
+        });
+        
+        if (store) {
+            // Only show customers who have ordered from this store
+            where.orders = {
+                some: {
+                    storeId: store.id
+                }
+            };
+        } else {
+            return { customers: [], pagination: { total: 0, page, pages: 0 } };
+        }
+    }
+
+    const [count, customers] = await Promise.all([
+        prisma.user.count({ where }),
+        prisma.user.findMany({
+            where,
+            include: {
+                orders: { select: { total: true, status: true, storeId: true } },
+                sessions: { orderBy: { lastActive: 'desc'}, take: 1 },
+                addresses: { where: { isDefault: true }, take: 1 }
+            },
+            orderBy: { createdAt: 'desc' },
+            skip,
+            take: limit,
+        })
+    ]);
+
+    const formattedCustomers = customers.map(cust => {
+        const completedOrders = cust.orders.filter(o => o.status === 'COMPLETED');
+        const totalSpent = completedOrders.reduce((acc, curr) => acc + curr.total, 0);
+        
+        return {
+            id: cust.id,
+            name: cust.name,
+            email: cust.email,
+            joinDate: cust.createdAt,
+            status: (cust as any).status.charAt(0).toUpperCase() + (cust as any).status.slice(1).toLowerCase(),
+            totalSpent,
+            totalOrders: cust.orders.length,
+            lastLogin: cust.sessions.length > 0 ? cust.sessions[0]?.lastActive : cust.createdAt,
+            location: cust.addresses.length > 0 ? cust.addresses[0]?.address : "N/A",
+            avatar: cust.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(cust.name)}&background=10B981&color=fff&format=png`,
+            phone: cust.phone || "N/A",
+        };
+    });
+
+    return {
+        customers: formattedCustomers,
+        pagination: {
+            total: count,
+            page,
+            pages: Math.ceil(count / limit)
+        }
+    };
+};
+
+export const createCustomerForAdmin = async (data: any) => {
+   const hashedPassword = await bcrypt.hash(data.password || 'zimcart123', 10);
+   const newUser = await prisma.user.create({
+       data: {
+           name: data.name,
+           email: data.email,
+           phone: data.phone || data.phoneNumber,
+           password: hashedPassword,
+           role: 'CUSTOMER',
+           avatar: data.avatar
+       }
+   });
+   return {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        joinDate: newUser.createdAt,
+        status: "Active",
+        totalSpent: 0,
+        totalOrders: 0,
+        lastLogin: newUser.createdAt,
+        location: "N/A",
+        avatar: newUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(newUser.name)}&background=10B981&color=fff&format=png`,
+         phone: newUser.phone || "N/A",
+   };
+};
+
+export const updateCustomerForAdmin = async (id: string, data: any) => {
+    // Determine target enum using incoming titlecase enum 
+    const targetStatus = typeof data.status === 'string' ? data.status.toUpperCase() : undefined;
+
+    const updated = await prisma.user.update({
+        where: { id },
+        data: {
+            name: data.name,
+            email: data.email,
+             phone: data.phone || data.phoneNumber,
+             avatar: data.avatar,
+            ...(targetStatus && { status: targetStatus as any })
+        }
+    });
+
+    return {
+        id: updated.id,
+        name: updated.name,
+        email: updated.email,
+         phone: updated.phone || "N/A",
+        status: (updated as any).status.charAt(0).toUpperCase() + (updated as any).status.slice(1).toLowerCase(),
+    };
+};
+
+export const deleteCustomerForAdmin = async (id: string, user: any) => {
+    // 1. Permission Guard
+    if (user.role === 'STORE_MANAGER') {
+        const store = await prisma.store.findFirst({
+            where: { managerId: user.id }
+        });
+        
+        if (!store) throw new ApiError(403, "No store association found");
+
+        const hasOrderedFromMe = await prisma.order.findFirst({
+            where: { userId: id, storeId: store.id }
+        });
+
+        if (!hasOrderedFromMe) {
+            throw new ApiError(403, "Access Denied: You can only purge customers who have engaged with your store.");
+        }
+    }
+
+    // 2. Atomic purge
+    return await prisma.$transaction(async (tx) => {
+        // 1. Clear Security & Session data
+        await tx.userSession.deleteMany({ where: { userId: id } });
+        
+        // 2. Clear Engagement data
+        await tx.searchHistory.deleteMany({ where: { userId: id } });
+        await tx.viewHistory.deleteMany({ where: { userId: id } });
+        await tx.favourite.deleteMany({ where: { userId: id } });
+        
+        // 3. Clear Financial & Logistics data
+        await tx.address.deleteMany({ where: { userId: id } });
+        await tx.paymentMethod.deleteMany({ where: { userId: id } });
+        await tx.userVoucher.deleteMany({ where: { userId: id } });
+        
+        // 4. Handle Notifications
+        await tx.notificationPreference.delete({ where: { userId: id } }).catch(() => {});
+        await tx.notification.deleteMany({ where: { userId: id } });
+
+        // 5. Handle Orders (Purge Everything)
+        // Since the schema requires a valid userId, we purge orders to maintain referential integrity.
+        await tx.order.deleteMany({
+            where: { userId: id }
+        });
+
+        // 6. Handle Support Tickets
+        await tx.supportTicket.deleteMany({ where: { userId: id } });
+
+        // 7. Finally Purge the User
+        return tx.user.delete({
+            where: { id }
+        });
+    });
+};
+
+export const getPaymentMethods = async (userId: string) => {
+  return prisma.paymentMethod.findMany({
+    where: { userId },
+    orderBy: [
+      { isDefault: 'desc' },
+      { type: 'asc' }
+    ]
+  });
+};
+
+export const addPaymentMethod = async (userId: string, data: any) => {
+  if (data.isDefault) {
+    await prisma.paymentMethod.updateMany({
+      where: { userId, isDefault: true },
+      data: { isDefault: false }
+    });
+  } else {
+    // If no methods exist, make this the default
+    const count = await prisma.paymentMethod.count({ where: { userId } });
+    if (count === 0) data.isDefault = true;
+  }
+
+  return prisma.paymentMethod.create({
+    data: {
+      ...data,
+      userId
+    }
+  });
+};
+
+export const setDefaultPaymentMethod = async (userId: string, paymentMethodId: string) => {
+  const method = await prisma.paymentMethod.findUnique({
+    where: { id: paymentMethodId }
+  });
+
+  if (!method || method.userId !== userId) {
+    throw new ApiError(404, 'Payment method not found or unauthorized');
+  }
+
+  // Remove old default
+  await prisma.paymentMethod.updateMany({
+    where: { userId, isDefault: true },
+    data: { isDefault: false }
+  });
+
+  // Set new default
+  return prisma.paymentMethod.update({
+    where: { id: paymentMethodId },
+    data: { isDefault: true }
+  });
+};
+
+export const deletePaymentMethod = async (userId: string, paymentMethodId: string) => {
+  const method = await prisma.paymentMethod.findUnique({
+    where: { id: paymentMethodId }
+  });
+
+  if (!method || method.userId !== userId) {
+    throw new ApiError(404, 'Payment method not found or unauthorized');
+  }
+
+  await prisma.paymentMethod.delete({
+    where: { id: paymentMethodId }
+  });
+
+  if (method.isDefault) {
+    // Assign a new default if one exists
+    const nextMethod = await prisma.paymentMethod.findFirst({
+      where: { userId }
+    });
+    
+    if (nextMethod) {
+      await prisma.paymentMethod.update({
+        where: { id: nextMethod.id },
+        data: { isDefault: true }
+      });
+    }
+  }
+
+  return true;
+};
+

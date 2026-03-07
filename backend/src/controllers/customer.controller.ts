@@ -61,6 +61,20 @@ export const getVouchers = asyncHandler(async (req, res) => {
   );
 });
 
+export const validateVoucher = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  const { code } = req.body;
+  
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  if (!code) throw new ApiError(400, 'Voucher code is required');
+  
+  const voucher = await customerService.validateVoucher(userId, code);
+  
+  return res.status(200).json(
+    new ApiResponse(200, voucher, 'Voucher validated successfully')
+  );
+});
+
 export const getFavourites = asyncHandler(async (req, res) => {
   const userId = req.user?.id;
   if (!userId) throw new ApiError(401, 'Unauthorized');
@@ -272,3 +286,71 @@ export const markAllNotificationsRead = asyncHandler(async (req, res) => {
     new ApiResponse(200, result, 'All notifications marked as read')
   );
 });
+
+export const getPaymentMethods = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const paymentMethods = await customerService.getPaymentMethods(userId);
+  
+  return res.status(200).json(
+    new ApiResponse(200, paymentMethods, 'Payment methods fetched successfully')
+  );
+});
+
+export const addPaymentMethod = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const paymentMethod = await customerService.addPaymentMethod(userId, req.body);
+  
+  return res.status(201).json(
+    new ApiResponse(201, paymentMethod, 'Payment method added successfully')
+  );
+});
+
+export const setDefaultPaymentMethod = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  const { id } = req.params;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  const paymentMethod = await customerService.setDefaultPaymentMethod(userId, id as string);
+  
+  return res.status(200).json(
+    new ApiResponse(200, paymentMethod, 'Payment method set as default')
+  );
+});
+
+export const deletePaymentMethod = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  const { id } = req.params;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+  
+  await customerService.deletePaymentMethod(userId, id as string);
+  
+  return res.status(200).json(
+    new ApiResponse(200, {}, 'Payment method deleted successfully')
+  );
+});
+
+// --- ADMIN DASHBOARD EXPORTS ---
+export const getAllCustomersForAdmin = asyncHandler(async (req, res) => {
+  const data = await customerService.getAllCustomersForAdmin(req.query, req.user);
+  return res.status(200).json(new ApiResponse(200, data, 'Customers fetched successfully'));
+});
+
+export const createCustomerForAdmin = asyncHandler(async (req, res) => {
+  const newCustomer = await customerService.createCustomerForAdmin(req.body);
+  return res.status(201).json(new ApiResponse(201, { customer: newCustomer }, 'Customer created successfully'));
+});
+
+export const updateCustomerForAdmin = asyncHandler(async (req, res) => {
+  const updatedCustomer = await customerService.updateCustomerForAdmin(req.params.id as string, req.body);
+  return res.status(200).json(new ApiResponse(200, { customer: updatedCustomer }, 'Customer updated successfully'));
+});
+
+export const deleteCustomerForAdmin = asyncHandler(async (req, res) => {
+  await customerService.deleteCustomerForAdmin(req.params.id as string, req.user);
+  return res.status(200).json(new ApiResponse(200, {}, 'Customer deleted successfully'));
+});
+

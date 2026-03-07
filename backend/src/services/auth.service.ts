@@ -360,3 +360,10 @@ export const changePassword = async (userId: string, data: any) => {
 
   return { message: 'Password changed successfully' };
 };
+
+export const getUserById = async (id: string) => {
+  const user = await prisma.user.findUnique({ where: { id } });
+  if (!user) return null;
+  const { password: _, refreshToken: __, twoFactorCode: ___, twoFactorExpires: ____, ...userResponse } = user;
+  return userResponse;
+};

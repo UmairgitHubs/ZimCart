@@ -85,3 +85,13 @@ export const getProduct = asyncHandler(async (req, res) => {
     new ApiResponse(200, product, "Product fetched successfully")
   );
 });
+
+export const deleteProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params as { id: string };
+  
+  await productService.deleteProduct(id, req.user?.id);
+
+  return res.status(200).json(
+    new ApiResponse(200, null, "Product purged successfully from the network")
+  );
+});

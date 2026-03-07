@@ -240,3 +240,34 @@ export const getProductById = async (id: string) => {
     }
   });
 };
+
+export const deleteProduct = async (id: string, managerId?: string) => {
+  try {
+    const storeId = await getEffectiveStoreId(undefined, managerId);
+
+    // 1. Check existence and ownership
+    const product = await prisma.product.findFirst({
+      where: { id, storeId }
+    });
+
+    if (!product) {
+      throw new ApiError(404, "Product not found or access denied");
+    }
+
+    // 2. Atomic deletion (this will also delete history if cascade is set, or we handle it manually)
+    // Note: Depends on Prisma schema version and cascade settings. 
+    // Usually, we want to clear related records first or use a transaction.
+    return await prisma.$transaction(async (tx) => {
+      // Clear associated history first
+      await tx.productHistory.deleteMany({ where: { productId: id } });
+      
+      // Delete the core product
+      return await tx.product.delete({
+        where: { id }
+      });
+    });
+  } catch (error: any) {
+    logger.error('Product Deletion Service Error:', error);
+    throw error;
+  }
+};

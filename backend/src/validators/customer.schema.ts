@@ -75,3 +75,15 @@ export const deleteAccountSchema = z.object({
     password: z.string().min(1, "Password is required for account deletion confirmation"),
   }).strict()
 });
+
+// Payment Methods Schemas
+export const addPaymentMethodSchema = z.object({
+  body: z.object({
+    type: z.enum(['CARD', 'PAYPAL', 'APPLE_PAY', 'GOOGLE_PAY', 'CASH']),
+    brand: z.string().optional(),
+    last4: z.string().regex(/^\d{4}$/, "Must be 4 digits").optional(),
+    expiry: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Format MM/YY").optional(),
+    token: z.string().optional(),
+    isDefault: z.boolean().optional(),
+  }).strict()
+});

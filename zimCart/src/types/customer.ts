@@ -12,10 +12,15 @@ export interface Mart {
 export interface Product {
   id: string;
   name: string;
-  image: string;
-  price: number;
+  image?: string; 
+  images: string[];
+  price: number | string;
   discountPrice?: number;
-  martId: string;
+  description?: string;
+  rating?: number | string;
+  reviewsCount?: number | string;
+  martId?: string;
+  category?: { name: string };
 }
 
 export interface Category {

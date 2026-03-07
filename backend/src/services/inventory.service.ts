@@ -9,11 +9,20 @@ export const getInventory = async (params: {
   status?: string;
   search?: string;
   warehouse?: string;
+  user: any;
 }) => {
-  const { page = 1, limit = 20, category, status, search, warehouse } = params;
+  const { page = 1, limit = 20, category, status, search, warehouse, user } = params;
   const skip = (page - 1) * limit;
 
   const where: any = {};
+
+  if (user.role === 'STORE_MANAGER') {
+    const store = await prisma.store.findFirst({
+        where: { managerId: user.id }
+    });
+    if (!store) return { items: [], stats: { totalValue: 0, lowStockCount: 0, outOfStockCount: 0, reservedStockCount: 0 }, pagination: { total: 0, page, pages: 0 } };
+    where.storeId = store.id;
+  }
 
   if (category) {
     where.category = { name: category };
@@ -121,12 +130,20 @@ export const getInventory = async (params: {
   };
 };
 
-export const updateStock = async (id: string, currentStock: number, reason?: string) => {
-  const oldProduct = await prisma.product.findUnique({ where: { id } });
-  if (!oldProduct) throw new ApiError(404, "Product not found");
+export const updateStock = async (id: string, currentStock: number, user: any, reason?: string) => {
+  const where: any = { id };
+  
+  if (user.role === 'STORE_MANAGER') {
+    const store = await prisma.store.findFirst({ where: { managerId: user.id } });
+    if (!store) throw new ApiError(403, "Access denied");
+    where.storeId = store.id;
+  }
+
+  const oldProduct = await prisma.product.findFirst({ where });
+  if (!oldProduct) throw new ApiError(404, "Product not found or access denied");
 
   const product = await prisma.product.update({
-    where: { id },
+    where: { id: oldProduct.id },
     data: { 
       inventory: currentStock,
       history: {
@@ -149,10 +166,18 @@ export const getInventoryHistory = async (id: string) => {
   });
 };
 
-export const deleteInventory = async (id: string) => {
-  const product = await prisma.product.findUnique({ where: { id } });
-  if (!product) throw new ApiError(404, "Product not found");
+export const deleteInventory = async (id: string, user: any) => {
+  const where: any = { id };
 
-  await prisma.product.delete({ where: { id } });
+  if (user.role === 'STORE_MANAGER') {
+    const store = await prisma.store.findFirst({ where: { managerId: user.id } });
+    if (!store) throw new ApiError(403, "Access denied");
+    where.storeId = store.id;
+  }
+
+  const product = await prisma.product.findFirst({ where });
+  if (!product) throw new ApiError(404, "Product not found or access denied");
+
+  await prisma.product.delete({ where: { id: product.id } });
   return true;
 };

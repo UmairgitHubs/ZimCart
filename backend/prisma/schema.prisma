@@ -19,6 +19,7 @@ model User {
 
   isPremium Boolean @default(false)
   country   String?
+  status    UserStatus @default(ACTIVE)
   
   // Security & Privacy Settings
   isTwoFactorEnabled Boolean @default(false)
@@ -36,6 +37,7 @@ model User {
   searchHistory  SearchHistory[]
   viewHistory    ViewHistory[]
   sessions       UserSession[]
+  cart           Cart?
   refreshToken           String?
   resetPasswordToken     String?
   resetPasswordExpires   DateTime?
@@ -49,6 +51,31 @@ model User {
   
   // Notification History
   notificationHistory    Notification[]
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  quantity  Int      @default(1)
+  variants  Json?    // Stores selected variant values e.g. { "Size": "Large" }
+  
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId, variants])
 }
 
 model Notification {
@@ -100,6 +127,12 @@ enum Role {
   ADMIN
   STORE_MANAGER
   RIDER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
 }
 
 model Address {
@@ -179,6 +212,7 @@ model Store { // Mart
   // Multi-tenancy Isolation
   managerId    String?    @unique
   manager      User?      @relation(fields: [managerId], references: [id])
+  vouchers     Voucher[]
 }
 
 enum StoreStatus {
@@ -244,6 +278,7 @@ model Product {
   orderItems    OrderItem[]
   favourites    Favourite[]
   history       ProductHistory[]
+  cartItems     CartItem[]
 }
 
 model ProductHistory {
@@ -276,6 +311,7 @@ model Order {
   items         OrderItem[]
   address       String      // Snapshot of delivery address
   paymentMethod String      // Snapshot of payment method
+  notes         String?     // External/Internal order notes
   trackingUrl   String?
 }
 
@@ -292,10 +328,11 @@ model OrderItem {
   id        String  @id @default(uuid())
   quantity  Int
   price     Float   // Price at time of purchase
+  name      String  @default("Generic Item")
   total     Float
   
   orderId   String
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId String
   product   Product @relation(fields: [productId], references: [id])
 }
@@ -311,6 +348,8 @@ model Voucher {
   expiryDate  DateTime
   isActive    Boolean  @default(true)
   
+  storeId     String?
+  store       Store?   @relation(fields: [storeId], references: [id])
   users       UserVoucher[]
 }
 

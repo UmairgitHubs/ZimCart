@@ -9,6 +9,7 @@ import GroceryScreen from '@/screens/customer/GroceryScreen';
 import ProfileScreen from '@/screens/customer/ProfileScreen';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useCart } from '@/hooks/useCart';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,6 +21,9 @@ const COLORS = {
 
 export default function CustomerTabNavigator() {
   const insets = useSafeAreaInsets();
+  const { data: cartData } = useCart();
+  
+  const cartCount = cartData?.items?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
 
   return (
     <Tab.Navigator
@@ -89,6 +93,8 @@ export default function CustomerTabNavigator() {
         component={CartScreen}
         options={{
           tabBarLabel: 'Cart',
+          tabBarBadge: cartCount > 0 ? cartCount : undefined,
+          tabBarBadgeStyle: { backgroundColor: '#ef4444', fontSize: 10, fontWeight: 'bold' },
           tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons 
               name={focused ? "cart" : "cart-outline"} 

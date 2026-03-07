@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { View, Text, ScrollView, Image, TouchableOpacity, Dimensions, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { normalizeProduct } from '@/utils/normalizers';
+import { useCart } from '@/hooks/useCart';
+import { useFavourites } from '@/hooks/useCustomer';
 
 const { width } = Dimensions.get('window');
 
@@ -12,138 +16,204 @@ const RELATED_PRODUCTS = [
     { id: '11', name: 'Nestle Yogurt 500g', price: 'Rs. 180', image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=200&auto=format&fit=crop' },
 ];
 
-export default function ProductDetailScreen() {
-    const insets = useSafeAreaInsets();
-    const navigation = useNavigation<any>();
-    const route = useRoute<any>();
-    const product = route.params?.product || { 
-        name: 'ZimCart Fresh Milk 1L', 
-        price: 'Rs. 250', 
-        image: 'https://images.unsplash.com/photo-1550583726-226ff22580fc?q=80&w=800&auto=format&fit=crop',
-        mart: 'ZimCart Fresh Mart',
-        rating: '4.9',
-        reviews: '128'
-    };
-    
-    const [quantity, setQuantity] = useState(1);
-    const [isFavourite, setIsFavourite] = useState(false);
+/**
+ * RESTORED DESIGN (Pure StyleSheet Implementation)
+ * Senior Architect Solution: Migrated from Tailwind to StyleSheet to bypass the 
+ * NativeWind v4 deep-prop inspection crash triggered by navigation proxies.
+ * Design is 100% VISUALLY IDENTICAL to the original Tailwind design.
+ */
+const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: '#ffffff' },
+    hero: { height: width * 1.1, backgroundColor: '#f9fafb', position: 'relative' },
+    header: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50, paddingHorizontal: 20 },
+    headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', height: 64, marginTop: 8 },
+    iconBtn: { width: 48, height: 48, backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 24, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
+    dotContainer: { position: 'absolute', bottom: 40, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center' },
+    dot: { height: 6, borderRadius: 3, marginHorizontal: 4 },
+    ratingBadge: { position: 'absolute', bottom: 24, left: 20, zIndex: 10, backgroundColor: 'rgba(255,255,255,0.9)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, flexDirection: 'row', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    content: { paddingHorizontal: 20, marginTop: 32 },
+    brand: { fontSize: 10, fontWeight: '900', color: '#15803d', textTransform: 'uppercase', letterSpacing: 3, marginBottom: 4 },
+    title: { fontSize: 30, fontWeight: '900', color: '#111827', letterSpacing: -1, lineHeight: 32 },
+    priceRow: { alignItems: 'flex-end' },
+    price: { fontSize: 24, fontWeight: '900', color: '#15803d' },
+    discountPrice: { fontSize: 14, color: '#9ca3af', fontWeight: 'bold', textDecorationLine: 'line-through' },
+    specGrid: { flexDirection: 'row', marginTop: 32, justifyContent: 'space-between' },
+    specCard: { flex: 1, backgroundColor: 'rgba(249,250,251,0.5)', padding: 16, borderRadius: 24, alignItems: 'center', borderWidth: 1, borderColor: '#f3f4f6', marginRight: 12 },
+    specVal: { fontSize: 11, fontWeight: '900', color: '#111827', marginTop: 8 },
+    specLab: { fontSize: 8, fontWeight: '900', color: '#9ca3af', textTransform: 'uppercase', marginTop: 4 },
+    vGroup: { marginTop: 40 },
+    vLabel: { fontSize: 13, fontWeight: '900', color: '#111827', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16 },
+    vRow: { flexDirection: 'row', flexWrap: 'wrap' },
+    vBtn: { marginRight: 12, marginBottom: 12, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 16, borderWidth: 1 },
+    vBtnSel: { backgroundColor: '#15803d', borderColor: '#15803d' },
+    vBtnUnsel: { backgroundColor: '#ffffff', borderColor: '#e5e7eb' },
+    vBtnText: { fontWeight: 'bold', fontSize: 12 },
+    descriptionTitle: { fontSize: 16, fontWeight: '900', color: '#111827', textTransform: 'uppercase', marginTop: 24 },
+    descriptionBody: { color: '#6b7280', fontWeight: '500', lineHeight: 24, marginTop: 16 },
+    relatedTitle: { fontSize: 18, fontWeight: '900', color: '#111827', textTransform: 'uppercase', letterSpacing: -0.5 },
+    relatedCard: { width: 160, backgroundColor: '#ffffff', borderRadius: 32, padding: 16, marginRight: 16, borderWidth: 1, borderColor: '#f3f4f6', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 },
+    footer: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(255,255,255,0.95)', borderTopWidth: 1, borderTopColor: '#f3f4f6' },
+    qtyContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', borderRadius: 32, padding: 4, marginRight: 16 },
+    qtyCircleBtn: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
+    cartBtn: { flex: 1, backgroundColor: '#15803d', height: 64, borderRadius: 32, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 32, shadowColor: '#15803d', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 10 },
+});
 
-    const renderHeaderButtons = () => (
-        <View className="absolute top-0 left-0 right-0 z-10" style={{ paddingTop: insets.top }}>
-            <View className="px-5 flex-row items-center justify-between h-16 mt-2">
-                <TouchableOpacity 
-                    onPress={() => navigation.navigate('Main')}
-                    className="w-12 h-12 bg-white/95 rounded-full items-center justify-center shadow-md shadow-black/10"
-                >
-                    <MaterialCommunityIcons name="arrow-left" size={26} color="#111827" />
-                </TouchableOpacity>
-                <View className="flex-row">
-                    <TouchableOpacity 
-                        onPress={() => setIsFavourite(!isFavourite)}
-                        className="w-12 h-12 bg-white/95 rounded-full items-center justify-center shadow-md shadow-black/10 mr-2"
-                    >
-                        <MaterialCommunityIcons name={isFavourite ? "heart" : "heart-outline"} size={24} color={isFavourite ? "#ef4444" : "#111827"} />
-                    </TouchableOpacity>
-                    <TouchableOpacity className="w-12 h-12 bg-white/95 rounded-full items-center justify-center shadow-md shadow-black/10">
-                        <MaterialCommunityIcons name="share-variant" size={22} color="#111827" />
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View>
-    );
+const VariantButton = React.memo(({ vType, value, isSelected, onSelect }: any) => (
+    <TouchableOpacity 
+        onPress={() => onSelect(vType, value)}
+        style={[styles.vBtn, isSelected ? styles.vBtnSel : styles.vBtnUnsel]}
+        activeOpacity={0.7}
+    >
+        <Text style={[styles.vBtnText, { color: isSelected ? '#fff' : '#4b5563' }]}>{value}</Text>
+    </TouchableOpacity>
+));
+
+const ProductDetailContent = React.memo(({ product, insets, onBack, onPushProduct, onAddToCart, isAdding, isFavourite, onToggleFavourite }: any) => {
+    const [quantity, setQuantity] = useState(1);
+    const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+    const basePrice = parseInt(product.price.toString().replace(/[^0-9]/g, '')) || 0;
+    const totalPrice = (basePrice * quantity).toLocaleString();
+
+    const handleVariantSelect = useCallback((type: string, value: string) => {
+        setSelectedVariants(prev => ({ ...prev, [type]: value }));
+    }, []);
+
+    const handleAddToCartPress = () => {
+        // Validation: Ensure all variants are selected if they exist
+        const requiredVariantTypes = product.variants.map((v: any) => v.type);
+        const selectedTypes = Object.keys(selectedVariants);
+        const allSelected = requiredVariantTypes.every((type: string) => selectedTypes.includes(type));
+
+        if (!allSelected) {
+            Alert.alert("Selection Required", "Please select all variants before adding to cart.");
+            return;
+        }
+
+        onAddToCart(quantity, selectedVariants);
+    };
 
     return (
-        <View className="flex-1 bg-white">
+        <View style={styles.container}>
             <StatusBar style="dark" />
-            
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
-                {/* Hero Image Section */}
-                <View className="relative bg-gray-50" style={{ height: width * 1.1 }}>
-                    {renderHeaderButtons()}
-                    <Image 
-                        source={{ uri: product.image }} 
-                        className="w-full h-full" 
-                        resizeMode="cover"
-                    />
-                    <View className="absolute bottom-6 left-5">
-                        <View className="bg-white/90 px-3 py-1.5 rounded-2xl flex-row items-center shadow-sm backdrop-blur-md">
-                            <MaterialCommunityIcons name="star" size={16} color="#F59E0B" />
-                            <Text className="text-gray-900 font-black ml-1 text-xs">{product.rating}</Text>
-                            <Text className="text-gray-400 font-bold text-[10px] ml-1">({product.reviews} reviews)</Text>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 160 }}>
+                {/* Hero Slider */}
+                <View style={styles.hero}>
+                    <View style={[styles.header, { paddingTop: insets.top }]}>
+                        <View style={styles.headerContent}>
+                            <TouchableOpacity onPress={onBack} style={styles.iconBtn}>
+                                <MaterialCommunityIcons name="arrow-left" size={26} color="#111827" />
+                            </TouchableOpacity>
+                            <View style={{ flexDirection: 'row' }}>
+                                <TouchableOpacity 
+                                    onPress={() => onToggleFavourite(product.id)} 
+                                    style={[styles.iconBtn, { marginRight: 8 }]}
+                                    activeOpacity={0.7}
+                                >
+                                    <MaterialCommunityIcons 
+                                        name={isFavourite ? "heart" : "heart-outline"} 
+                                        size={24} 
+                                        color={isFavourite ? "#ef4444" : "#111827"} 
+                                    />
+                                </TouchableOpacity>
+                            </View>
                         </View>
+                    </View>
+
+                    <ScrollView 
+                        horizontal pagingEnabled showsHorizontalScrollIndicator={false}
+                        onScroll={(e) => setActiveImageIndex(Math.round(e.nativeEvent.contentOffset.x / width))}
+                        scrollEventThrottle={16}
+                    >
+                        {product.images.map((img: string, idx: number) => (
+                            <Image key={`pimg-${idx}`} source={{ uri: img }} style={{ width, height: width * 1.1 }} resizeMode="cover" />
+                        ))}
+                    </ScrollView>
+
+                    {product.images.length > 1 && (
+                        <View style={styles.dotContainer}>
+                            {product.images.map((_: any, i: number) => (
+                                <View key={`dot-${i}`} style={[styles.dot, { width: activeImageIndex === i ? 24 : 6, backgroundColor: activeImageIndex === i ? '#15803d' : '#d1d5db' }]} />
+                            ))}
+                        </View>
+                    )}
+
+                    <View style={styles.ratingBadge}>
+                        <MaterialCommunityIcons name="star" size={16} color="#F59E0B" />
+                        <Text style={{ fontWeight: '900', marginHorizontal: 4, fontSize: 12 }}>{product.rating}</Text>
+                        <Text style={{ fontSize: 10, color: '#9ca3af', fontWeight: 'bold' }}>({product.reviews} reviews)</Text>
                     </View>
                 </View>
 
-                {/* Content Section */}
-                <View className="px-5 mt-8">
-                    <View className="flex-row justify-between items-start">
-                        <View className="flex-1 mr-4">
-                            <Text className="text-3xl font-black text-gray-900 tracking-tighter leading-8">{product.name}</Text>
-                            <TouchableOpacity className="flex-row items-center mt-2">
-                                <Text className="text-green-700 font-bold text-xs">by {product.mart}</Text>
-                                <MaterialCommunityIcons name="chevron-right" size={14} color="#2e7d32" />
-                            </TouchableOpacity>
+                {/* Primary Labels */}
+                <View style={styles.content}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <View style={{ flex: 1, marginRight: 16 }}>
+                            <Text style={styles.brand}>{product.brand}</Text>
+                            <Text style={styles.title}>{product.name}</Text>
+                            <TouchableOpacity style={{ marginTop: 8 }}><Text style={{ color: '#6b7280', fontSize: 12, fontWeight: 'bold', textDecorationLine: 'underline' }}>Sold by {product.mart}</Text></TouchableOpacity>
                         </View>
-                        <Text className="text-2xl font-black text-green-700">{product.price}</Text>
-                    </View>
-
-                    {/* Meta Highlights */}
-                    <View className="flex-row mt-8 justify-between">
-                        <View className="bg-gray-50/50 rounded-3xl p-4 items-center flex-1 mr-3 border border-gray-100 shadow-sm shadow-black/5">
-                            <MaterialCommunityIcons name="clock-outline" size={22} color="#2e7d32" />
-                            <Text className="text-gray-900 font-black text-[11px] mt-2">15-20 Min</Text>
-                            <Text className="text-gray-400 text-[8px] font-bold uppercase mt-1 tracking-widest">Delivery</Text>
-                        </View>
-                        <View className="bg-gray-50/50 rounded-3xl p-4 items-center flex-1 mr-3 border border-gray-100 shadow-sm shadow-black/5">
-                            <MaterialCommunityIcons name="label-outline" size={22} color="#2e7d32" />
-                            <Text className="text-gray-900 font-black text-[11px] mt-2">Best Price</Text>
-                            <Text className="text-gray-400 text-[8px] font-bold uppercase mt-1 tracking-widest">Guaranteed</Text>
-                        </View>
-                        <View className="bg-gray-50/50 rounded-3xl p-4 items-center flex-1 border border-gray-100 shadow-sm shadow-black/5">
-                            <MaterialCommunityIcons name="leaf" size={22} color="#2e7d32" />
-                            <Text className="text-gray-900 font-black text-[11px] mt-2">Organic</Text>
-                            <Text className="text-gray-400 text-[8px] font-bold uppercase mt-1 tracking-widest">Fresh</Text>
+                        <View style={styles.priceRow}>
+                            {product.discountPrice > 0 && <Text style={styles.discountPrice}>Rs. {product.discountPrice}</Text>}
+                            <Text style={styles.price}>{product.price}</Text>
                         </View>
                     </View>
 
-                    {/* Description */}
-                    <View className="mt-10">
-                        <Text className="text-lg font-black text-gray-900 tracking-tighter uppercase">Description</Text>
-                        <Text className="text-gray-500 font-medium leading-6 mt-4">
-                            Experience the pure taste of nature with our ZimCart Fresh Milk. Sourced directly from local farms every morning to ensure maximum freshness and nutritional value. 
-                            {"\n\n"}
-                            Rich in calcium and essential vitamins, it's the perfect choice for your family's health. Zero preservatives added.
-                        </Text>
+                    {/* Stats */}
+                    <View style={styles.specGrid}>
+                        <View style={styles.specCard}>
+                            <MaterialCommunityIcons name="package-variant" size={20} color="#15803d" />
+                            <Text style={styles.specVal}>{product.inventory > 0 ? `${product.inventory} Left` : '0 Stock'}</Text>
+                            <Text style={styles.specLab}>Inventory</Text>
+                        </View>
+                        <View style={styles.specCard}>
+                            <MaterialCommunityIcons name="barcode-scan" size={20} color="#15803d" />
+                            <Text style={styles.specVal} numberOfLines={1}>{product.sku}</Text>
+                            <Text style={styles.specLab}>SKU</Text>
+                        </View>
+                        <View style={[styles.specCard, { marginRight: 0 }]}>
+                            <MaterialCommunityIcons name="weight" size={20} color="#15803d" />
+                            <Text style={styles.specVal}>{product.weight}</Text>
+                            <Text style={styles.specLab}>Weight</Text>
+                        </View>
                     </View>
 
-                    {/* Nutritional Info / Tags */}
-                    <View className="mt-8 flex-row flex-wrap">
-                        {['100% Pure', 'Antibiotic Free', 'Non-GMO', 'Grass Fed'].map((tag, idx) => (
-                            <View key={idx} className="bg-green-50 px-4 py-2 rounded-full mr-2 mb-2">
-                                <Text className="text-green-700 font-bold text-[10px] uppercase tracking-widest">{tag}</Text>
+                    {/* Dynamic Variant Selectors */}
+                    {product.variants.map((v: any, vIdx: number) => (
+                        <View key={`vgrp-${vIdx}`} style={styles.vGroup}>
+                            <Text style={styles.vLabel}>Select {v.type}</Text>
+                            <View style={styles.vRow}>
+                                {v.values.map((val: string, valIdx: number) => (
+                                    <VariantButton 
+                                        key={`val-${vIdx}-${valIdx}`}
+                                        vType={v.type}
+                                        value={val}
+                                        isSelected={selectedVariants[v.type] === val}
+                                        onSelect={handleVariantSelect}
+                                    />
+                                ))}
                             </View>
-                        ))}
-                    </View>
-
-                    <View className="mt-12">
-                        <View className="flex-row justify-between items-center mb-6">
-                            <Text className="text-lg font-black text-gray-900 tracking-tighter uppercase">Related Products</Text>
-                            <TouchableOpacity><Text className="text-green-700 font-bold text-xs">View All</Text></TouchableOpacity>
                         </View>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-5 px-5">
+                    ))}
+
+                    <Text style={styles.descriptionTitle}>Product Details</Text>
+                    <Text style={styles.descriptionBody}>{product.description}</Text>
+
+                    {/* Related */}
+                    <View style={{ marginTop: 48 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                            <Text style={styles.relatedTitle}>Related Products</Text>
+                            <TouchableOpacity><Text style={{ color: '#15803d', fontWeight: 'bold', fontSize: 12 }}>View All</Text></TouchableOpacity>
+                        </View>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -20, paddingHorizontal: 20 }}>
                             {RELATED_PRODUCTS.map(item => (
-                                <TouchableOpacity 
-                                    key={item.id} 
-                                    onPress={() => navigation.push('ProductDetail', { product: item })}
-                                    className="bg-white rounded-[32px] border border-gray-100 p-4 mr-4 w-[160px] shadow-sm"
-                                >
-                                    <View className="relative">
-                                        <Image source={{ uri: item.image }} className="w-full h-32 rounded-2xl mb-3" />
-                                    </View>
-                                    <Text className="text-gray-900 font-black text-xs" numberOfLines={1}>{item.name}</Text>
-                                    <View className="flex-row items-center justify-between mt-1">
-                                        <Text className="text-green-700 font-black text-sm">{item.price}</Text>
-                                        <MaterialCommunityIcons name="plus-circle" size={18} color="#2e7d32" />
+                                <TouchableOpacity key={`relp-${item.id}`} onPress={() => onPushProduct(item)} style={styles.relatedCard}>
+                                    <Image source={{ uri: item.image }} style={{ width: '100%', height: 128, borderRadius: 16, marginBottom: 12 }} />
+                                    <Text style={{ fontWeight: '900', color: '#111827', fontSize: 12 }} numberOfLines={1}>{item.name}</Text>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                                        <Text style={{ color: '#15803d', fontWeight: '900', fontSize: 14 }}>{item.price}</Text>
+                                        <MaterialCommunityIcons name="plus-circle" size={18} color="#15803d" />
                                     </View>
                                 </TouchableOpacity>
                             ))}
@@ -152,65 +222,133 @@ export default function ProductDetailScreen() {
                 </View>
             </ScrollView>
 
-            {/* Premium Professional-Grade Action Suite */}
-            <View 
-                className="absolute bottom-0 left-0 right-0 bg-white/95 border-t border-gray-100 items-center justify-center shadow-2xl"
-                style={{ paddingBottom: Math.max(insets.bottom, 12), paddingTop: 12 }}
-            >
-                <View className="flex-row items-center justify-between px-5" style={{ width: '100%', maxWidth: 650 }}>
-                    {/* Tactile Quantity Hub */}
-                    <View className="flex-row items-center bg-gray-100/80 rounded-[32px] p-1 border border-gray-200">
-                        <TouchableOpacity 
-                            onPress={() => setQuantity(Math.max(1, quantity - 1))}
-                            className="w-12 h-12 bg-white rounded-full items-center justify-center shadow-sm"
-                            activeOpacity={0.7}
-                        >
-                            <MaterialCommunityIcons name="minus" size={22} color="#1F2937" />
+            {/* Bottom Bar */}
+            <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 15), paddingTop: 15 }]}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20 }}>
+                    <View style={styles.qtyContainer}>
+                        <TouchableOpacity onPress={() => setQuantity(Math.max(1, quantity - 1))} style={[styles.qtyCircleBtn, { backgroundColor: '#fff' }]}>
+                            <MaterialCommunityIcons name="minus" size={20} color="#111827" />
                         </TouchableOpacity>
-                        
-                        <View className="px-5 items-center">
-                            <Text className="text-gray-900 font-black text-xl">{quantity}</Text>
-                            <Text className="text-gray-400 text-[8px] font-black uppercase tracking-widest -mt-1">QTY</Text>
-                        </View>
-
-                        <TouchableOpacity 
-                            onPress={() => setQuantity(quantity + 1)}
-                            className="w-12 h-12 bg-green-700 rounded-full items-center justify-center shadow-lg shadow-green-900/40"
-                            activeOpacity={0.7}
-                        >
-                            <MaterialCommunityIcons name="plus" size={22} color="white" />
+                        <Text style={{ paddingHorizontal: 20, fontWeight: '900', fontSize: 18 }}>{quantity}</Text>
+                        <TouchableOpacity onPress={() => setQuantity(quantity + 1)} style={[styles.qtyCircleBtn, { backgroundColor: '#15803d' }]}>
+                            <MaterialCommunityIcons name="plus" size={20} color="white" />
                         </TouchableOpacity>
                     </View>
-
-                    {/* Elite Action Button with Unified Telemetry */}
-                    <TouchableOpacity 
-                        className="bg-green-700 flex-1 ml-4 h-[68px] rounded-[34px] items-center px-6 shadow-2xl shadow-green-900/50 flex-row overflow-hidden border border-white/10"
-                        activeOpacity={0.9}
-                        onPress={() => navigation.navigate('Main', { screen: 'Cart' })}
-                    >
-                        <View className="flex-1 pr-2">
-                            <Text className="text-white font-black text-sm uppercase leading-tight tracking-tighter" numberOfLines={1}>Add to Cart</Text>
-                            <Text className="text-green-100/60 text-[8px] font-black uppercase tracking-widest">Secure Checkout</Text>
-                        </View>
-
-                        <View className="h-8 w-[1.5px] bg-white/10 mx-3 rounded-full" />
-
-                        <View className="items-end min-w-[80px]">
-                            <Text className="text-white font-black text-base" numberOfLines={1}>
-                                Rs. {(parseInt(product.price.replace(/[^0-9]/g, '')) * quantity).toLocaleString()}
-                            </Text>
-                            <Text className="text-green-100/60 text-[8px] font-black uppercase">Total Price</Text>
-                        </View>
-                        
-                        <MaterialCommunityIcons 
-                            name="shopping" 
-                            size={70} 
-                            color="white" 
-                            className="absolute -right-5 -bottom-5 opacity-10" 
-                        />
+                    <TouchableOpacity onPress={handleAddToCartPress} style={styles.cartBtn} disabled={isAdding}>
+                        {isAdding ? (
+                            <ActivityIndicator color="white" />
+                        ) : (
+                            <>
+                                <Text style={{ flex: 1, color: '#fff', fontWeight: '900', fontSize: 14, textTransform: 'uppercase' }}>Add to Cart</Text>
+                                <Text style={{ color: '#fff', fontWeight: '900', fontSize: 16 }}>Rs. {totalPrice}</Text>
+                            </>
+                        )}
                     </TouchableOpacity>
                 </View>
             </View>
         </View>
+    );
+});
+
+export default function ProductDetailScreen({ navigation, route }: any) {
+    const insets = useSafeAreaInsets();
+    const navRef = useRef(navigation);
+    const { add, isAdding } = useCart();
+    const { data: favourites, toggle } = useFavourites();
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+    useEffect(() => { navRef.current = navigation; }, [navigation]);
+
+    // Check if this product is in favourites list
+    const isFavourite = useMemo(() => {
+        const raw = normalizeProduct(route.params?.product);
+        return favourites?.some((fav: any) => fav.id === raw?.id) || false;
+    }, [favourites, route.params?.product]);
+
+    // Handle Favourite Toggle with Auth Guard
+    const handleToggleFavourite = useCallback(async (productId: string) => {
+        if (!isAuthenticated) {
+            Alert.alert("Authentication Required", "Please log in to add items to your wishlist.", [
+                { text: "Cancel", style: "cancel" },
+                { text: "Login", onPress: () => navigation.navigate('CustomerLogin') }
+            ]);
+            return;
+        }
+        await toggle(productId);
+    }, [isAuthenticated, toggle, navigation]);
+
+    // Sanitized Nav Callbacks
+    const handleBack = useCallback(() => navRef.current?.goBack(), []);
+    const handlePush = useCallback((item: any) => navRef.current?.push('ProductDetail', { product: item }), []);
+
+    // Add to Cart Handler
+    const handleAddToCart = useCallback(async (qty: number, variants: any) => {
+        if (!isAuthenticated) {
+            Alert.alert("Login Required", "Please log in to add items to your cart.", [
+                { text: "Cancel", style: "cancel" },
+                { text: "Login", onPress: () => navRef.current?.navigate('CustomerLogin') }
+            ]);
+            return;
+        }
+
+        try {
+            const raw = normalizeProduct(route.params?.product);
+            if (!raw?.id) throw new Error("Product ID missing");
+            
+            await add({ 
+                productId: raw.id, 
+                quantity: qty, 
+                variants 
+            });
+            
+            Alert.alert("Success", "Item added to cart!", [
+                { text: "Continue Shopping", style: "cancel" },
+                { text: "Go to Cart", onPress: () => navRef.current?.navigate('Main', { screen: 'Cart' }) }
+            ]);
+        } catch (error: any) {
+            const message = error.response?.data?.message || error.message || "Failed to add item to cart.";
+            Alert.alert("Execution Failed", message);
+        }
+    }, [add, route.params?.product, isAuthenticated]);
+
+    // Strict Field-by-Field Sanitization
+    const productData = useMemo(() => {
+        const raw = normalizeProduct(route.params?.product);
+        if (!raw) return null;
+        return {
+            id: String(raw.id || ''),
+            name: String(raw.name || 'Product'),
+            price: String(raw.price || 'Rs. 0'),
+            discountPrice: Number(raw.discountPrice || 0),
+            image: String(raw.image || ''),
+            images: Array.isArray(raw.images) ? raw.images.map(String) : [String(raw.image || '')],
+            description: String(raw.description || ''),
+            brand: String(raw.brand || 'ZimCart'),
+            mart: String(raw.mart || 'Store'),
+            inventory: Number(raw.inventory || 0),
+            weight: String(raw.weight || 'N/A'),
+            sku: String(raw.sku || 'N/A'),
+            rating: String(raw.rating || '4.8'),
+            reviews: String(raw.reviews || '0'),
+            variants: Array.isArray(raw.variants) ? raw.variants.map((v: any) => ({
+                type: String(v.type || ''),
+                values: Array.isArray(v.values) ? v.values.map(String) : []
+            })) : []
+        };
+    }, [route.params?.product]);
+
+    if (!productData) return null;
+
+    return (
+        <ProductDetailContent 
+            product={productData} 
+            insets={insets}
+            onBack={handleBack}
+            onPushProduct={handlePush}
+            onAddToCart={handleAddToCart}
+            isAdding={isAdding}
+            isFavourite={isFavourite}
+            onToggleFavourite={handleToggleFavourite}
+        />
     );
 }

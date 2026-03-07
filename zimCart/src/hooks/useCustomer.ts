@@ -69,9 +69,38 @@ export const useFavourites = () => {
 
     const toggleFavourite = useMutation({
         mutationFn: customerApi.toggleFavourite,
-        onSuccess: (result, productId) => {
+        // Senior Architect: Optimistic Update for Zero-Latency UX
+        onMutate: async (productId: string) => {
+            // Cancel outgoing refetches so they don't overwrite our optimistic update
+            await queryClient.cancelQueries({ queryKey: ['favourites'] });
+
+            // Snapshot the previous value
+            const previousFavourites = queryClient.getQueryData<any[]>(['favourites']);
+
+            // Optimistically update the list
+            queryClient.setQueryData(['favourites'], (old: any[] | undefined) => {
+                if (!old) return [];
+                const exists = old.some(fav => fav.id === productId);
+                if (exists) {
+                    return old.filter(fav => fav.id !== productId);
+                } else {
+                    // Synthetic product object for UI purposes (matching backend return structure)
+                    return [...old, { id: productId }];
+                }
+            });
+
+            // Return a context object with the snapshotted value
+            return { previousFavourites };
+        },
+        // If the mutation fails, use the context returned from onMutate to roll back
+        onError: (err, productId, context) => {
+            if (context?.previousFavourites) {
+                queryClient.setQueryData(['favourites'], context.previousFavourites);
+            }
+        },
+        // Always refetch after error or success to ensure we're in sync with the server
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['favourites'] });
-            // Optimistic update could be implemented here
         },
     });
 

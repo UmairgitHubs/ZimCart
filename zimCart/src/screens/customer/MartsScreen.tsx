@@ -6,9 +6,12 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { EXPLORE_MARTS, STORES } from '@/data/mock/home';
+import { useMarts } from '@/hooks/useMarketplace';
 import LargeMartCard from '@/components/customer/cards/LargeMartCard';
 import ModernMartCard from '@/components/customer/cards/ModernMartCard';
+import { ActivityIndicator } from 'react-native';
+import { Mart } from '@/types/customer';
+import { normalizeMart } from '@/utils/normalizers';
 
 const CATEGORIES = [
     { id: '1', name: 'All', icon: 'apps' },
@@ -24,19 +27,16 @@ export default function MartsScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
 
-    // Combine mock data for a richer list
-    const allMarts = [...EXPLORE_MARTS, ...STORES.map(s => ({
-        ...s,
-        ratingCount: '(100+)',
-        time: s.deliveryTime,
-        delivery: s.deliveryFee,
-        promos: ['Special Discount'],
-        isAd: false
-    }))];
+    const { data: rawMarts = [], isLoading, isError, refetch } = useMarts();
+    
+    // Normalize and Filter
+    const marts = (rawMarts as any[]).map(m => normalizeMart(m)).filter(Boolean) as Mart[];
 
-    const filteredMarts = allMarts.filter(mart => {
+    const filteredMarts = marts.filter((mart) => {
         const matchesSearch = mart.name.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesCategory = selectedCategory === 'All' || mart.tags?.some(tag => tag.toLowerCase().includes(selectedCategory.toLowerCase())) || mart.name.toLowerCase().includes(selectedCategory.toLowerCase());
+        const matchesCategory = selectedCategory === 'All' || 
+                              mart.tags?.some((tag: string) => tag.toLowerCase().includes(selectedCategory.toLowerCase())) || 
+                              mart.name.toLowerCase().includes(selectedCategory.toLowerCase());
         return matchesSearch && matchesCategory;
     });
 
@@ -113,11 +113,11 @@ export default function MartsScreen() {
                 </View>
 
                 {/* Featured Marts Slider */}
-                {searchQuery === '' && selectedCategory === 'All' && (
+                {searchQuery === '' && selectedCategory === 'All' && marts.length > 0 && (
                     <View className="mb-8">
                         <Text className="px-4 text-xl font-black text-gray-900 mb-4">Featured Marts</Text>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4">
-                            {STORES.map(mart => (
+                            {marts.slice(0, 3).map((mart: any) => (
                                 <ModernMartCard 
                                     key={mart.id} 
                                     mart={mart} 
@@ -130,19 +130,36 @@ export default function MartsScreen() {
 
                 {/* Main List */}
                 <View className="px-4">
-                    {filteredMarts.map(mart => (
-                        <LargeMartCard 
-                            key={mart.id} 
-                            item={mart} 
-                            onPress={() => navigation.navigate('StoreDetail', { mart })}
-                        />
-                    ))}
-                    
-                    {filteredMarts.length === 0 && (
-                        <View className="items-center justify-center py-20">
-                            <MaterialCommunityIcons name="store-off-outline" size={64} color="#E5E7EB" />
-                            <Text className="text-gray-400 font-bold mt-4">No marts found match your search</Text>
+                    {isLoading ? (
+                        <View className="py-20 items-center">
+                            <ActivityIndicator size="large" color="#15803d" />
+                            <Text className="mt-4 text-gray-500 font-bold">Summoning the Marts...</Text>
                         </View>
+                    ) : isError ? (
+                        <View className="py-20 items-center">
+                            <MaterialCommunityIcons name="alert-circle-outline" size={64} color="#ef4444" />
+                            <Text className="mt-4 text-gray-900 font-black">Connection Interrupted</Text>
+                            <TouchableOpacity onPress={() => refetch()} className="mt-4 bg-green-700 px-6 py-2 rounded-xl">
+                                <Text className="text-white font-bold">Try Again</Text>
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
+                        <>
+                            {filteredMarts.map((mart: any) => (
+                                <LargeMartCard 
+                                    key={mart.id} 
+                                    item={mart} 
+                                    onPress={() => navigation.navigate('StoreDetail', { mart })}
+                                />
+                            ))}
+                            
+                            {filteredMarts.length === 0 && (
+                                <View className="items-center justify-center py-20">
+                                    <MaterialCommunityIcons name="store-off-outline" size={64} color="#E5E7EB" />
+                                    <Text className="text-gray-400 font-bold mt-4">No marts found match your search</Text>
+                                </View>
+                            )}
+                        </>
                     )}
                 </View>
             </ScrollView>

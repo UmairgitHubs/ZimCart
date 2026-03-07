@@ -112,7 +112,7 @@ export default function OnboardingScreen() {
         animated: true,
       });
     } else {
-      // Navigate to Home Screen
+      // Navigate to Home Hub
       navigation.navigate('Main');
     }
   };

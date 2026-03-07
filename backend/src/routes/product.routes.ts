@@ -15,5 +15,6 @@ router.get('/:id', productController.getProduct);
 // Note: In a production app, we'd also add a checkRole(['ADMIN', 'STORE_MANAGER']) middleware
 router.post('/', verifyJWT, validateRequest(productSchema), productController.createProduct);
 router.patch('/:id', verifyJWT, validateRequest(z.object({ body: productBodySchema.partial() })), productController.updateProduct);
+router.delete('/:id', verifyJWT, productController.deleteProduct);
 
 export default router;

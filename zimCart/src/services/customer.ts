@@ -30,6 +30,11 @@ export const customerApi = {
     return data.data;
   },
 
+  validateVoucher: async (code: string): Promise<Voucher> => {
+    const { data } = await api.post('/customers/vouchers/validate', { code });
+    return data.data;
+  },
+
   // Favourites
   getFavourites: async (): Promise<FavouriteItem[]> => {
     const { data } = await api.get('/customers/favourites');
@@ -59,6 +64,27 @@ export const customerApi = {
 
   deleteAddress: async (id: string): Promise<any> => {
     const { data } = await api.delete(`/customers/addresses/${id}`);
+    return data.data;
+  },
+
+  // Payment Methods
+  getPaymentMethods: async (): Promise<any[]> => {
+    const { data } = await api.get('/customers/payment-methods');
+    return data.data;
+  },
+
+  addPaymentMethod: async (method: any): Promise<any> => {
+    const { data } = await api.post('/customers/payment-methods', method);
+    return data.data;
+  },
+
+  setDefaultPaymentMethod: async (id: string): Promise<any> => {
+    const { data } = await api.patch(`/customers/payment-methods/${id}/default`);
+    return data.data;
+  },
+
+  deletePaymentMethod: async (id: string): Promise<any> => {
+    const { data } = await api.delete(`/customers/payment-methods/${id}`);
     return data.data;
   },
 

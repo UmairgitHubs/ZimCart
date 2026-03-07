@@ -14,6 +14,7 @@ export const getInventory = asyncHandler(async (req, res) => {
     status: status as string,
     search: search as string,
     warehouse: warehouse as string,
+    user: req.user
   });
 
   return res.status(200).json(
@@ -25,7 +26,7 @@ export const updateStock = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { currentStock, reason } = req.body;
 
-  const product = await inventoryService.updateStock(String(id), Number(currentStock), reason);
+  const product = await inventoryService.updateStock(String(id), Number(currentStock), req.user, reason);
 
   return res.status(200).json(
     new ApiResponse(200, product, "Stock updated successfully")
@@ -43,7 +44,7 @@ export const getHistory = asyncHandler(async (req, res) => {
 
 export const deleteInventory = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  await inventoryService.deleteInventory(String(id));
+  await inventoryService.deleteInventory(String(id), req.user);
 
   return res.status(200).json(
     new ApiResponse(200, {}, "Product deleted successfully from inventory")

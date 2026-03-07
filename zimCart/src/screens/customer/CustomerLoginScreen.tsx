@@ -52,11 +52,7 @@ export default function CustomerLoginScreen() {
             }
 
             reset(); 
-            
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'Main' }],
-            });
+            // Removed manual navigation.reset as the Navigator re-renders automatically based on isAuthenticated state
 
         } catch (error) {
             const message = parseApiError(error);
