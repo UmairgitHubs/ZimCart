@@ -4844,3 +4844,42 @@
 2026-03-08 02:38:40:3840 [31merror[39m: [31mUser role 'STORE_MANAGER' is not authorized to access this resource[39m
 2026-03-08 02:49:25:4925 [31merror[39m: [31mUnauthorized request[39m
 2026-03-08 03:15:03:153 [31merror[39m: [31mInvalid credentials[39m
+2026-03-08 04:52:22:5222 [31merror[39m: [31mInvalid credentials[39m
+2026-03-08 05:04:17:417 [31merror[39m: [31mValidation Error: body.expiry: Format MM/YY[39m
+2026-03-08 05:04:20:420 [31merror[39m: [31mValidation Error: body.expiry: Format MM/YY[39m
+2026-03-08 05:04:28:428 [31merror[39m: [31mValidation Error: body.expiry: Format MM/YY[39m
+2026-03-08 05:04:36:436 [31merror[39m: [31mValidation Error: body.expiry: Format MM/YY[39m
+2026-03-08 05:20:38:2038 [31merror[39m: [31mToken expired[39m
+2026-03-08 05:20:38:2038 [31merror[39m: [31mToken expired[39m
+2026-03-08 17:37:53:3753 [31merror[39m: [31mUnauthorized request[39m
+2026-03-08 17:38:02:382 [31merror[39m: [31mInvalid session or token expired[39m
+2026-03-08 17:38:02:382 [31merror[39m: [31mConnection terminated due to connection timeout[39m
+2026-03-08 18:55:15:5515 [31merror[39m: [31mToken expired[39m
+2026-03-08 19:04:50:450 [31merror[39m: [31mUnauthorized request[39m
+2026-03-08 19:08:24:824 [31merror[39m: [31mCannot read properties of undefined (reading 'role')[39m
+2026-03-08 19:08:24:824 [31merror[39m: [31mCannot read properties of undefined (reading 'role')[39m
+2026-03-08 19:08:26:826 [31merror[39m: [31mCannot read properties of undefined (reading 'role')[39m
+2026-03-08 19:08:26:826 [31merror[39m: [31mCannot read properties of undefined (reading 'role')[39m
+2026-03-08 19:08:28:828 [31merror[39m: [31mCannot read properties of undefined (reading 'role')[39m
+2026-03-08 19:08:28:828 [31merror[39m: [31mCannot read properties of undefined (reading 'role')[39m
+2026-03-08 19:08:32:832 [31merror[39m: [31mCannot read properties of undefined (reading 'role')[39m
+2026-03-08 19:08:32:832 [31merror[39m: [31mCannot read properties of undefined (reading 'role')[39m
+2026-03-08 19:15:08:158 [31merror[39m: [31mUnauthorized request[39m
+2026-03-08 19:15:30:1530 [31merror[39m: [31mToken expired[39m
+2026-03-08 19:15:30:1530 [31merror[39m: [31mToken expired[39m
+2026-03-08 19:31:33:3133 [31merror[39m: [31mToken expired[39m
+2026-03-08 19:31:33:3133 [31merror[39m: [31mToken expired[39m
+2026-03-08 19:42:08:428 [31merror[39m: [31mUnauthorized request[39m
+2026-03-08 19:42:08:428 [31merror[39m: [31mUnauthorized request[39m
+2026-03-08 19:58:58:5858 [31merror[39m: [31mUnauthorized request[39m
+2026-03-08 20:04:33:433 [31merror[39m: [31mToken expired[39m
+2026-03-08 20:14:57:1457 [31merror[39m: [31mUnauthorized request[39m
+2026-03-08 20:14:59:1459 [31merror[39m: [31mUnauthorized request[39m
+2026-03-08 20:14:59:1459 [31merror[39m: [31mInvalid Credentials[39m
+2026-03-08 20:40:15:4015 [31merror[39m: [31mUnauthorized request[39m
+2026-03-08 20:56:47:5647 [31merror[39m: [31mToken expired[39m
+2026-03-10 02:17:22:1722 [31merror[39m: [31mUnauthorized request[39m
+2026-03-10 02:17:29:1729 [31merror[39m: [31mInvalid session or token expired[39m
+2026-03-10 02:42:01:421 [31merror[39m: [31mUnauthorized request[39m
+2026-03-11 01:21:37:2137 [31merror[39m: [31mUnauthorized request[39m
+2026-03-11 01:43:06:436 [31merror[39m: [31mUnauthorized request[39m

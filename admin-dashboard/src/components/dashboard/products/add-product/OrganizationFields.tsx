@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { List, Layers } from "lucide-react";
+import { List, Layers, Percent } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useCategories } from "@/hooks/useCategories";
 import { Category } from "@/types/categories";
@@ -104,6 +104,21 @@ export function OrganizationFields() {
                   {s}
                </label>
              ))}
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-500 text-emerald-600">Tax (%)</label>
+          <div className="relative group">
+            <input 
+              type="number"
+              {...register("taxPercentage", { valueAsNumber: true })}
+              placeholder="0.0" 
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/10 rounded-xl text-[13px] font-bold text-slate-700 outline-none transition-all pr-10"
+            />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:text-emerald-500 transition-colors">
+              <Percent className="w-4 h-4" />
+            </div>
           </div>
         </div>
       </div>

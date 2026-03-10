@@ -7,7 +7,7 @@ export const getCategories = async (params: { search?: string; status?: string; 
 
   const where: any = {};
   
-  if (user.role === 'STORE_MANAGER') {
+  if (user?.role === 'STORE_MANAGER') {
     const store = await prisma.store.findFirst({ where: { managerId: user.id } });
     if (!store) return { items: [], stats: { total: 0, published: 0, draft: 0, hidden: 0 } };
     where.storeId = store.id;

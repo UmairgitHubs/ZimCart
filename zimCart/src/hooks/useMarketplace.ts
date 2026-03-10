@@ -28,10 +28,18 @@ export const useStoreDetails = (storeId: string, search?: string, category?: str
   });
 };
 
-export const useProducts = (params: { storeId?: string; categoryId?: string; search?: string }) => {
+export const useProducts = (params: { storeId?: string; categoryId?: string; search?: string; isDeal?: boolean }) => {
   return useQuery({
     queryKey: ['products', params],
     queryFn: () => marketplaceApi.getProducts(params),
     staleTime: 1000 * 60 * 5,
+  });
+};
+
+export const useCategories = (params?: { storeId?: string }) => {
+  return useQuery({
+    queryKey: ['categories', params],
+    queryFn: () => marketplaceApi.getCategories(params || {}),
+    staleTime: 1000 * 60 * 10, // 10 minutes cache
   });
 };

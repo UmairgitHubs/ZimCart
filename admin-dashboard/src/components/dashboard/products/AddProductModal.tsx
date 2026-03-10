@@ -8,10 +8,12 @@ import { Product } from "@/types/products";
 // Sub-components
 import { GeneralInfoFields } from "./add-product/GeneralInfoFields";
 import { ImageGalleryFields } from "./add-product/ImageGalleryFields";
-import { PricingIdentifierFields } from "./add-product/PricingIdentifierFields";
 import { VariantFields } from "./add-product/VariantFields";
 import { PromotionFields } from "./add-product/PromotionFields";
 import { OrganizationFields } from "./add-product/OrganizationFields";
+import { UnitConfigurationFields } from "./add-product/UnitConfigurationFields";
+import { InventorySummaryPanel } from "./add-product/InventorySummaryPanel";
+import axios from "axios";
 
 interface AddProductModalProps {
   isOpen: boolean;
@@ -40,21 +42,33 @@ export function AddProductModal({ isOpen, onClose, product }: AddProductModalPro
       discountPrice: 0,
       costPrice: 0,
       taxPercentage: 0,
-      sku: "",
-      barcode: "",
       category: "",
       subCategory: "",
-      inventory: 0,
       status: "Draft",
       images: [],
       discountPercentage: 0,
       isDeal: false,
       weight: "",
-      variants: []
+      baseUnit: "piece",
+      sales: 0,
+      variants: [
+        { 
+          name: "Standard", 
+          sellingUnit: "piece", 
+          baseUnitQuantity: 1, 
+          sku: "", 
+          costPrice: 0, 
+          sellingPrice: 0, 
+          stockQuantity: 0, 
+          lowStockThreshold: 10,
+          isDefault: true,
+          isActive: true 
+        }
+      ]
     }
   });
 
-  const { handleSubmit, reset, setValue, watch, control, setError } = methods;
+  const { handleSubmit, reset, setValue, watch, control, setError, getValues } = methods;
 
   // 1. Modal Housekeeping
   useEffect(() => {
@@ -69,46 +83,97 @@ export function AddProductModal({ isOpen, onClose, product }: AddProductModalPro
     };
   }, [isOpen, onClose]);
 
-  // 2. Form State Synchronization
+  // 2. Barcode Lookup Logic
+  const handleBarcodeLookup = async (barcode: string) => {
+    try {
+      const { data } = await axios.get(`/api/products/barcode-lookup?code=${barcode}`);
+      
+      // Auto-fill logic (Do not overwrite user-entered values)
+      const currentValues = getValues();
+      
+      if (!currentValues.name) setValue("name", data.name, { shouldValidate: true });
+      if (!currentValues.brand) setValue("brand", data.brand, { shouldValidate: true });
+      if (!currentValues.description) setValue("description", data.description, { shouldValidate: true });
+      
+      // Auto-fill Image if gallery is empty
+      if ((!currentValues.images || currentValues.images.length === 0) && data.image) {
+        setValue("images", [data.image], { shouldValidate: true });
+      }
+      
+      return true;
+    } catch (err) {
+      console.error("Barcode lookup failed:", err);
+      // Optional: Log but don't disrupt user flow
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    const onBarcodeEvent = (e: any) => {
+       handleBarcodeLookup(e.detail.barcode);
+    };
+    window.addEventListener('barcode-lookup' as any, onBarcodeEvent);
+    return () => window.removeEventListener('barcode-lookup' as any, onBarcodeEvent);
+  }, []);
+
+  // 3. Form State Synchronization
   useEffect(() => {
     if (isOpen) {
       setLocalSuccess(false);
       setErrorMessage(null);
       if (product) {
         reset({ 
-          ...product, 
-          category: typeof product.category === 'object' ? product.category.name : product.category,
+          ...(product as any), 
+          category: typeof product.category === 'object' ? (product.category as any).name : product.category,
           brand: product.brand || "", 
-          barcode: product.barcode || "", 
           subCategory: product.subCategory || "", 
           weight: product.weight || "", 
-          variants: product.variants || [] 
+          baseUnit: (product as any).baseUnit || "piece",
+          sales: (product as any).sales || 0,
+          variants: (product.variants as any)?.length && (product.variants as any)[0].sellingUnit ? (product.variants as any) : [{ 
+            name: "Standard", sellingUnit: "piece", baseUnitQuantity: 1, sku: (product as any).sku || "", 
+            costPrice: product.costPrice || 0, sellingPrice: product.price || 0, 
+            stockQuantity: (product as any).inventory || 0, lowStockThreshold: 10,
+            isDefault: true, isActive: true 
+          }] 
         });
       }
- else {
-        reset({ name: "", brand: "", description: "", price: 0, discountPrice: 0, costPrice: 0, taxPercentage: 0, sku: "", barcode: "", category: "", subCategory: "", inventory: 0, status: "Draft", images: [], discountPercentage: 0, isDeal: false, weight: "", variants: [] });
+      else {
+        reset({ 
+           name: "", brand: "", description: "", price: 0, discountPrice: 0, 
+           costPrice: 0, taxPercentage: 0, category: "", subCategory: "", 
+           status: "Draft", images: [], discountPercentage: 0, isDeal: false, 
+           weight: "", baseUnit: "piece", sales: 0,
+           variants: [{ 
+             name: "Standard", sellingUnit: "piece", baseUnitQuantity: 1, sku: "", 
+             costPrice: 0, sellingPrice: 0, stockQuantity: 0, lowStockThreshold: 10,
+             isDefault: true, isActive: true 
+           }]
+        });
       }
     }
   }, [isOpen, product, reset]);
-
-  // 3. Automated Logic (SKU Generation)
-  const nameWatch = watch("name");
-  const brandWatch = watch("brand");
-
-  useEffect(() => {
-    if (!product && nameWatch && !watch("sku")) {
-      const brandPart = brandWatch ? brandWatch.slice(0, 3).toUpperCase() : "ZIM";
-      const namePart = nameWatch.slice(0, 3).toUpperCase();
-      const randomPart = Math.floor(1000 + Math.random() * 9000);
-      setValue("sku", `${brandPart}-${namePart}-${randomPart}`, { shouldValidate: true });
-    }
-  }, [nameWatch, brandWatch, setValue, product, watch]);
 
   if (!isOpen) return null;
 
   const onSubmitForm = async (data: any) => {
     try {
       setErrorMessage(null);
+      
+      // Auto-sync top-level pricing and identifiers from Default Variant
+      const defaultVariant = data.variants.find((v: any) => v.isDefault) || data.variants[0];
+      if (defaultVariant) {
+        data.price = defaultVariant.sellingPrice;
+        data.costPrice = defaultVariant.costPrice;
+        data.discountPrice = defaultVariant.discountPrice || 0;
+        data.weight = defaultVariant.weight || "";
+        data.sku = defaultVariant.sku;
+        data.barcode = defaultVariant.barcode || "";
+      }
+
+      // Calculate aggregated inventory
+      data.inventory = data.variants.reduce((acc: number, v: any) => acc + (Number(v.stockQuantity) || 0), 0);
+
       let res;
       if (product) {
         res = await updateProduct({ id: product.id, data });
@@ -124,7 +189,6 @@ export function AddProductModal({ isOpen, onClose, product }: AddProductModalPro
         }, 2000);
       }
     } catch (err: any) {
-      // Axios puts the response data in err.response.data
       const responseStatus = err.response?.status;
       const responseData = err.response?.data;
 
@@ -146,7 +210,7 @@ export function AddProductModal({ isOpen, onClose, product }: AddProductModalPro
         onClick={() => !isLoading && !localSuccess && onClose()}
       />
       
-      <div className="relative w-full max-w-2xl bg-white rounded-[32px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
+      <div className="relative w-full max-w-4xl bg-white rounded-[32px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 md:px-8 md:py-6 border-b border-slate-100 bg-white sticky top-0 z-10">
@@ -187,17 +251,39 @@ export function AddProductModal({ isOpen, onClose, product }: AddProductModalPro
             </div>
           ) : (
             <FormProvider {...methods}>
-              <form id="add-product-form" onSubmit={handleSubmit(onSubmitForm)} className="space-y-8">
+              <form id="add-product-form" onSubmit={handleSubmit(onSubmitForm)} className="space-y-10">
                 {errorMessage && (
                   <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium animate-in shake-in duration-300">
                     {errorMessage}
                   </div>
                 )}
 
+                {Object.keys(methods.formState.errors).length > 0 && (
+                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-sm font-medium space-y-1">
+                    <p className="font-bold flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
+                      Please fix the following issues:
+                    </p>
+                    <ul className="list-disc list-inside text-[12px] opacity-80">
+                      {Object.keys(methods.formState.errors).map((key) => {
+                         const error = methods.formState.errors[key as keyof typeof methods.formState.errors];
+                         return <li key={key}>{(error as any)?.message || key}</li>;
+                      })}
+                    </ul>
+                  </div>
+                )}
+
                 <GeneralInfoFields />
                 <ImageGalleryFields />
-                <PricingIdentifierFields />
-                <VariantFields />
+                
+                <UnitConfigurationFields />
+                
+                <div className="pt-2">
+                   <VariantFields />
+                </div>
+
+                <InventorySummaryPanel />
+
                 <PromotionFields />
                 <OrganizationFields />
               </form>

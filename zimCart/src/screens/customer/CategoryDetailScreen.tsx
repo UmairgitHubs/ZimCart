@@ -4,26 +4,25 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useProducts } from '@/hooks/useMarketplace';
+import { ActivityIndicator } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
 const FILTERS = ['All', 'Popular', 'Low Price', 'High Price', 'New'];
 
-const CATEGORY_PRODUCTS = [
-    { id: '1', name: 'ZimCart Fresh Milk 1L', price: 'Rs. 250', oldPrice: 'Rs. 280', image: 'https://images.unsplash.com/photo-1550583726-226ff22580fc?q=80&w=200&auto=format&fit=crop', mart: 'ZimCart Fresh', discount: '10%' },
-    { id: '2', name: 'Nestle Yogurt 500g', price: 'Rs. 180', oldPrice: 'Rs. 200', image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=200&auto=format&fit=crop', mart: 'Mart 24', discount: '5%' },
-    { id: '3', name: 'Fresh Paneer 200g', price: 'Rs. 450', oldPrice: 'Rs. 500', image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?q=80&w=200&auto=format&fit=crop', mart: 'ZimCart Fresh', discount: '15%' },
-    { id: '4', name: 'Cheddar Cheese Slice', price: 'Rs. 580', oldPrice: 'Rs. 650', image: 'https://images.unsplash.com/photo-1618164435735-413d3b066c9a?q=80&w=200&auto=format&fit=crop', mart: 'Local Supermarket', discount: '20%' },
-    { id: '5', name: 'Butter 200g', price: 'Rs. 320', oldPrice: 'Rs. 350', image: 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?q=80&w=200&auto=format&fit=crop', mart: 'ZimCart Fresh', discount: '8%' },
-    { id: '6', name: 'Whipped Cream', price: 'Rs. 420', oldPrice: 'Rs. 480', image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=200&auto=format&fit=crop', mart: 'ZimCart Fresh', discount: '12%' },
-];
-
 export default function CategoryDetailScreen() {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation<any>();
     const route = useRoute<any>();
-    const category = route.params?.category || { name: 'Aisle', color: '#f3f4f6' };
+    const category = route.params?.category || { name: 'Aisle', color: '#f3f4f6', id: null };
     
+    // Modern Technique: React Query for dynamic product fetching
+    const { data: productsData, isLoading } = useProducts({ 
+        categoryId: category.id 
+    });
+
+    const products = productsData?.products || [];
     const [activeFilter, setActiveFilter] = useState('All');
 
     const renderHeader = () => (
@@ -97,35 +96,57 @@ export default function CategoryDetailScreen() {
 
                 {/* Main Product List */}
                 <Text className="text-lg font-black text-gray-900 mb-6 tracking-tighter uppercase">Available Products</Text>
-                <View className="flex-row flex-wrap justify-between">
-                    {CATEGORY_PRODUCTS.map(product => (
-                        <TouchableOpacity 
-                            key={product.id}
-                            className="bg-white rounded-[32px] mb-6 border border-gray-50 shadow-sm"
-                            style={{ width: (width - 50) / 2 }}
-                            activeOpacity={0.9}
-                            onPress={() => navigation.navigate('ProductDetail', { product })}
-                        >
-                            <View className="relative">
-                                <Image source={{ uri: product.image }} className="w-full h-40 rounded-t-[32px]" />
-                                <View className="absolute top-3 left-3 bg-red-500 px-2 py-1 rounded-lg">
-                                    <Text className="text-white text-[9px] font-black">{product.discount} OFF</Text>
+                
+                {isLoading ? (
+                    <View className="py-20 items-center justify-center">
+                        <ActivityIndicator size="large" color="#2e7d32" />
+                        <Text className="text-gray-400 font-bold mt-4 uppercase tracking-widest text-[10px]">Fetching Catalog...</Text>
+                    </View>
+                ) : (
+                    <View className="flex-row flex-wrap justify-between">
+                        {products.length > 0 ? products.map((product: any) => (
+                            <TouchableOpacity 
+                                key={product.id}
+                                className="bg-white rounded-[32px] mb-6 border border-gray-50 shadow-sm"
+                                style={{ width: (width - 50) / 2 }}
+                                activeOpacity={0.9}
+                                onPress={() => navigation.navigate('ProductDetail', { product })}
+                            >
+                                <View className="relative">
+                                    <Image 
+                                        source={{ uri: product.images?.[0] || 'https://via.placeholder.com/200' }} 
+                                        className="w-full h-40 rounded-t-[32px]" 
+                                    />
+                                    {(product.discountPercentage > 0 || product.discountPrice > 0) && (
+                                        <View className="absolute top-3 left-3 bg-red-500 px-2 py-1 rounded-lg">
+                                            <Text className="text-white text-[9px] font-black">
+                                                {product.discountPercentage ? `${product.discountPercentage}%` : 'DEAL'} OFF
+                                            </Text>
+                                        </View>
+                                    )}
+                                    <TouchableOpacity className="absolute bottom-3 right-3 bg-green-700 w-10 h-10 rounded-2xl items-center justify-center shadow-lg shadow-green-900/40">
+                                        <MaterialCommunityIcons name="plus" size={24} color="white" />
+                                    </TouchableOpacity>
                                 </View>
-                                <TouchableOpacity className="absolute bottom-3 right-3 bg-green-700 w-10 h-10 rounded-2xl items-center justify-center shadow-lg shadow-green-900/40">
-                                    <MaterialCommunityIcons name="plus" size={24} color="white" />
-                                </TouchableOpacity>
-                            </View>
-                            <View className="p-4">
-                                <Text className="text-[10px] text-gray-400 font-bold uppercase mb-1">{product.mart}</Text>
-                                <Text className="text-xs font-black text-gray-900" numberOfLines={1}>{product.name}</Text>
-                                <View className="flex-row items-center mt-2">
-                                    <Text className="text-green-700 font-black text-sm">{product.price}</Text>
-                                    <Text className="text-gray-400 text-[10px] line-through ml-2">{product.oldPrice}</Text>
+                                <View className="p-4">
+                                    <Text className="text-[10px] text-gray-400 font-bold uppercase mb-1">{product.store?.name || 'ZimCart Store'}</Text>
+                                    <Text className="text-xs font-black text-gray-900" numberOfLines={1}>{product.name}</Text>
+                                    <View className="flex-row items-center mt-2">
+                                        <Text className="text-green-700 font-black text-sm">Rs. {product.discountPrice || product.price}</Text>
+                                        {product.discountPrice > 0 && product.price > product.discountPrice && (
+                                            <Text className="text-gray-400 text-[10px] line-through ml-2">Rs. {product.price}</Text>
+                                        )}
+                                    </View>
                                 </View>
+                            </TouchableOpacity>
+                        )) : (
+                            <View className="w-full py-20 items-center justify-center bg-gray-50 rounded-[40px] border border-dashed border-gray-200">
+                                <MaterialCommunityIcons name="package-variant" size={48} color="#D1D5DB" />
+                                <Text className="text-gray-400 font-bold mt-4 uppercase tracking-widest text-[10px]">No products in this aisle yet</Text>
                             </View>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                        )}
+                    </View>
+                )}
             </ScrollView>
 
             {/* Premium Professional-Grade Cart Bar */}

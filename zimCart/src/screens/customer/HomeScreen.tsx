@@ -30,7 +30,7 @@ import {
 
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useMarts } from '@/hooks/useMarketplace';
+import { useMarts, useProducts, useCategories } from '@/hooks/useMarketplace';
 import { ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -38,6 +38,8 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { data: marts = [], isLoading } = useMarts();
+  const { data: dealsData, isLoading: isLoadingDeals } = useProducts({ isDeal: true });
+  const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
 
   return (
     <View className="flex-1 bg-white">
@@ -139,14 +141,36 @@ export default function HomeScreen() {
                      <TouchableOpacity><Text className="text-primary font-bold text-xs">View all</Text></TouchableOpacity>
                  </View>
                  
-                 <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4 pb-4">
-                     {DAILY_DEALS.map(item => (
-                        <BestBuyCard key={item.id} item={item} />
-                     ))}
-                 </ScrollView>
+                 {isLoadingDeals ? (
+                     <View className="h-40 items-center justify-center">
+                         <ActivityIndicator color="#2e7d32" />
+                     </View>
+                 ) : (
+                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4 pb-4">
+                         {dealsData?.products?.map((item: any) => (
+                            <BestBuyCard 
+                                key={item.id} 
+                                item={{
+                                    id: item.id,
+                                    name: item.name,
+                                    mart: item.store?.name || 'ZimCart Fresh',
+                                    price: `Rs. ${item.discountPrice || item.price}`,
+                                    oldPrice: item.discountPrice ? `Rs. ${item.price}` : '',
+                                    discount: item.discountPercentage ? `${item.discountPercentage}% OFF` : 'DEAL',
+                                    image: item.images?.[0] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=400&auto=format&fit=crop',
+                                    time: item.store?.deliveryTime || '30-45 min'
+                                }} 
+                                onPress={() => navigation.navigate('ProductDetail', { product: item })}
+                            />
+                         ))}
+                         {(!dealsData?.products || dealsData.products.length === 0) && (
+                             <Text className="text-gray-400 font-bold px-4">No deals available this week</Text>
+                         )}
+                     </ScrollView>
+                 )}
              </View>
 
-             {/* Top Brands */}
+             {/* Top Brands
              <View className="mb-8">
                  <Text className="text-xl font-black text-gray-900 mb-4 px-1">Top Brands</Text>
                  <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
@@ -158,7 +182,7 @@ export default function HomeScreen() {
                         />
                      ))}
                  </ScrollView>
-             </View>
+             </View> */}
 
              {/* Shop by Aisle */}
              <View className="mb-8">
@@ -166,22 +190,35 @@ export default function HomeScreen() {
                      <Text className="text-xl font-black text-gray-900">Shop by Aisle</Text>
                      <TouchableOpacity><Text className="text-primary font-bold text-xs">View all</Text></TouchableOpacity>
                  </View>
-                 <View className="flex-row flex-wrap justify-between">
-                     {AISLES.map(aisle => (
-                        <AisleCard 
-                           key={aisle.id} 
-                           item={aisle} 
-                           onPress={() => {
-                               if (aisle.name === 'Pet Care') navigation.navigate('PetCare');
-                               else if (aisle.name === 'Tech') navigation.navigate('Tech');
-                               else if (aisle.name === 'Fashion') navigation.navigate('Fashion');
-                               else if (aisle.name === 'Beauty') navigation.navigate('Beauty');
-                               else if (aisle.name === 'Home' || aisle.name === 'Home Decor') navigation.navigate('HomeDecor');
-                               else navigation.navigate('CategoryDetail', { category: aisle });
-                           }}
-                        />
-                     ))}
-                 </View>
+                 
+                 {isLoadingCategories ? (
+                     <View className="py-10 items-center justify-center">
+                         <ActivityIndicator color="#2e7d32" />
+                     </View>
+                 ) : (
+                     <View className="flex-row flex-wrap justify-between px-1">
+                         {(Array.isArray(categories) ? categories : (categories as any)?.items || []).slice(0, 6).map((category: any, idx: number) => {
+                            const pastelColors = ['#ecfccb', '#fee2e2', '#fff7ed', '#fef9c3', '#eff6ff', '#f3e8ff', '#e0e7ff', '#ccfbf1'];
+                            const color = pastelColors[idx % pastelColors.length];
+                            
+                            return (
+                               <AisleCard 
+                                  key={category.id} 
+                                  item={{
+                                      id: category.id,
+                                      name: category.name,
+                                      color: color,
+                                      image: category.image || 'https://cdn-icons-png.flaticon.com/512/3724/3724720.png'
+                                  }} 
+                                  onPress={() => navigation.navigate('CategoryDetail', { category })}
+                               />
+                            );
+                         })}
+                         {(!categories || (Array.isArray(categories) ? categories.length === 0 : (categories as any)?.items?.length === 0)) && (
+                            <Text className="text-gray-400 font-bold px-2 py-4">No categories found...</Text>
+                         )}
+                     </View>
+                 )}
              </View>
 
              {/* Fresh Arrivals */}
@@ -199,22 +236,24 @@ export default function HomeScreen() {
              {/* Shops by Category */}
              <View className="mb-8">
                  <Text className="text-xl font-black text-gray-900 mb-4 px-1">Browse Categories</Text>
-                 <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4 pb-4">
-                     {SHOP_CATEGORIES.map(cat => (
-                        <ShopCategoryCard 
-                            key={cat.id} 
-                            item={cat} 
-                            onPress={() => {
-                                if (cat.name === 'Pet Care') navigation.navigate('PetCare');
-                                else if (cat.name === 'Tech') navigation.navigate('Tech');
-                                else if (cat.name === 'Fashion') navigation.navigate('Fashion');
-                                else if (cat.name === 'Beauty') navigation.navigate('Beauty');
-                                else if (cat.name === 'Home' || cat.name === 'Home Decor') navigation.navigate('HomeDecor');
-                                else navigation.navigate('CategoryDetail', { category: cat });
-                            }}
-                        />
-                     ))}
-                 </ScrollView>
+                 {isLoadingCategories ? (
+                     <ActivityIndicator color="#2e7d32" />
+                 ) : (
+                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4 pb-4">
+                         {(Array.isArray(categories) ? categories : (categories as any)?.items || []).map((cat: any) => (
+                            <ShopCategoryCard 
+                                key={cat.id} 
+                                item={{
+                                    id: cat.id,
+                                    name: cat.name,
+                                    items: `${cat.productCount || 0} Products`,
+                                    image: cat.image || 'https://cdn-icons-png.flaticon.com/512/3724/3724720.png'
+                                }} 
+                                onPress={() => navigation.navigate('CategoryDetail', { category: cat })}
+                            />
+                         ))}
+                     </ScrollView>
+                 )}
              </View>
 
              {/* Explore Marts Nearby (Vertical Feed) */}

@@ -9,14 +9,14 @@ export const createProduct = asyncHandler(async (req, res) => {
     name, brand, description, images, price, discountPrice, 
     costPrice, taxPercentage, sku, barcode, category, 
     subCategory, inventory, status, isDeal, discountPercentage, 
-    weight, sales, variants 
+    weight, baseUnit, sales, variants 
   } = req.body;
 
   const product = await productService.createProduct({
     name, brand, description, images, price, discountPrice,
     costPrice, taxPercentage, sku, barcode, category,
     subCategory, inventory, status, isDeal, discountPercentage,
-    weight, sales, variants
+    weight, baseUnit, sales, variants
   }, req.user?.id);
   
   if (!product) {
@@ -35,14 +35,14 @@ export const updateProduct = asyncHandler(async (req, res) => {
     name, brand, description, images, price, discountPrice, 
     costPrice, taxPercentage, sku, barcode, category, 
     subCategory, inventory, status, isDeal, discountPercentage, 
-    weight, sales, variants 
+    weight, baseUnit, sales, variants 
   } = req.body;
 
   const product = await productService.updateProduct(id, {
     name, brand, description, images, price, discountPrice,
     costPrice, taxPercentage, sku, barcode, category,
     subCategory, inventory, status, isDeal, discountPercentage,
-    weight, sales, variants
+    weight, baseUnit, sales, variants
   }, req.user?.id);
   
   if (!product) {
@@ -58,11 +58,17 @@ export const updateProduct = asyncHandler(async (req, res) => {
 export const getProducts = asyncHandler(async (req, res) => {
   const page = parseInt(String(req.query.page || '1')) || 1;
   const limit = parseInt(String(req.query.limit || '20')) || 20;
-  const { search, category, status } = req.query as { search?: string, category?: string, status?: string };
+  const { search, category, categoryId, status, isDeal, storeId } = req.query as { search?: string, category?: string, categoryId?: string, status?: string, isDeal?: string, storeId?: string };
   
   const data = await productService.getProducts(page, limit, { 
-    search, category, status, 
-    managerId: req.user?.id // Dashboard view: use logged in manager's context
+    search, 
+    category, 
+    categoryId,
+    status, 
+    storeId,
+    // Only apply managerId if they are fetching their own dashboard
+    managerId: req.user?.id,
+    isDeal: isDeal === 'true' ? true : undefined
   });
 
   return res.status(200).json(

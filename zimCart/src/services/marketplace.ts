@@ -11,7 +11,7 @@ export const marketplaceApi = {
     return data.data;
   },
 
-  getProducts: async (params: { storeId?: string; categoryId?: string; search?: string; page?: number }) => {
+  getProducts: async (params: { storeId?: string; categoryId?: string; search?: string; page?: number; isDeal?: boolean }) => {
     const { data } = await api.get('/products', { params });
     return data.data;
   },

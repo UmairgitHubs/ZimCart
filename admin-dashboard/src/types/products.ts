@@ -33,11 +33,25 @@ export interface Product {
   status: ProductStatus;
   images: string[];
   weight?: string;
+  baseUnit?: 'piece' | 'kg' | 'g' | 'litre' | 'ml' | 'metre' | 'box';
   lastUpdated: string;
   sales: number;
   discountPercentage?: number;
   isDeal?: boolean;
-  variants?: { type: string; values: string[] }[];
+  variants?: {
+    name: string;
+    sellingUnit: 'piece' | 'kg' | 'g' | 'litre' | 'ml' | 'box' | 'pack' | 'bag' | 'carton' | 'dozen';
+    baseUnitQuantity: number;
+    sku: string;
+    barcode?: string;
+    costPrice: number;
+    sellingPrice: number;
+    discountPrice?: number;
+    stockQuantity: number;
+    lowStockThreshold: number;
+    isDefault: boolean;
+    isActive: boolean;
+  }[];
   history?: ProductHistory[];
 }
 

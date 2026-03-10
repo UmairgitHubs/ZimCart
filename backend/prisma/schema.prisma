@@ -262,7 +262,8 @@ model Product {
   isDeal        Boolean   @default(false)
   discountPercentage Int  @default(0)
   weight        String?
-  variants      Json?     // Stores array of { type: string, values: string[] }
+  baseUnit      String?   @default("piece") // piece, kg, g, litre, ml, metre, box
+  variants      Json?     // Stores array of variant objects with prices, stock, and identifiers
   sales         Int       @default(0)
   
   rating        Float     @default(0)
