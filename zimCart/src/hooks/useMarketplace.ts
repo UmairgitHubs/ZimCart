@@ -28,11 +28,23 @@ export const useStoreDetails = (storeId: string, search?: string, category?: str
   });
 };
 
-export const useProducts = (params: { storeId?: string; categoryId?: string; search?: string; isDeal?: boolean }) => {
+export const useProducts = (
+  params: {
+    storeId?: string;
+    categoryId?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+    isDeal?: boolean;
+    status?: string;
+  },
+  options?: { enabled?: boolean }
+) => {
   return useQuery({
     queryKey: ['products', params],
     queryFn: () => marketplaceApi.getProducts(params),
     staleTime: 1000 * 60 * 5,
+    enabled: options?.enabled ?? true,
   });
 };
 

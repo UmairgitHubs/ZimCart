@@ -1,4 +1,6 @@
-export type TicketStatus = 'Open' | 'In Progress' | 'Resolved' | 'Closed';
+import type { ApiTicketStatus } from '@/lib/support-thread';
+
+export type TicketStatus = 'Open' | 'In Progress' | 'Closed';
 export type TicketPriority = 'Low' | 'Medium' | 'High' | 'Critical';
 export type TicketCategory = 'Order Issue' | 'Payment' | 'Delivery' | 'Account' | 'Technical';
 
@@ -16,6 +18,7 @@ export interface SupportTicket {
   customerId: string;
   customerName: string;
   customerEmail: string;
+  customerPhone?: string | null;
   orderId?: string;
   subject: string;
   category: TicketCategory;
@@ -25,6 +28,24 @@ export interface SupportTicket {
   createdAt: string;
   updatedAt: string;
   messages: TicketMessage[];
+}
+
+export interface SupportTicketUserDto {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+}
+
+export interface SupportTicketDto {
+  id: string;
+  subject: string;
+  message: string;
+  status: ApiTicketStatus;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  user: SupportTicketUserDto;
 }
 
 export interface SupportFilters {

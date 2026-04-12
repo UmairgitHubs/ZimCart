@@ -17,13 +17,25 @@ import {
   Building2,
   Fingerprint
 } from "lucide-react";
-import { Rider } from "@/types/riders";
 import { cn } from "@/lib/utils";
+import type { Rider } from "@/types/riders";
+
+export type NewRiderPayload = {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  nationalId: string;
+  vehicleType: string;
+  licensePlate: string;
+  homeBaseLabel: string;
+  status: Rider["status"];
+};
 
 interface AddRiderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (newRider: Rider) => void;
+  onConfirm: (payload: NewRiderPayload) => Promise<void>;
 }
 
 export function AddRiderModal({ isOpen, onClose, onConfirm }: AddRiderModalProps) {
@@ -32,11 +44,13 @@ export function AddRiderModal({ isOpen, onClose, onConfirm }: AddRiderModalProps
     name: "",
     email: "",
     phone: "",
+    password: "",
+    confirmPassword: "",
     idNumber: "",
     vehicleType: "Motorcycle",
     licensePlate: "",
     assignedHub: "Harare Main Hub",
-    status: "Available" as const,
+    status: "Available" as Rider["status"],
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -54,7 +68,13 @@ export function AddRiderModal({ isOpen, onClose, onConfirm }: AddRiderModalProps
     if (!formData.licensePlate.trim() && formData.vehicleType !== "Standard Bike") {
       newErrors.licensePlate = "License plate required for motorized vehicles";
     }
-    
+    if (!formData.password || formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -63,29 +83,22 @@ export function AddRiderModal({ isOpen, onClose, onConfirm }: AddRiderModalProps
     if (!validate()) return;
 
     setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const newRider: Rider = {
-      id: `RDR-${Math.floor(Math.random() * 9000) + 1000}X`,
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      idNumber: formData.idNumber,
-      vehicleType: formData.vehicleType,
-      licensePlate: formData.licensePlate.toUpperCase() || "N/A",
-      assignedHub: formData.assignedHub,
-      status: formData.status,
-      distanceKm: 0,
-      rating: 5.0,
-      totalDeliveries: 0,
-      lastActive: "Just now",
-      avatarUrl: ""
-    };
-
-    onConfirm(newRider);
-    setIsSaving(false);
-    resetAndClose();
+    try {
+      await onConfirm({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        password: formData.password,
+        nationalId: formData.idNumber.trim(),
+        vehicleType: formData.vehicleType,
+        licensePlate: formData.licensePlate.trim() || "N/A",
+        homeBaseLabel: formData.assignedHub,
+        status: formData.status,
+      });
+      resetAndClose();
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const resetAndClose = () => {
@@ -93,6 +106,8 @@ export function AddRiderModal({ isOpen, onClose, onConfirm }: AddRiderModalProps
       name: "",
       email: "",
       phone: "",
+      password: "",
+      confirmPassword: "",
       idNumber: "",
       vehicleType: "Motorcycle",
       licensePlate: "",
@@ -214,6 +229,42 @@ export function AddRiderModal({ isOpen, onClose, onConfirm }: AddRiderModalProps
 
                <div className="space-y-2.5">
                   <div className="flex justify-between items-center px-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Portal password</label>
+                    {errors.password && <span className="text-[9px] font-bold text-red-500 uppercase">{errors.password}</span>}
+                  </div>
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className={cn(
+                      "w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:bg-white focus:border-emerald-500 transition-all outline-none shadow-sm",
+                      errors.password && "border-red-200 bg-red-50/30"
+                    )}
+                    placeholder="Min. 8 characters"
+                  />
+               </div>
+
+               <div className="space-y-2.5">
+                  <div className="flex justify-between items-center px-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Confirm password</label>
+                    {errors.confirmPassword && <span className="text-[9px] font-bold text-red-500 uppercase">{errors.confirmPassword}</span>}
+                  </div>
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    className={cn(
+                      "w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:bg-white focus:border-emerald-500 transition-all outline-none shadow-sm",
+                      errors.confirmPassword && "border-red-200 bg-red-50/30"
+                    )}
+                    placeholder="Repeat password"
+                  />
+               </div>
+
+               <div className="space-y-2.5">
+                  <div className="flex justify-between items-center px-1">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Gov ID / License No.</label>
                     {errors.idNumber && <span className="text-[9px] font-bold text-red-500 uppercase">{errors.idNumber}</span>}
                   </div>
@@ -291,6 +342,22 @@ export function AddRiderModal({ isOpen, onClose, onConfirm }: AddRiderModalProps
                     <option value="Gweru Hub">Gweru Specialized Hub</option>
                   </select>
                 </div>
+             </div>
+
+             <div className="space-y-2.5">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Initial fleet status</label>
+                <select
+                  value={formData.status}
+                  onChange={(e) =>
+                    setFormData({ ...formData, status: e.target.value as (typeof formData)["status"] })
+                  }
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:bg-white focus:border-emerald-500 transition-all outline-none appearance-none shadow-sm"
+                >
+                  <option value="Available">Available for dispatch</option>
+                  <option value="Offline">Offline / starting later</option>
+                  <option value="Dispatched">On delivery (testing)</option>
+                  <option value="Banned">Suspended (blocked)</option>
+                </select>
              </div>
 
              <div className="p-6 bg-blue-50/40 rounded-[24px] border border-blue-100/50 flex items-start gap-4">

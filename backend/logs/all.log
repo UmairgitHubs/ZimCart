@@ -11830,3 +11830,254 @@
 2026-03-11 01:43:07:437 [35mhttp[39m: [35mPOST /api/v1/products 201 1061 - 277.267 ms[39m
 2026-03-11 01:43:07:437 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 200 5348 - 262.777 ms[39m
 2026-03-11 01:43:07:437 [35mhttp[39m: [35mGET /api/v1/categories 200 1584 - 420.825 ms[39m
+2026-04-05 20:37:50:3750 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-05 20:37:50:3750 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-05 20:37:50:3750 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-05 20:39:44:3944 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-05 20:39:44:3944 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-05 20:39:44:3944 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-05 20:43:02:432 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-05 20:43:02:432 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-05 20:43:02:432 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-05 20:43:21:4321 [35mhttp[39m: [35mGET /health 304 - - 8.751 ms[39m
+2026-04-05 20:43:34:4334 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 20:43:34:4334 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 15.560 ms[39m
+2026-04-05 20:59:29:5929 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-05 20:59:29:5929 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-05 20:59:29:5929 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-05 20:59:46:5946 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 20:59:46:5946 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 30.872 ms[39m
+2026-04-05 20:59:47:5947 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 20:59:47:5947 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 10.398 ms[39m
+2026-04-05 20:59:48:5948 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 20:59:48:5948 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 8.129 ms[39m
+2026-04-05 20:59:48:5948 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 20:59:48:5948 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 35.357 ms[39m
+2026-04-05 21:00:15:015 [31merror[39m: [31m[39m
+[31mInvalid `prisma.user.findUnique()` invocation in[39m
+[31mC:\Users\HP\OneDrive\Documents\GitHub\ZimCart\backend\src\services\auth.service.ts:49:42[39m
+
+[31m  46 const { email, password, name, phone, role, country, termsConsent, privacyConsent } = data;[39m
+[31m  47 [39m
+[31m  48 const finalRole = role || 'CUSTOMER';[39m
+[31m→ 49 const existingUser = await prisma.user.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-04-05 21:00:15:015 [35mhttp[39m: [35mPOST /api/v1/auth/register 400 1959 - 1155.612 ms[39m
+2026-04-05 21:02:13:213 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-05 21:02:13:213 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-05 21:02:13:213 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-05 21:02:20:220 [35mhttp[39m: [35mPOST /api/v1/auth/register 201 1117 - 1194.392 ms[39m
+2026-04-05 21:02:45:245 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:02:45:245 [35mhttp[39m: [35mGET /api/v1/orders 401 1352 - 14.230 ms[39m
+2026-04-05 21:02:45:245 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:02:45:245 [35mhttp[39m: [35mGET /api/v1/orders/stats 401 1352 - 6.707 ms[39m
+2026-04-05 21:02:45:245 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:02:45:245 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 14.180 ms[39m
+2026-04-05 21:02:45:245 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:02:45:245 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 6.019 ms[39m
+2026-04-05 21:02:46:246 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:02:46:246 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 4.276 ms[39m
+2026-04-05 21:02:46:246 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:02:46:246 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 3.561 ms[39m
+2026-04-05 21:03:11:311 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1636 - 709.867 ms[39m
+2026-04-05 21:03:15:315 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:15:315 [35mhttp[39m: [35mGET /api/v1/orders 401 1352 - 6.131 ms[39m
+2026-04-05 21:03:15:315 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:15:315 [35mhttp[39m: [35mGET /api/v1/orders/stats 401 1352 - 12.351 ms[39m
+2026-04-05 21:03:15:315 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:15:315 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 16.505 ms[39m
+2026-04-05 21:03:15:315 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:15:315 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 8.323 ms[39m
+2026-04-05 21:03:16:316 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:16:316 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 3.137 ms[39m
+2026-04-05 21:03:16:316 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:16:316 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 8.150 ms[39m
+2026-04-05 21:03:30:330 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:30:330 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 10.256 ms[39m
+2026-04-05 21:03:30:330 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:30:330 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 8.373 ms[39m
+2026-04-05 21:03:30:330 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:30:330 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 3.343 ms[39m
+2026-04-05 21:03:30:330 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:30:330 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 6.779 ms[39m
+2026-04-05 21:03:41:341 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1636 - 550.196 ms[39m
+2026-04-05 21:03:47:347 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:47:347 [35mhttp[39m: [35mGET /api/v1/orders 401 1352 - 2.809 ms[39m
+2026-04-05 21:03:47:347 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:47:347 [35mhttp[39m: [35mGET /api/v1/orders/stats 401 1352 - 33.931 ms[39m
+2026-04-05 21:03:47:347 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:47:347 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 24.932 ms[39m
+2026-04-05 21:03:47:347 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:47:347 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 12.648 ms[39m
+2026-04-05 21:03:48:348 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:48:348 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 2.882 ms[39m
+2026-04-05 21:03:48:348 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:48:348 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 2.473 ms[39m
+2026-04-05 21:04:18:418 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-05 21:04:18:418 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-05 21:04:18:418 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-05 21:04:22:422 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:04:22:422 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 19.842 ms[39m
+2026-04-05 21:09:41:941 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-05 21:09:41:941 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-05 21:09:41:941 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-05 21:10:04:104 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:10:04:104 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 27.185 ms[39m
+2026-04-05 21:10:04:104 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:10:04:104 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 14.746 ms[39m
+2026-04-05 21:10:18:1018 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1636 - 1386.808 ms[39m
+2026-04-05 21:10:24:1024 [35mhttp[39m: [35mGET /api/v1/orders 200 94 - 359.519 ms[39m
+2026-04-05 21:10:24:1024 [35mhttp[39m: [35mGET /api/v1/orders/stats 200 154 - 327.807 ms[39m
+2026-04-05 21:10:33:1033 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 200 142 - 127.726 ms[39m
+2026-04-05 21:10:38:1038 [35mhttp[39m: [35mGET /api/v1/categories 200 152 - 116.183 ms[39m
+2026-04-05 21:10:38:1038 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 200 152 - 224.974 ms[39m
+2026-04-05 21:10:51:1051 [35mhttp[39m: [35mGET /api/v1/inventory?search=&page=1&limit=10 200 226 - 208.351 ms[39m
+2026-04-05 21:10:54:1054 [35mhttp[39m: [35mGET /api/v1/customers/admin/all?page=1&limit=10&search=&status=All 200 144 - 73.144 ms[39m
+2026-04-05 21:11:39:1139 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 160.312 ms[39m
+2026-04-12 13:10:22:1022 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 13:10:22:1022 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 13:10:22:1022 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 13:10:47:1047 [31merror[39m: [31mUnauthorized request[39m
+2026-04-12 13:10:47:1047 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 32.791 ms[39m
+2026-04-12 13:10:49:1049 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1697 - 1938.481 ms[39m
+2026-04-12 13:10:49:1049 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 37.735 ms[39m
+2026-04-12 13:11:00:110 [35mhttp[39m: [35mGET /api/v1/vouchers 200 98 - 115.148 ms[39m
+2026-04-12 13:13:26:1326 [35mhttp[39m: [35mGET /api/v1/customers/admin/all?page=1&limit=10&search=&status=All 200 144 - 473.418 ms[39m
+2026-04-12 13:14:08:148 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 13:14:08:148 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 13:14:08:148 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 13:14:27:1427 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 13:14:27:1427 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 13:14:27:1427 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 13:14:51:1451 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 13:14:51:1451 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 13:14:51:1451 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 13:17:09:179 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 13:17:09:179 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 13:17:09:179 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 13:19:05:195 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 13:19:05:195 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 13:19:05:195 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 13:33:00:330 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 13:33:00:330 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 13:33:00:330 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 13:33:21:3321 [31merror[39m: [31mUnauthorized request[39m
+2026-04-12 13:33:21:3321 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 43.249 ms[39m
+2026-04-12 13:33:24:3324 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1697 - 2634.828 ms[39m
+2026-04-12 13:33:24:3324 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 33.356 ms[39m
+2026-04-12 13:33:36:3336 [35mhttp[39m: [35mGET /api/v1/help/tickets/admin 200 96 - 154.175 ms[39m
+2026-04-12 13:34:02:342 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 201.908 ms[39m
+2026-04-12 13:34:02:342 [35mhttp[39m: [35mGET /api/v1/help/tickets/admin 200 96 - 63.488 ms[39m
+2026-04-12 13:35:20:3520 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 249.895 ms[39m
+2026-04-12 13:35:20:3520 [35mhttp[39m: [35mGET /api/v1/help/tickets/admin 304 - - 282.261 ms[39m
+2026-04-12 13:54:50:5450 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 13:54:50:5450 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 13:54:50:5450 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 13:54:53:5453 [31merror[39m: [31mUnauthorized request[39m
+2026-04-12 13:54:53:5453 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 32.612 ms[39m
+2026-04-12 13:54:54:5454 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1697 - 622.600 ms[39m
+2026-04-12 13:54:54:5454 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 30.625 ms[39m
+2026-04-12 13:55:15:5515 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 200 358 - 50.999 ms[39m
+2026-04-12 14:00:54:054 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 14:00:54:054 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 14:00:54:054 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 14:01:02:12 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 14:01:02:12 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 14:01:02:12 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 14:10:41:1041 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 14:10:41:1041 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 14:10:41:1041 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 14:13:56:1356 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 14:13:56:1356 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 14:13:56:1356 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 14:17:26:1726 [31merror[39m: [31mUnauthorized request[39m
+2026-04-12 14:17:26:1726 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 40.670 ms[39m
+2026-04-12 14:17:27:1727 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1697 - 705.652 ms[39m
+2026-04-12 14:17:27:1727 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 25.949 ms[39m
+2026-04-12 14:17:27:1727 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 304 - - 44.954 ms[39m
+2026-04-12 14:17:30:1730 [35mhttp[39m: [35mGET /api/v1/analytics/overview 200 528 - 400.717 ms[39m
+2026-04-12 14:17:41:1741 [35mhttp[39m: [35mGET /api/v1/analytics/insights?range=ytd 200 367 - 70.482 ms[39m
+2026-04-12 20:01:25:125 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:01:25:125 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:01:25:125 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:02:32:232 [31merror[39m: [31mUnauthorized request[39m
+2026-04-12 20:02:32:232 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 14.585 ms[39m
+2026-04-12 20:02:33:233 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1697 - 797.584 ms[39m
+2026-04-12 20:02:33:233 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 30.265 ms[39m
+2026-04-12 20:02:35:235 [35mhttp[39m: [35mGET /api/v1/analytics/overview 200 528 - 571.425 ms[39m
+2026-04-12 20:02:56:256 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=8&search=sm 200 142 - 78.921 ms[39m
+2026-04-12 20:02:56:256 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=8&search=sms 200 142 - 26.725 ms[39m
+2026-04-12 20:03:00:30 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=8&search=sku 200 142 - 19.847 ms[39m
+2026-04-12 20:09:21:921 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:09:21:921 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:09:21:921 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:09:35:935 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:09:35:935 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:09:35:935 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:09:59:959 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:09:59:959 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:09:59:959 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:11:12:1112 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:11:12:1112 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:11:12:1112 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:14:42:1442 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:14:42:1442 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:14:42:1442 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:14:54:1454 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:14:54:1454 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:14:54:1454 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:15:12:1512 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:15:12:1512 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:15:12:1512 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:15:32:1532 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:15:32:1532 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:15:32:1532 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:16:51:1651 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 919.293 ms[39m
+2026-04-12 20:16:52:1652 [35mhttp[39m: [35mGET /api/v1/analytics/overview 200 528 - 400.245 ms[39m
+2026-04-12 20:16:59:1659 [35mhttp[39m: [35mGET /api/v1/orders/stats 200 154 - 298.327 ms[39m
+2026-04-12 20:16:59:1659 [35mhttp[39m: [35mGET /api/v1/orders 200 94 - 341.414 ms[39m
+2026-04-12 20:26:45:2645 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:26:45:2645 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:26:45:2645 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:29:34:2934 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:29:34:2934 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:29:34:2934 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:31:06:316 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:31:06:316 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:31:06:316 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:31:32:3132 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:31:32:3132 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:31:32:3132 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:31:39:3139 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:31:39:3139 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:31:39:3139 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:31:51:3151 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:31:51:3151 [32minfo[39m: [32mServer is running on port 5000[39m
+2026-04-12 20:31:51:3151 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:42:17:4217 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-12 20:42:17:4217 [32minfo[39m: [32mServer listening on http://0.0.0.0:5000[39m
+2026-04-12 20:42:17:4217 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-12 20:42:21:4221 [31merror[39m: [31mUnauthorized request[39m
+2026-04-12 20:42:21:4221 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 31.840 ms[39m
+2026-04-12 20:42:22:4222 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1697 - 679.940 ms[39m
+2026-04-12 20:42:22:4222 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 30.280 ms[39m
+2026-04-12 20:42:23:4223 [35mhttp[39m: [35mGET /api/v1/analytics/overview 304 - - 430.446 ms[39m
+2026-04-12 20:42:51:4251 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 34.625 ms[39m
+2026-04-12 20:42:51:4251 [35mhttp[39m: [35mGET /api/v1/analytics/overview 304 - - 96.958 ms[39m
+2026-04-12 20:43:43:4343 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 297.685 ms[39m
+2026-04-12 20:43:44:4344 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=All 200 218 - 898.079 ms[39m
+2026-04-12 20:44:21:4421 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=Available 200 218 - 383.497 ms[39m
+2026-04-12 20:44:23:4423 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=Dispatched 200 218 - 49.337 ms[39m
+2026-04-12 20:44:25:4425 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=Offline 200 218 - 43.751 ms[39m
+2026-04-12 20:44:25:4425 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=Banned 200 218 - 29.665 ms[39m
+2026-04-12 20:44:31:4431 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=All 304 - - 24.703 ms[39m
+2026-04-12 20:44:43:4443 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 18.580 ms[39m
+2026-04-12 20:44:43:4443 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=All 304 - - 27.096 ms[39m
+2026-04-12 20:44:59:4459 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 17.650 ms[39m
+2026-04-12 20:44:59:4459 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=All 200 218 - 33.236 ms[39m
+2026-04-12 20:46:28:4628 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 753.420 ms[39m
+2026-04-12 20:46:29:4629 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=All - - - - ms[39m
+2026-04-12 20:46:30:4630 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 108.194 ms[39m
+2026-04-12 20:46:30:4630 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=All 200 218 - 36.457 ms[39m
+2026-04-12 20:46:43:4643 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 90.967 ms[39m
+2026-04-12 20:46:43:4643 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=All 200 218 - 27.659 ms[39m

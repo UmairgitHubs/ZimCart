@@ -9,6 +9,15 @@ export interface ProfileSettings {
 
 export interface StoreSettings {
   storeName: string;
+  /** Public mart description (maps to API `description`). */
+  martDescription: string;
+  /** Logo / banner image URL (maps to API `image`). */
+  martImageUrl: string;
+  martDeliveryTime: string;
+  martMinOrder: number;
+  martDeliveryFee: number;
+  martIsActive: boolean;
+  martStatus: 'OPEN' | 'CLOSED' | 'BUSY' | 'HIDDEN';
   contactEmail: string;
   supportPhone: string;
   physicalAddress: string;

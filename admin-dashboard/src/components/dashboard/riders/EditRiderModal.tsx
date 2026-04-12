@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 interface EditRiderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (updatedRider: Rider) => void;
+  onConfirm: (updatedRider: Rider) => Promise<void>;
   rider: Rider | null;
 }
 
@@ -50,11 +50,12 @@ export function EditRiderModal({ isOpen, onClose, onConfirm, rider }: EditRiderM
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    onConfirm({ ...rider, ...formData } as Rider);
-    setIsSaving(false);
-    onClose();
+    try {
+      await onConfirm({ ...rider, ...formData } as Rider);
+      onClose();
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (

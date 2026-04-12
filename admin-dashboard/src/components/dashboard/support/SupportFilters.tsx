@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Search, ListFilter, ChevronDown, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { TicketStatus, TicketPriority, TicketCategory } from "@/types/support";
 
 interface SupportFiltersProps {
   searchTerm: string;
@@ -11,7 +10,7 @@ interface SupportFiltersProps {
   onNewTicket: () => void;
 }
 
-const STATUS_OPTIONS = ["All", "Open", "In Progress", "Resolved", "Closed"];
+const STATUS_OPTIONS = ["All", "Open", "In Progress", "Closed"];
 
 export function SupportFilters({
   searchTerm,

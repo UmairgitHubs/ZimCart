@@ -14,7 +14,6 @@ import {
   BarChart3,
   DollarSign,
   Percent,
-  Truck,
   Building2,
   Info,
   ExternalLink,
@@ -55,10 +54,12 @@ export function PromotionDetailsModal({ promotion, isOpen, onClose }: PromotionD
 
   const getIcon = () => {
     switch (promotion.type) {
-      case 'Percentage': return Percent;
-      case 'Fixed Amount': return DollarSign;
-      case 'Free Shipping': return Truck;
-      default: return Tag;
+      case "Percentage":
+        return Percent;
+      case "Fixed Amount":
+        return DollarSign;
+      default:
+        return Tag;
     }
   };
 
@@ -138,7 +139,16 @@ export function PromotionDetailsModal({ promotion, isOpen, onClose }: PromotionD
           <section className="grid grid-cols-2 lg:grid-cols-4 gap-6">
              {[
                { label: "Gross Redeems", val: promotion.usageCount, icon: TrendingUp, color: "text-emerald-500", bg: "bg-emerald-50/50" },
-               { label: "Discount Value", val: promotion.type === 'Percentage' ? `${promotion.value}% OFF` : promotion.type === 'Free Shipping' ? 'FREE' : `$${promotion.value} OFF`, icon: PromoIcon, color: "text-emerald-600", bg: "bg-emerald-50/50" },
+               {
+                 label: "Discount value",
+                 val:
+                   promotion.type === "Percentage"
+                     ? `${promotion.value}% off`
+                     : `$${promotion.value} off`,
+                 icon: PromoIcon,
+                 color: "text-emerald-600",
+                 bg: "bg-emerald-50/50",
+               },
                { label: "Category Scope", val: promotion.targetCategory || 'Global Fleet', icon: Building2, color: "text-emerald-500", bg: "bg-emerald-50/50" },
                { label: "Min. Threshold", val: promotion.minPurchase ? `$${promotion.minPurchase}` : 'No Minimum', icon: Briefcase, color: "text-emerald-500", bg: "bg-emerald-50/50" },
              ].map((stat, idx) => (
@@ -172,7 +182,15 @@ export function PromotionDetailsModal({ promotion, isOpen, onClose }: PromotionD
                          </div>
                          <div>
                             <p className="text-[9px] font-black text-slate-400 uppercase mb-0.5">Activation Date</p>
-                            <p className="text-sm font-black text-slate-700">{new Date(promotion.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                            <p className="text-sm font-black text-slate-700">
+                              {promotion.startDate
+                                ? new Date(promotion.startDate).toLocaleDateString("en-US", {
+                                    month: "long",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  })
+                                : "— (not stored)"}
+                            </p>
                          </div>
                       </div>
                    </div>

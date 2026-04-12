@@ -184,43 +184,58 @@ export const updateProduct = async (id: string, data: Partial<ProductInput>, man
   }
 };
 
-export const getProducts = async (page: number = 1, limit: number = 20, filters?: { search?: string | undefined; category?: string | undefined; categoryId?: string | undefined; status?: string | undefined; storeId?: string | undefined; managerId?: string | undefined; isDeal?: boolean | undefined }) => {
+export type ProductListFilters = {
+  search?: string;
+  category?: string;
+  categoryId?: string;
+  status?: string;
+  storeId?: string;
+  managerId?: string;
+  isDeal?: boolean;
+  /** Public/customer catalog: enforce visible store + non-draft products; ignore client status spoofing */
+  marketplaceMode?: boolean;
+};
+
+export const getProducts = async (page: number = 1, limit: number = 20, filters?: ProductListFilters) => {
   const skip = (page - 1) * limit;
   const where: any = {};
-  
-  if (filters?.storeId || filters?.managerId) {
-     where.storeId = await getEffectiveStoreId(filters?.storeId, filters?.managerId);
+  const marketplaceMode = filters?.marketplaceMode === true;
+
+  if (marketplaceMode) {
+    if (filters?.storeId) {
+      where.storeId = filters.storeId;
+    }
+    where.status = { not: 'Draft' };
+    where.store = {
+      isActive: true,
+      status: { in: ['OPEN', 'BUSY'] },
+    };
+  } else {
+    if (filters?.storeId || filters?.managerId) {
+      where.storeId = await getEffectiveStoreId(filters?.storeId, filters?.managerId);
+    }
+
+    if (filters?.status && filters.status !== 'All') {
+      where.status = filters.status;
+    }
   }
 
   if (filters?.categoryId) {
     where.categoryId = filters.categoryId;
   }
-  
-  if (filters?.status && filters.status !== 'All') {
-    where.status = filters.status;
-  }
 
   if (filters?.isDeal !== undefined) {
-    if (filters.isDeal && !filters.managerId) {
-      // Enterprise "Weekly Best Buys" logic for public marketplace 
+    if (filters.isDeal && marketplaceMode) {
       where.isDeal = true;
-      where.status = 'Published';
       where.inventory = { gt: 0 };
-      where.store = {
-        status: 'OPEN',
-        isActive: true
-      };
-      
-      // Ensure the deal is actually discounted!
       if (!where.AND) where.AND = [];
       where.AND.push({
         OR: [
           { discountPercentage: { gt: 0 } },
-          { discountPrice: { gt: 0 } }
-        ]
+          { discountPrice: { gt: 0 } },
+        ],
       });
     } else {
-      // Just filter by the flag directly for the dashboard
       where.isDeal = filters.isDeal;
     }
   }
@@ -272,16 +287,39 @@ export const getProducts = async (page: number = 1, limit: number = 20, filters?
   };
 };
 
-export const getProductById = async (id: string) => {
-  return prisma.product.findUnique({
+export const getProductById = async (
+  id: string,
+  options?: { marketplaceMode?: boolean }
+) => {
+  const product = await prisma.product.findUnique({
     where: { id },
-    include: { 
+    include: {
       category: true,
+      store: {
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          isActive: true,
+          deliveryTime: true,
+        },
+      },
       history: {
-        orderBy: { createdAt: 'desc' }
-      }
-    }
+        orderBy: { createdAt: 'desc' },
+      },
+    },
   });
+
+  if (!product) return null;
+
+  if (options?.marketplaceMode) {
+    if (product.status === 'Draft') return null;
+    const s = product.store;
+    if (!s || !s.isActive) return null;
+    if (s.status !== 'OPEN' && s.status !== 'BUSY') return null;
+  }
+
+  return product;
 };
 
 export const deleteProduct = async (id: string, managerId?: string) => {

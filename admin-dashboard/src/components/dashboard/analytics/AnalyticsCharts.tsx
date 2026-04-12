@@ -19,16 +19,21 @@ import { RevenueDataPoint, CategoryPerformance } from "@/types/analytics";
 interface AnalyticsChartsProps {
   revenueData: RevenueDataPoint[];
   categoryData: CategoryPerformance[];
+  rangeSubtitle?: string;
 }
 
-export function AnalyticsCharts({ revenueData, categoryData }: AnalyticsChartsProps) {
+export function AnalyticsCharts({
+  revenueData,
+  categoryData,
+  rangeSubtitle = "Selected range",
+}: AnalyticsChartsProps) {
   const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'];
 
   const CustomTooltipArea = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      return (
+          return (
         <div className="bg-white p-4 border border-slate-100 shadow-xl rounded-2xl">
-          <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">{label} 2026</p>
+          <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">{label}</p>
           <div className="flex flex-col gap-1">
              <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -66,7 +71,7 @@ export function AnalyticsCharts({ revenueData, categoryData }: AnalyticsChartsPr
         <div className="flex items-center justify-between mb-8">
           <div>
              <h3 className="text-xl font-black text-slate-800 tracking-tight">Revenue & Orders</h3>
-             <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Year to Date Performance</p>
+             <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">{rangeSubtitle}</p>
           </div>
           <div className="flex items-center gap-4">
              <div className="flex items-center gap-2">

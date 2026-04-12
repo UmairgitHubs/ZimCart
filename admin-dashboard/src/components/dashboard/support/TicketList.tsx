@@ -88,12 +88,12 @@ export function TicketList({ tickets, onView }: TicketListProps) {
                 <td className="px-5 py-5">
                    <span className={cn(
                      "px-2.5 py-0.5 rounded-full text-[9px] font-bold border uppercase tracking-wider inline-flex items-center gap-1.5",
-                     ticket.status === 'Resolved' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                     ticket.status === 'Closed' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
                      ticket.status === 'Open' ? "bg-amber-50 text-amber-600 border-amber-100" :
                      ticket.status === 'In Progress' ? "bg-blue-50 text-blue-600 border-blue-100" :
                      "bg-slate-50 text-slate-500 border-slate-200"
                    )}>
-                     {ticket.status === 'Resolved' && <CheckCircle2 className="w-2.5 h-2.5" />}
+                     {ticket.status === 'Closed' && <CheckCircle2 className="w-2.5 h-2.5" />}
                      {ticket.status}
                    </span>
                 </td>
@@ -131,7 +131,7 @@ export function TicketList({ tickets, onView }: TicketListProps) {
                </div>
                <span className={cn(
                   "px-2.5 py-0.5 rounded-full text-[9px] font-bold border uppercase tracking-wider flex shrink-0 items-center justify-center",
-                  ticket.status === 'Resolved' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                  ticket.status === 'Closed' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
                   ticket.status === 'Open' ? "bg-amber-50 text-amber-600 border-amber-100" :
                   ticket.status === 'In Progress' ? "bg-blue-50 text-blue-600 border-blue-100" :
                   "bg-slate-50 text-slate-500 border-slate-200"

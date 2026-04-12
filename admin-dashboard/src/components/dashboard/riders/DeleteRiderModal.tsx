@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 interface DeleteRiderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (rider: Rider) => void;
+  onConfirm: (rider: Rider) => Promise<void>;
   rider: Rider | null;
 }
 
@@ -19,11 +19,12 @@ export function DeleteRiderModal({ isOpen, onClose, onConfirm, rider }: DeleteRi
 
   const handleConfirm = async () => {
     setIsDeleting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    onConfirm(rider);
-    setIsDeleting(false);
-    onClose();
+    try {
+      await onConfirm(rider);
+      onClose();
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (

@@ -16,6 +16,13 @@ export const MOCK_PROFILE_SETTINGS: ProfileSettings = {
 
 export const MOCK_STORE_SETTINGS: StoreSettings = {
   storeName: "ZimCart Mart Hub",
+  martDescription: "",
+  martImageUrl: "",
+  martDeliveryTime: "30–45 min",
+  martMinOrder: 0,
+  martDeliveryFee: 0,
+  martIsActive: true,
+  martStatus: "OPEN",
   contactEmail: "support@zimcart.co.zw",
   supportPhone: "+263 86 44 222 111",
   physicalAddress: "123 Samora Machel Ave, Harare, Zimbabwe",

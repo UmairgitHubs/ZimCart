@@ -13,6 +13,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  /* Hydration warnings on <div hidden> with bis_skin_checked come from antivirus/browser extensions
+     (e.g. Bitdefender), not from this app — exclude localhost from scanning or use a clean browser profile. */
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

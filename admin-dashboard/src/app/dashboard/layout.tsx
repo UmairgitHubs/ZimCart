@@ -15,7 +15,7 @@ export default function DashboardLayout({
 
   return (
     <ProtectedRoute allowedRoles={['STORE_MANAGER', 'ADMIN']}>
-      <div className="flex h-screen bg-[#F8FAFC] relative overflow-hidden">
+      <div className="flex h-screen bg-[#F8FAFC] relative overflow-hidden" suppressHydrationWarning>
         {/* Mobile Overlay */}
         {isSidebarOpen && (
           <div 

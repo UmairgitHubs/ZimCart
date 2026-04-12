@@ -69,8 +69,9 @@ export function PromotionList({ promotions, onView, onEdit, onDelete }: Promotio
                 <td className="px-6 py-5">
                   <div className="flex flex-col gap-0.5">
                     <span className="text-sm font-black text-slate-800">
-                      {promo.type === 'Percentage' ? `${promo.value}% Off` : 
-                       promo.type === 'Fixed Amount' ? `$${promo.value} Off` : 'Free Shipping'}
+                      {promo.type === "Percentage"
+                        ? `${promo.value}% off`
+                        : `$${promo.value} off`}
                     </span>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
                        Min. Purchase: ${promo.minPurchase || 0}
@@ -81,11 +82,12 @@ export function PromotionList({ promotions, onView, onEdit, onDelete }: Promotio
                    <div className="flex flex-col gap-1 text-[11px] font-bold text-slate-500">
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-3 h-3 text-slate-300" />
-                        <span>{new Date(promo.startDate).toLocaleDateString()}</span>
+                        <span>Starts</span>
+                        <span>{promo.startDate ? new Date(promo.startDate).toLocaleDateString() : "—"}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Clock className="w-3 h-3 text-slate-300" />
-                        <span>{new Date(promo.endDate).toLocaleDateString()}</span>
+                        <span>Expires {new Date(promo.endDate).toLocaleDateString()}</span>
                       </div>
                    </div>
                 </td>
@@ -111,10 +113,11 @@ export function PromotionList({ promotions, onView, onEdit, onDelete }: Promotio
                 <td className="px-6 py-5">
                    <span className={cn(
                      "px-3 py-1 rounded-full text-[10px] font-black border uppercase tracking-widest inline-flex items-center gap-1.5",
-                     promo.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                     promo.status === 'Scheduled' ? "bg-blue-50 text-blue-600 border-blue-100" :
-                     promo.status === 'Expired' ? "bg-amber-50 text-amber-600 border-amber-100" :
-                     "bg-red-50 text-red-600 border-red-100"
+                     promo.status === "Active"
+                       ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                       : promo.status === "Scheduled"
+                         ? "bg-blue-50 text-blue-600 border-blue-100"
+                         : "bg-amber-50 text-amber-600 border-amber-100"
                    )}>
                      {promo.status}
                    </span>
@@ -195,10 +198,11 @@ export function PromotionList({ promotions, onView, onEdit, onDelete }: Promotio
                <div className="flex flex-col items-end gap-2">
                  <span className={cn(
                     "px-3 py-1 rounded-full text-[9px] font-black border uppercase tracking-widest",
-                    promo.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                    promo.status === 'Scheduled' ? "bg-blue-50 text-blue-600 border-blue-100" :
-                    promo.status === 'Expired' ? "bg-amber-50 text-amber-600 border-amber-100" :
-                    "bg-red-50 text-red-600 border-red-100"
+                    promo.status === "Active"
+                      ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                      : promo.status === "Scheduled"
+                        ? "bg-blue-50 text-blue-600 border-blue-100"
+                        : "bg-amber-50 text-amber-600 border-amber-100"
                  )}>{promo.status}</span>
                  <div className="flex gap-2">
                    <button onClick={() => onEdit(promo)} className="p-2 bg-slate-50 rounded-lg text-slate-400 hover:text-blue-500 border border-slate-100">

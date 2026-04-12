@@ -9,7 +9,7 @@ const router = Router();
 
 // Public routes (for the marketplace)
 router.get('/', verifyJWTOptional, productController.getProducts);
-router.get('/:id', productController.getProduct);
+router.get('/:id', verifyJWTOptional, productController.getProduct);
 
 // Protected routes (for Admin Dashboard)
 // Note: In a production app, we'd also add a checkRole(['ADMIN', 'STORE_MANAGER']) middleware

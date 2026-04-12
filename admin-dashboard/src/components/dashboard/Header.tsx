@@ -1,23 +1,55 @@
 "use client";
 
-import React from "react";
-import { Search, Bell, MessageSquare, Menu, LogOut } from "lucide-react";
-import { cn } from "@/lib/utils";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { Search, Bell, MessageSquare, Menu, LogOut, Loader2, Package } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useProductQuickSearch } from "@/hooks/useProductQuickSearch";
+import type { Product } from "@/types/products";
+
+function categoryLabel(category: Product["category"]): string {
+  if (!category) return "";
+  return typeof category === "string" ? category : category.name ?? "";
+}
+
+function searchHref(product: Product): string {
+  const q = product.sku?.trim() || product.name?.trim() || "";
+  return `/dashboard/products?q=${encodeURIComponent(q)}`;
+}
 
 /**
  * Senior Optimized Header
  * - Removed all dropdown state to simplify DOM and improve performance.
  * - Centralized user identity logic using Redux.
  * - Integrated direct Logout for a faster workflow.
+ * - Product quick search calls GET /products?search= (same scope as catalog).
  */
 export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const { user } = useSelector((state: RootState) => state.auth);
   const { logout } = useAuth();
 
-  console.log(user)
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const debounced = useDebounce(query, 320);
+  const { data: hits, isFetching, isError, error } = useProductQuickSearch(debounced);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  const showPanel = open && debounced.trim().length >= 2;
+
+  useEffect(() => {
+    const onDocMouseDown = (e: MouseEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocMouseDown);
+    return () => document.removeEventListener("mousedown", onDocMouseDown);
+  }, []);
+
+  const onInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") setOpen(false);
+  }, []);
 
   const handleLogout = () => {
     if (confirm("Are you sure you want to sign out of the ZimCart Registry?")) {
@@ -36,14 +68,102 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           <Menu className="w-6 h-6" />
         </button>
 
-        {/* Universal Search bar */}
-        <div className="relative hidden md:block w-96 group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+        {/* Product search — GET /products?search= */}
+        <div ref={rootRef} className="relative hidden md:block w-96 group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none z-[1]" />
           <input
-            type="text"
-            placeholder="Search resources, orders, or riders..."
+            type="search"
+            autoComplete="off"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setOpen(true);
+            }}
+            onFocus={() => setOpen(true)}
+            onKeyDown={onInputKeyDown}
+            placeholder="Search products (name, SKU, brand)…"
             className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-transparent rounded-2xl text-[13px] font-medium focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white transition-all outline-none"
+            aria-autocomplete="list"
+            aria-expanded={showPanel}
           />
+
+          {showPanel && (
+            <div
+              className="absolute left-0 right-0 top-full mt-2 rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-200/50 z-[60] overflow-hidden"
+              role="listbox"
+            >
+              {isFetching && (
+                <div className="flex items-center gap-2 px-4 py-3 text-sm text-slate-500">
+                  <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+                  Searching…
+                </div>
+              )}
+
+              {!isFetching && isError && (
+                <div className="px-4 py-3 text-sm text-red-700">
+                  {(error as Error)?.message ?? "Search failed"}
+                </div>
+              )}
+
+              {!isFetching && !isError && (hits?.length ?? 0) === 0 && (
+                <div className="px-4 py-3 text-sm text-slate-500">No matching products.</div>
+              )}
+
+              {!isFetching && !isError && hits && hits.length > 0 && (
+                <ul className="max-h-80 overflow-y-auto py-1">
+                  {hits.map((p) => {
+                    const cat = categoryLabel(p.category);
+                    const thumb = p.images?.[0];
+                    return (
+                      <li key={p.id} role="option">
+                        <Link
+                          href={searchHref(p)}
+                          onClick={() => {
+                            setOpen(false);
+                            setQuery("");
+                          }}
+                          className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="h-10 w-10 rounded-lg bg-slate-100 border border-slate-100 overflow-hidden shrink-0 flex items-center justify-center">
+                            {thumb ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={thumb} alt="" className="h-full w-full object-cover" />
+                            ) : (
+                              <Package className="w-5 h-5 text-slate-400" />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[13px] font-semibold text-slate-800 truncate">{p.name}</p>
+                            <p className="text-[11px] text-slate-500 truncate">
+                              {p.sku && <span className="font-mono">{p.sku}</span>}
+                              {p.sku && p.brand ? " · " : null}
+                              {p.brand}
+                              {cat ? ` · ${cat}` : ""}
+                            </p>
+                          </div>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+
+              {!isFetching && !isError && debounced.trim().length >= 2 && (
+                <div className="border-t border-slate-100 px-3 py-2 bg-slate-50/80">
+                  <Link
+                    href={`/dashboard/products?q=${encodeURIComponent(debounced.trim())}`}
+                    onClick={() => {
+                      setOpen(false);
+                      setQuery("");
+                    }}
+                    className="text-[12px] font-semibold text-emerald-700 hover:text-emerald-800"
+                  >
+                    View all in Products →
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

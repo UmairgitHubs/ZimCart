@@ -4883,3 +4883,48 @@
 2026-03-10 02:42:01:421 [31merror[39m: [31mUnauthorized request[39m
 2026-03-11 01:21:37:2137 [31merror[39m: [31mUnauthorized request[39m
 2026-03-11 01:43:06:436 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 20:43:34:4334 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 20:59:46:5946 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 20:59:47:5947 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 20:59:48:5948 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 20:59:48:5948 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:00:15:015 [31merror[39m: [31m[39m
+[31mInvalid `prisma.user.findUnique()` invocation in[39m
+[31mC:\Users\HP\OneDrive\Documents\GitHub\ZimCart\backend\src\services\auth.service.ts:49:42[39m
+
+[31m  46 const { email, password, name, phone, role, country, termsConsent, privacyConsent } = data;[39m
+[31m  47 [39m
+[31m  48 const finalRole = role || 'CUSTOMER';[39m
+[31m→ 49 const existingUser = await prisma.user.findUnique([39m
+[31mThe column `(not available)` does not exist in the current database.[39m
+2026-04-05 21:02:45:245 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:02:45:245 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:02:45:245 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:02:45:245 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:02:46:246 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:02:46:246 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:15:315 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:15:315 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:15:315 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:15:315 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:16:316 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:16:316 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:30:330 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:30:330 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:30:330 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:30:330 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:47:347 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:47:347 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:47:347 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:47:347 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:03:48:348 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:03:48:348 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-05 21:04:22:422 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:10:04:104 [31merror[39m: [31mUnauthorized request[39m
+2026-04-05 21:10:04:104 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-12 13:10:47:1047 [31merror[39m: [31mUnauthorized request[39m
+2026-04-12 13:33:21:3321 [31merror[39m: [31mUnauthorized request[39m
+2026-04-12 13:54:53:5453 [31merror[39m: [31mUnauthorized request[39m
+2026-04-12 14:17:26:1726 [31merror[39m: [31mUnauthorized request[39m
+2026-04-12 20:02:32:232 [31merror[39m: [31mUnauthorized request[39m
+2026-04-12 20:42:21:4221 [31merror[39m: [31mUnauthorized request[39m

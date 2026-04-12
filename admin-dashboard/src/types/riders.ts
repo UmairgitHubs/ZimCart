@@ -13,4 +13,6 @@ export interface Rider {
   totalDeliveries: number;
   lastActive: string;
   avatarUrl: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

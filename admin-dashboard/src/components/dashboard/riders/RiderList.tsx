@@ -19,9 +19,11 @@ interface RiderListProps {
   onView: (rider: Rider) => void;
   onEdit: (rider: Rider) => void;
   onDelete: (rider: Rider) => void;
+  /** ADMIN-only mutations; store managers get read-only directory */
+  canMutate?: boolean;
 }
 
-export function RiderList({ riders, onView, onEdit, onDelete }: RiderListProps) {
+export function RiderList({ riders, onView, onEdit, onDelete, canMutate = true }: RiderListProps) {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -71,6 +73,7 @@ export function RiderList({ riders, onView, onEdit, onDelete }: RiderListProps) 
                 </div>
               </div>
               
+              {canMutate && (
               <div className="relative">
                 <button 
                   onClick={() => setActiveMenuId(activeMenuId === rider.id ? null : rider.id)}
@@ -103,6 +106,7 @@ export function RiderList({ riders, onView, onEdit, onDelete }: RiderListProps) 
                   </div>
                 )}
               </div>
+              )}
             </div>
 
             {/* Status & Stats Grid */}
@@ -259,6 +263,7 @@ export function RiderList({ riders, onView, onEdit, onDelete }: RiderListProps) 
                       <Eye className="w-4 h-4" />
                     </button>
                     
+                    {canMutate && (
                     <div className="relative">
                       <button 
                         onClick={() => setActiveMenuId(activeMenuId === rider.id ? null : rider.id)}
@@ -293,6 +298,7 @@ export function RiderList({ riders, onView, onEdit, onDelete }: RiderListProps) 
                         </div>
                       )}
                     </div>
+                    )}
                   </div>
                 </td>
               </tr>

@@ -14,17 +14,46 @@ import {
   Cell 
 } from "recharts";
 
-import { CATEGORY_SALES_DATA, ORDER_STATUS_DISTRIBUTION } from "@/constants/dashboard";
+export interface CategorySalesBar {
+  name: string;
+  sales: number;
+  orders?: number;
+}
 
-export function PerformanceCharts() {
+export interface OrderStatusSlice {
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface PerformanceChartsProps {
+  categorySales: CategorySalesBar[];
+  orderStatus: OrderStatusSlice[];
+  categorySubtitle?: string;
+  statusSubtitle?: string;
+}
+
+const EMPTY_CATEGORY: CategorySalesBar[] = [{ name: "—", sales: 0 }];
+const EMPTY_STATUS: OrderStatusSlice[] = [{ name: "No orders", value: 1, color: "#E2E8F0" }];
+
+export function PerformanceCharts({
+  categorySales,
+  orderStatus,
+  categorySubtitle = "Last 30 days, non-cancelled revenue",
+  statusSubtitle = "Last 30 days, all statuses",
+}: PerformanceChartsProps) {
+  const barData = categorySales.length > 0 ? categorySales : EMPTY_CATEGORY;
+  const pieData = orderStatus.length > 0 ? orderStatus : EMPTY_STATUS;
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
       {/* Category Sales */}
       <div className="bg-white p-6 rounded-[32px] shadow-sm border border-slate-50 h-[350px] flex flex-col">
-        <h3 className="text-lg font-bold text-slate-800 mb-6">Sales by Category</h3>
+        <h3 className="text-lg font-bold text-slate-800 mb-1">Sales by Category</h3>
+        <p className="text-[11px] font-semibold text-slate-400 mb-4">{categorySubtitle}</p>
         <div className="flex-1">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={CATEGORY_SALES_DATA}>
+            <BarChart data={barData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#94A3B8", fontSize: 11 }} />
               <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94A3B8", fontSize: 11 }} tickFormatter={(val) => `$${val}`} />
@@ -40,18 +69,19 @@ export function PerformanceCharts() {
 
       {/* Order Status */}
       <div className="bg-white p-6 rounded-[32px] shadow-sm border border-slate-50 h-[350px] flex flex-col">
-        <h3 className="text-lg font-bold text-slate-800 mb-6">Order Status Distribution</h3>
+        <h3 className="text-lg font-bold text-slate-800 mb-1">Order Status Distribution</h3>
+        <p className="text-[11px] font-semibold text-slate-400 mb-4">{statusSubtitle}</p>
         <div className="flex-1">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={ORDER_STATUS_DISTRIBUTION}
+                data={pieData}
                 innerRadius={60}
                 outerRadius={100}
                 paddingAngle={5}
                 dataKey="value"
               >
-                {ORDER_STATUS_DISTRIBUTION.map((entry, index) => (
+                {pieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
@@ -62,7 +92,7 @@ export function PerformanceCharts() {
           </ResponsiveContainer>
         </div>
         <div className="flex justify-center flex-wrap gap-x-6 gap-y-2 mt-2">
-          {ORDER_STATUS_DISTRIBUTION.map((item) => (
+          {pieData.map((item) => (
             <div key={item.name} className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
               <span className="text-xs font-bold text-slate-500">{item.name}</span>

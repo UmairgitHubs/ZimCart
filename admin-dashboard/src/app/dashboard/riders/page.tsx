@@ -1,19 +1,21 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { 
-  Bike, 
-  MapPin, 
-  Download, 
-  FileText, 
-  UserPlus, 
+import React, { useState } from "react";
+import {
+  Bike,
+  MapPin,
+  Download,
+  FileText,
+  UserPlus,
   Database,
   AlertTriangle,
   Clock,
   Loader2,
   ChevronDown,
-  CheckCircle2
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
+import { useSelector } from "react-redux";
 import { cn } from "@/lib/utils";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { RiderList } from "@/components/dashboard/riders/RiderList";
@@ -22,65 +24,87 @@ import { RiderDetailsModal } from "@/components/dashboard/riders/RiderDetailsMod
 import { EditRiderModal } from "@/components/dashboard/riders/EditRiderModal";
 import { DeleteRiderModal } from "@/components/dashboard/riders/DeleteRiderModal";
 import { AddRiderModal } from "@/components/dashboard/riders/AddRiderModal";
-import { MOCK_RIDERS } from "@/constants/riders";
+import type { NewRiderPayload } from "@/components/dashboard/riders/AddRiderModal";
 import { Rider } from "@/types/riders";
+import { RootState } from "@/lib/store";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRiders, useUpdateRider, useDeleteRider } from "@/hooks/useRiders";
+import { riderAdminApi } from "@/services/riderAdmin.service";
 
 export default function RidersPage() {
+  const queryClient = useQueryClient();
+  const user = useSelector((s: RootState) => s.auth.user);
+  const isAdmin = user?.role === "ADMIN";
+
   const [searchTerm, setSearchTerm] = useState("");
   const [activeStatus, setActiveStatus] = useState("All");
-  const [riders, setRiders] = useState<Rider[]>(MOCK_RIDERS);
-  const [selectedRider, setSelectedRider] = useState<Rider | null>(null);
+  const debouncedSearch = useDebounce(searchTerm, 400);
 
-  // Modal States
+  const { data, isLoading, error, refetch, isFetching } = useRiders({
+    page: 1,
+    limit: 100,
+    search: debouncedSearch.trim() || undefined,
+    status: activeStatus,
+  });
+
+  const updateRider = useUpdateRider();
+  const deleteRider = useDeleteRider();
+
+  const riders = data?.riders ?? [];
+  const stats = data?.stats;
+
+  const [selectedRider, setSelectedRider] = useState<Rider | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  // Export states
   const [isExportingCSV, setIsExportingCSV] = useState(false);
   const [csvSuccess, setCsvSuccess] = useState(false);
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [pdfSuccess, setPdfSuccess] = useState(false);
   const [showExportOptions, setShowExportOptions] = useState(false);
 
-  const filteredRiders = useMemo(() => {
-    return riders.filter((rider) => {
-      const matchesStatus = 
-        activeStatus === "All" || 
-        rider.status === activeStatus;
-      
-      const matchesSearch = 
-        rider.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rider.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rider.licensePlate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rider.id.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      return matchesStatus && matchesSearch;
-    });
-  }, [searchTerm, activeStatus, riders]);
-
   const handleExportCSV = () => {
     setIsExportingCSV(true);
-    setTimeout(() => {
-      setIsExportingCSV(false);
-      setCsvSuccess(true);
-      setTimeout(() => setCsvSuccess(false), 2000);
-    }, 1500);
+    const rows = [
+      ["id", "name", "email", "phone", "status", "vehicle", "plate", "hub", "deliveries", "rating", "lastActive"],
+      ...riders.map((r) => [
+        r.id,
+        r.name,
+        r.email,
+        r.phone,
+        r.status,
+        r.vehicleType,
+        r.licensePlate,
+        r.assignedHub,
+        String(r.totalDeliveries),
+        String(r.rating),
+        r.lastActive,
+      ]),
+    ];
+    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `riders-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setIsExportingCSV(false);
+    setCsvSuccess(true);
+    window.setTimeout(() => setCsvSuccess(false), 2000);
   };
 
   const handleExportPDF = () => {
     setIsExportingPDF(true);
-    setTimeout(() => {
+    window.setTimeout(() => {
       setIsExportingPDF(false);
       setPdfSuccess(true);
-      setTimeout(() => setPdfSuccess(false), 2000);
-    }, 1500);
+      window.setTimeout(() => setPdfSuccess(false), 2000);
+    }, 800);
   };
-
-  const activeCount = riders.filter(r => r.status === 'Available').length;
-  const dispatchCount = riders.filter(r => r.status === 'Dispatched').length;
-  const bannedCount = riders.filter(r => r.status === 'Banned').length;
 
   const handleView = (rider: Rider) => {
     setSelectedRider(rider);
@@ -97,39 +121,51 @@ export default function RidersPage() {
     setIsDeleteModalOpen(true);
   };
 
-  // Confirm Handlers
-  const onUpdateConfirm = (updatedRider: Rider) => {
-    setRiders(prev => prev.map(r => r.id === updatedRider.id ? updatedRider : r));
-    console.log("Rider Sync Complete:", updatedRider.id);
+  const onAddRider = async (payload: NewRiderPayload) => {
+    await riderAdminApi.create(payload);
+    await queryClient.invalidateQueries({ queryKey: ["riders"] });
   };
 
-  const onDeleteConfirm = (rider: Rider) => {
-    setRiders(prev => prev.filter(r => r.id !== rider.id));
-    console.log("Rider Purged:", rider.id);
+  const onUpdateRider = async (updated: Rider) => {
+    await updateRider.mutateAsync({
+      id: updated.id,
+      payload: {
+        name: updated.name,
+        email: updated.email,
+        phone: updated.phone,
+        idNumber: updated.idNumber,
+        vehicleType: updated.vehicleType,
+        licensePlate: updated.licensePlate,
+        assignedHub: updated.assignedHub,
+        status: updated.status,
+        totalDeliveries: updated.totalDeliveries,
+        rating: updated.rating,
+      },
+    });
   };
 
-  const onAddConfirm = (newRider: Rider) => {
-    setRiders(prev => [newRider, ...prev]);
-    console.log("New Rider Activated:", newRider.id);
+  const onDeleteRider = async (rider: Rider) => {
+    await deleteRider.mutateAsync(rider.id);
   };
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-700">
-      {/* Header Section */}
       <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1 md:px-0">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
             Fleet <span className="text-emerald-600">Logistics</span>
           </h1>
           <p className="text-sm font-medium text-slate-500 mt-1">
-            Manage your rider fleet, track live locations, and coordinate handovers.
+            Rider accounts are <code className="text-xs bg-slate-100 px-1 rounded">User.role = RIDER</code> with a linked{" "}
+            <code className="text-xs bg-slate-100 px-1 rounded">RiderProfile</code>. List &amp; stats from{" "}
+            <code className="text-xs bg-slate-100 px-1 rounded">GET /riders</code>.
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3">
-          {/* Export Actions Step */}
           <div className="relative group/export hidden sm:block">
-            <button 
+            <button
+              type="button"
               onClick={() => setShowExportOptions(!showExportOptions)}
               className={cn(
                 "flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-sm hover:border-emerald-200 hover:bg-emerald-50/30 whitespace-nowrap",
@@ -138,51 +174,62 @@ export default function RidersPage() {
             >
               <Download className={cn("w-4 h-4 text-emerald-600 transition-transform", showExportOptions && "scale-110")} />
               <span>Export Report</span>
-              <ChevronDown className={cn("w-3.5 h-3.5 ml-0.5 text-slate-400 transition-transform duration-300", showExportOptions && "rotate-180 text-emerald-500")} />
+              <ChevronDown
+                className={cn("w-3.5 h-3.5 ml-0.5 text-slate-400 transition-transform duration-300", showExportOptions && "rotate-180 text-emerald-500")}
+              />
             </button>
 
             {showExportOptions && (
               <>
-                <div 
-                  className="fixed inset-0 z-40" 
-                  onClick={() => setShowExportOptions(false)}
-                />
+                <div className="fixed inset-0 z-40" onClick={() => setShowExportOptions(false)} />
                 <div className="absolute right-0 mt-1 w-48 bg-white rounded-[24px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-100 z-50 py-1 px-3 animate-in fade-in zoom-in-95 duration-200">
                   <div className="flex flex-col">
-                    <button 
-                      onClick={() => { handleExportCSV(); setShowExportOptions(false); }}
-                      disabled={isExportingCSV || csvSuccess}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleExportCSV();
+                        setShowExportOptions(false);
+                      }}
+                      disabled={isExportingCSV || csvSuccess || riders.length === 0}
                       className={cn(
                         "w-full flex items-center gap-3 px-4 py-2 rounded-2xl text-[12px] font-bold transition-all group/item",
-                        csvSuccess ? 'bg-emerald-50 text-emerald-700' :
-                        isExportingCSV ? 'text-slate-400 cursor-not-allowed bg-slate-50' : 
-                        'text-slate-600 hover:bg-slate-50 hover:text-emerald-700 active:scale-95'
+                        csvSuccess ? "bg-emerald-50 text-emerald-700" : isExportingCSV ? "text-slate-400 cursor-not-allowed bg-slate-50" : "text-slate-600 hover:bg-slate-50 hover:text-emerald-700 active:scale-95"
                       )}
                     >
                       <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover/item:bg-white transition-colors">
-                        {isExportingCSV ? <Loader2 className="w-4 h-4 animate-spin text-emerald-600" /> : 
-                         csvSuccess ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : 
-                         <Download className="w-4 h-4 text-emerald-600 group-hover/item:scale-110 transition-transform" />}
+                        {isExportingCSV ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+                        ) : csvSuccess ? (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        ) : (
+                          <Download className="w-4 h-4 text-emerald-600 group-hover/item:scale-110 transition-transform" />
+                        )}
                       </div>
                       <span className="tracking-tight uppercase">CSV Report</span>
                     </button>
-                    
+
                     <div className="h-[1px] w-full bg-slate-50 my-1" />
 
-                    <button 
-                      onClick={() => { handleExportPDF(); setShowExportOptions(false); }}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleExportPDF();
+                        setShowExportOptions(false);
+                      }}
                       disabled={isExportingPDF || pdfSuccess}
                       className={cn(
                         "w-full flex items-center gap-3 px-4 py-2 rounded-2xl text-[12px] font-bold transition-all group/item",
-                        pdfSuccess ? 'bg-emerald-50 text-emerald-700' :
-                        isExportingPDF ? 'text-slate-400 cursor-not-allowed bg-slate-50' : 
-                        'text-slate-600 hover:bg-slate-50 hover:text-emerald-700 active:scale-95'
+                        pdfSuccess ? "bg-emerald-50 text-emerald-700" : isExportingPDF ? "text-slate-400 cursor-not-allowed bg-slate-50" : "text-slate-600 hover:bg-slate-50 hover:text-emerald-700 active:scale-95"
                       )}
                     >
                       <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover/item:bg-white transition-colors">
-                        {isExportingPDF ? <Loader2 className="w-4 h-4 animate-spin text-emerald-600" /> : 
-                         pdfSuccess ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : 
-                         <FileText className="w-4 h-4 text-emerald-600 group-hover/item:scale-110 transition-transform" />}
+                        {isExportingPDF ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+                        ) : pdfSuccess ? (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        ) : (
+                          <FileText className="w-4 h-4 text-emerald-600 group-hover/item:scale-110 transition-transform" />
+                        )}
                       </div>
                       <span className="tracking-tight uppercase">PDF Report</span>
                     </button>
@@ -192,51 +239,59 @@ export default function RidersPage() {
             )}
           </div>
 
-          <button 
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/10 group"
-          >
-            <UserPlus className="w-4 h-4 transition-transform group-hover:scale-110" />
-            <span>Onboard Rider</span>
-          </button>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => setIsAddModalOpen(true)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[12px] font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/10 group"
+            >
+              <UserPlus className="w-4 h-4 transition-transform group-hover:scale-110" />
+              <span>Onboard Rider</span>
+            </button>
+          )}
         </div>
       </section>
 
-      {/* Stats Cards Section */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <StatCard 
-          label="Total Fleet" 
-          value={riders.length} 
-          icon={Bike} 
-          color="text-emerald-600" 
-          bgColor="bg-emerald-50/50" 
+        <StatCard
+          label="Total Fleet"
+          value={stats ? String(stats.totalFleet) : isLoading ? "—" : String(riders.length)}
+          icon={Bike}
+          color="text-emerald-600"
+          bgColor="bg-emerald-50/50"
         />
-        <StatCard 
-          label="Available Now" 
-          value={activeCount} 
-          icon={Clock} 
-          color="text-emerald-500" 
-          bgColor="bg-emerald-50/30" 
+        <StatCard
+          label="Available Now"
+          value={stats ? String(stats.availableNow) : "—"}
+          icon={Clock}
+          color="text-emerald-500"
+          bgColor="bg-emerald-50/30"
         />
-        <StatCard 
-          label="On Delivery" 
-          value={dispatchCount} 
-          icon={MapPin} 
-          color="text-blue-600" 
-          bgColor="bg-blue-50/50" 
+        <StatCard
+          label="On Delivery"
+          value={stats ? String(stats.onDelivery) : "—"}
+          icon={MapPin}
+          color="text-blue-600"
+          bgColor="bg-blue-50/50"
         />
-        <StatCard 
-          label="Action Needed" 
-          value={bannedCount} 
-          icon={AlertTriangle} 
-          color="text-red-500" 
-          bgColor="bg-red-50/50" 
+        <StatCard
+          label="Action Needed"
+          value={stats ? String(stats.banned) : "—"}
+          icon={AlertTriangle}
+          color="text-red-500"
+          bgColor="bg-red-50/50"
         />
       </section>
 
-      {/* Main Content Area */}
+      {error && (
+        <div className="flex items-start gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-800">
+          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+          <span>{(error as Error).message}</span>
+        </div>
+      )}
+
       <section>
-        <RiderFilters 
+        <RiderFilters
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           activeStatus={activeStatus}
@@ -244,82 +299,80 @@ export default function RidersPage() {
         />
 
         <div className="bg-white rounded-[40px] border border-slate-100 overflow-hidden relative group min-h-[500px]">
-          {/* Glassmorphism subtle background element */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-50/10 blur-[120px] -z-10 rounded-full"></div>
-          
+          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-50/10 blur-[120px] -z-10 rounded-full" />
+
           <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
-            {filteredRiders.length > 0 ? (
-              <RiderList 
-                riders={filteredRiders} 
+            {isLoading && !data ? (
+              <div className="flex items-center justify-center gap-3 py-24 text-slate-500">
+                <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+                <span className="text-sm font-semibold">Loading riders…</span>
+              </div>
+            ) : riders.length > 0 ? (
+              <RiderList
+                riders={riders}
                 onView={handleView}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                canMutate={isAdmin}
               />
             ) : (
               <div className="p-20 text-center">
-                 <div className="w-24 h-24 bg-slate-50 rounded-[40px] flex items-center justify-center mx-auto mb-8 border border-slate-100 group-hover:scale-110 transition-transform duration-500">
-                    <Database className="w-10 h-10 text-slate-200" />
-                 </div>
-                 <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">No riders found</h3>
-                 <p className="text-slate-400 font-bold mt-2 max-w-sm mx-auto">Try adjusting your filters or search terms to find the rider you are looking for.</p>
-                 <button 
-                   onClick={() => { setSearchTerm(""); setActiveStatus("All"); }}
-                   className="mt-8 px-8 py-3 bg-slate-800 text-white rounded-2xl text-[12px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-slate-200"
-                 >
-                   Reset Search View
-                 </button>
+                <div className="w-24 h-24 bg-slate-50 rounded-[40px] flex items-center justify-center mx-auto mb-8 border border-slate-100">
+                  <Database className="w-10 h-10 text-slate-200" />
+                </div>
+                <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">No riders found</h3>
+                <p className="text-slate-400 font-bold mt-2 max-w-sm mx-auto">
+                  {isAdmin ? "Onboard a rider or adjust filters." : "No riders match these filters."}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setActiveStatus("All");
+                    void refetch();
+                  }}
+                  className="mt-8 px-8 py-3 bg-slate-800 text-white rounded-2xl text-[12px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-slate-200"
+                >
+                  Reset filters
+                </button>
               </div>
             )}
-            
-            {/* Pagination Placeholder */}
-            {filteredRiders.length > 0 && (
+
+            {riders.length > 0 && (
               <div className="px-8 py-6 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between bg-slate-50/30 gap-6">
-                <div className="flex items-center gap-3">
-                   <div className="flex -space-x-2">
-                      <div className="w-6 h-6 rounded-full bg-emerald-100 border-2 border-white"></div>
-                      <div className="w-6 h-6 rounded-full bg-blue-100 border-2 border-white"></div>
-                      <div className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white"></div>
-                   </div>
-                   <p className="text-xs font-black text-slate-400">
-                     Directory contains <span className="text-slate-800">{filteredRiders.length}</span> matching profiles
-                   </p>
-                </div>
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                  <button className="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-black text-slate-400 cursor-not-allowed transition-all uppercase tracking-widest">Previous</button>
-                  <button className="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-black text-slate-800 shadow-sm hover:border-emerald-200 hover:text-emerald-600 transition-all active:scale-95 uppercase tracking-widest">Next Page</button>
-                </div>
+                <p className="text-xs font-black text-slate-400">
+                  Showing <span className="text-slate-800">{riders.length}</span> rider{riders.length === 1 ? "" : "s"}
+                  {isFetching ? " · refreshing…" : ""}
+                </p>
               </div>
             )}
           </div>
         </div>
       </section>
 
-      {/* Modals Handling */}
-      <RiderDetailsModal 
-        isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
-        rider={selectedRider}
-      />
+      <RiderDetailsModal isOpen={isDetailsModalOpen} onClose={() => setIsDetailsModalOpen(false)} rider={selectedRider} />
 
-      <EditRiderModal 
+      <EditRiderModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         rider={selectedRider}
-        onConfirm={onUpdateConfirm}
+        onConfirm={onUpdateRider}
       />
 
-      <DeleteRiderModal 
+      <DeleteRiderModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         rider={selectedRider}
-        onConfirm={onDeleteConfirm}
+        onConfirm={onDeleteRider}
       />
 
-      <AddRiderModal 
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onConfirm={onAddConfirm}
-      />
+      {isAdmin && (
+        <AddRiderModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onConfirm={onAddRider}
+        />
+      )}
     </div>
   );
 }

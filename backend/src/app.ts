@@ -12,10 +12,13 @@ import config from "./config/config.js";
 
 const app = express();
 
-app.use(cors({ 
-    origin: config.FRONTEND_URL,
-    credentials: true
-}));
+const corsOrigins = config.FRONTEND_URL.split(',').map((o) => o.trim()).filter(Boolean);
+app.use(
+  cors({
+    origin: corsOrigins.length === 1 ? corsOrigins[0] : corsOrigins,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());

@@ -1,5 +1,6 @@
-export type PromotionStatus = 'Active' | 'Scheduled' | 'Expired' | 'Disabled';
-export type DiscountType = 'Percentage' | 'Fixed Amount' | 'Free Shipping';
+export type PromotionStatus = 'Active' | 'Scheduled' | 'Expired';
+
+export type DiscountType = 'Percentage' | 'Fixed Amount';
 
 export interface Promotion {
   id: string;
@@ -9,12 +10,17 @@ export interface Promotion {
   type: DiscountType;
   value: number;
   minPurchase?: number;
+  /** Not persisted; empty when backed by API vouchers (expiry only). */
   startDate: string;
   endDate: string;
   usageCount: number;
   usageLimit?: number;
   status: PromotionStatus;
   targetCategory?: string;
+  /** Present when mapped from API; drives edit payloads. */
+  isActive?: boolean;
+  discountType?: 'PERCENTAGE' | 'FIXED';
+  maxDiscount?: number;
 }
 
 export interface PromotionFilters {

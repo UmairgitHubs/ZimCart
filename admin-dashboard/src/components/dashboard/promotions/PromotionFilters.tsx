@@ -9,7 +9,7 @@ interface PromotionFiltersProps {
   setActiveStatus: (val: string) => void;
 }
 
-const STATUS_OPTIONS = ["All", "Active", "Scheduled", "Expired", "Disabled"];
+const STATUS_OPTIONS = ["All", "Active", "Scheduled", "Expired"];
 
 export function PromotionFilters({
   searchTerm,

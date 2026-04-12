@@ -55,21 +55,28 @@ export const updateProduct = asyncHandler(async (req, res) => {
 });
 
 
+function isStaffCatalogRole(role?: string) {
+  return role === 'ADMIN' || role === 'STORE_MANAGER';
+}
+
 export const getProducts = asyncHandler(async (req, res) => {
   const page = parseInt(String(req.query.page || '1')) || 1;
   const limit = parseInt(String(req.query.limit || '20')) || 20;
   const { search, category, categoryId, status, isDeal, storeId } = req.query as { search?: string, category?: string, categoryId?: string, status?: string, isDeal?: string, storeId?: string };
-  
-  const data = await productService.getProducts(page, limit, { 
-    search, 
-    category, 
-    categoryId,
-    status, 
-    storeId,
-    // Only apply managerId if they are fetching their own dashboard
-    managerId: req.user?.id,
-    isDeal: isDeal === 'true' ? true : undefined
-  });
+  const staff = isStaffCatalogRole(req.user?.role);
+
+  const filters: productService.ProductListFilters = {
+    marketplaceMode: !staff,
+  };
+  if (search) filters.search = search;
+  if (category) filters.category = category;
+  if (categoryId) filters.categoryId = categoryId;
+  if (status) filters.status = status;
+  if (storeId) filters.storeId = storeId;
+  if (staff && req.user?.id) filters.managerId = req.user.id;
+  if (isDeal === 'true') filters.isDeal = true;
+
+  const data = await productService.getProducts(page, limit, filters);
 
   return res.status(200).json(
     new ApiResponse(200, {
@@ -81,7 +88,8 @@ export const getProducts = asyncHandler(async (req, res) => {
 
 export const getProduct = asyncHandler(async (req, res) => {
   const { id } = req.params as { id: string };
-  const product = await productService.getProductById(id);
+  const staff = isStaffCatalogRole(req.user?.role);
+  const product = await productService.getProductById(id, { marketplaceMode: !staff });
   
   if (!product) {
     throw new ApiError(404, "Product not found");
