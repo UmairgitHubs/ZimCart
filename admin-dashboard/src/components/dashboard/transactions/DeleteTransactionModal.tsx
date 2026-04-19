@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 interface DeleteTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (trx: Transaction) => void;
+  onConfirm: (trx: Transaction) => Promise<void>;
   transaction: Transaction | null;
 }
 
@@ -19,11 +19,12 @@ export function DeleteTransactionModal({ isOpen, onClose, onConfirm, transaction
 
   const handleConfirm = async () => {
     setIsDeleting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    onConfirm(transaction);
-    setIsDeleting(false);
-    onClose();
+    try {
+      await onConfirm(transaction);
+      onClose();
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (

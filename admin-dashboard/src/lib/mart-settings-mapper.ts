@@ -1,5 +1,5 @@
 import type { MartStoreSettingsDto } from '@/types/martSettings';
-import type { StoreSettings } from '@/types/settings';
+import type { NotificationSettings, StoreSettings } from '@/types/settings';
 
 const WEEKDAYS = [
   'monday',
@@ -21,6 +21,10 @@ type Prefs = {
   deliveryRadiusKm?: number;
   emergencyClose?: boolean;
   holidays?: { date: string; description: string }[];
+  /** Mart-level alert toggles (persisted in Store.openingHours JSON). */
+  martAlertPreferences?: NotificationSettings;
+  /** Hint for client UX; server JWT expiry is not driven by this alone. */
+  sessionTimeoutMinutes?: number;
 };
 
 function readPrefs(raw: unknown): Prefs {
@@ -29,6 +33,59 @@ function readPrefs(raw: unknown): Prefs {
   const p = oh._preferences;
   if (!p || typeof p !== 'object') return {};
   return p as Prefs;
+}
+
+export const DEFAULT_MART_NOTIFICATION_SETTINGS: NotificationSettings = {
+  emailAlerts: {
+    newOrders: true,
+    cancellations: true,
+    inventoryLow: true,
+    marketing: false,
+  },
+  pushAlerts: {
+    newOrders: true,
+    cancellations: true,
+    supportTickets: true,
+    systemUpdates: false,
+  },
+};
+
+function isNotificationSettings(v: unknown): v is NotificationSettings {
+  if (!v || typeof v !== 'object') return false;
+  const o = v as Record<string, unknown>;
+  return (
+    typeof o.emailAlerts === 'object' &&
+    o.emailAlerts !== null &&
+    typeof o.pushAlerts === 'object' &&
+    o.pushAlerts !== null
+  );
+}
+
+export function martDtoToNotificationSettings(dto: MartStoreSettingsDto): NotificationSettings {
+  const prefs = readPrefs(dto.openingHours);
+  if (isNotificationSettings(prefs.martAlertPreferences)) {
+    return prefs.martAlertPreferences;
+  }
+  return DEFAULT_MART_NOTIFICATION_SETTINGS;
+}
+
+export function martDtoToSessionTimeoutMinutes(dto: MartStoreSettingsDto): number {
+  const prefs = readPrefs(dto.openingHours);
+  const m = prefs.sessionTimeoutMinutes;
+  if (m === 15 || m === 30 || m === 60 || m === 240) return m;
+  return 60;
+}
+
+/** Merge partial preference keys into Store.openingHours while preserving weekday keys. */
+export function mergeOpeningHoursPreferences(
+  server: MartStoreSettingsDto,
+  prefsPatch: Partial<Prefs>
+): Record<string, unknown> {
+  const raw = server.openingHours;
+  const base = raw && typeof raw === 'object' ? { ...(raw as Record<string, unknown>) } : {};
+  const existingPrefs = readPrefs(raw);
+  const nextPrefs: Prefs = { ...existingPrefs, ...prefsPatch };
+  return { ...base, _preferences: nextPrefs };
 }
 
 function readSimpleHours(raw: unknown): { open: string; close: string } {
@@ -82,7 +139,9 @@ export function buildOpeningHoursJson(
     ? previous.openingHours
     : {}) as Record<string, unknown>;
 
+  const existing = readPrefs(previous?.openingHours);
   const prefs: Prefs = {
+    ...existing,
     contactEmail: form.contactEmail,
     supportPhone: form.supportPhone,
     physicalAddress: form.physicalAddress,
@@ -131,5 +190,31 @@ export function buildMartSettingsPatch(
     body.storeId = opts.adminStoreId;
   }
 
+  return body;
+}
+
+export function buildMartNotificationPatch(
+  server: MartStoreSettingsDto,
+  prefs: NotificationSettings,
+  opts: { role: 'ADMIN' | 'STORE_MANAGER'; adminStoreId?: string }
+): Record<string, unknown> {
+  const openingHours = mergeOpeningHoursPreferences(server, { martAlertPreferences: prefs });
+  const body: Record<string, unknown> = { openingHours };
+  if (opts.role === 'ADMIN' && opts.adminStoreId) {
+    body.storeId = opts.adminStoreId;
+  }
+  return body;
+}
+
+export function buildMartSessionTimeoutPatch(
+  server: MartStoreSettingsDto,
+  sessionTimeoutMinutes: number,
+  opts: { role: 'ADMIN' | 'STORE_MANAGER'; adminStoreId?: string }
+): Record<string, unknown> {
+  const openingHours = mergeOpeningHoursPreferences(server, { sessionTimeoutMinutes });
+  const body: Record<string, unknown> = { openingHours };
+  if (opts.role === 'ADMIN' && opts.adminStoreId) {
+    body.storeId = opts.adminStoreId;
+  }
   return body;
 }

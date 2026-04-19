@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 interface EditTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (updatedTrx: Transaction) => void;
+  onConfirm: (updatedTrx: Transaction) => Promise<void>;
   transaction: Transaction | null;
 }
 
@@ -38,11 +38,12 @@ export function EditTransactionModal({ isOpen, onClose, onConfirm, transaction }
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    onConfirm({ ...transaction, ...formData } as Transaction);
-    setIsSaving(false);
-    onClose();
+    try {
+      await onConfirm({ ...transaction, ...formData } as Transaction);
+      onClose();
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const statusOptions: { value: TransactionStatus; icon: any; color: string; bg: string; border: string }[] = [

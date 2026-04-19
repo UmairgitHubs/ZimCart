@@ -47,6 +47,36 @@ export const authService = {
     return response.data;
   },
 
+  async changePassword(data: { currentPassword: string; newPassword: string; confirmPassword: string }) {
+    const response = await apiClient.post('/auth/change-password', data);
+    return response.data;
+  },
+
+  async updateSecuritySettings(data: { isTwoFactorEnabled?: boolean; dataSharingConsent?: boolean }) {
+    const response = await apiClient.patch('/customers/security', data);
+    return response.data;
+  },
+
+  async updateProfile(data: { name?: string; phone?: string; avatar?: string; isPremium?: boolean }) {
+    const response = await apiClient.patch('/customers/profile', data);
+    return response.data;
+  },
+
+  async getSessions() {
+    const response = await apiClient.get('/customers/sessions');
+    return response.data;
+  },
+
+  async revokeSession(sessionId: string) {
+    const response = await apiClient.delete(`/customers/sessions/${sessionId}`);
+    return response.data;
+  },
+
+  async revokeAllOtherSessions() {
+    const response = await apiClient.delete('/customers/sessions');
+    return response.data;
+  },
+
   async getMe() {
     const response = await apiClient.get('/auth/me');
     return response.data;

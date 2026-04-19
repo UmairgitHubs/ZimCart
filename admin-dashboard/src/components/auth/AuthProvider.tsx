@@ -2,14 +2,28 @@
 
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { usePathname } from "next/navigation";
 import { authService } from "@/services/auth.service";
 import { setCredentials, setLoading } from "@/lib/features/auth/authSlice";
 import { AppDispatch } from "@/lib/store";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch<AppDispatch>();
+  const pathname = usePathname();
 
   useEffect(() => {
+    const isPublicAuthRoute =
+      pathname === "/" ||
+      pathname.startsWith("/signup") ||
+      pathname.startsWith("/forgot-password") ||
+      pathname.startsWith("/reset-password") ||
+      pathname.startsWith("/verify-reset-code");
+
+    if (isPublicAuthRoute) {
+      dispatch(setLoading(false));
+      return;
+    }
+
     const initAuth = async () => {
       dispatch(setLoading(true));
       try {
@@ -17,16 +31,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (response.data?.user) {
           dispatch(setCredentials({ user: response.data.user }));
         }
-      } catch (error) {
+      } catch {
         // Not authenticated or session expired - silent fail
-        console.log("Session not found or expired");
       } finally {
         dispatch(setLoading(false));
       }
     };
 
     initAuth();
-  }, [dispatch]);
+  }, [dispatch, pathname]);
 
   return <>{children}</>;
 }

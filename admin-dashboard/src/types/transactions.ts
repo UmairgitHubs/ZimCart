@@ -1,5 +1,5 @@
 export type TransactionStatus = 'Completed' | 'Pending' | 'Failed' | 'Refunded';
-export type PaymentMethod = 'EcoCash' | 'InnBucks' | 'Visa/MasterCard' | 'Bank Transfer' | 'OMari';
+export type PaymentMethod = string;
 
 export interface Transaction {
   id: string;

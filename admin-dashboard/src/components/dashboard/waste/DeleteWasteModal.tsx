@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 interface DeleteWasteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (log: WasteLogEntry) => void;
+  onConfirm: (log: WasteLogEntry) => Promise<void>;
   log: WasteLogEntry | null;
 }
 
@@ -19,11 +19,12 @@ export function DeleteWasteModal({ isOpen, onClose, onConfirm, log }: DeleteWast
 
   const handleConfirm = async () => {
     setIsDeleting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    onConfirm(log);
-    setIsDeleting(false);
-    onClose();
+    try {
+      await onConfirm(log);
+      onClose();
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (

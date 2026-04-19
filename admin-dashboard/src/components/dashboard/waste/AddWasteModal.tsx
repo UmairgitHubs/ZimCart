@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 interface AddWasteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (newLog: WasteLogEntry) => void;
+  onConfirm: (newLog: WasteLogEntry) => Promise<void>;
 }
 
 export function AddWasteModal({ isOpen, onClose, onConfirm }: AddWasteModalProps) {
@@ -55,27 +55,26 @@ export function AddWasteModal({ isOpen, onClose, onConfirm }: AddWasteModalProps
     if (!validate()) return;
 
     setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const newLog: WasteLogEntry = {
-      id: `WL-${new Date().getFullYear()}-${Math.floor(Math.random() * 900) + 100}`,
-      productId: `PRD-${Math.floor(Math.random() * 900) + 100}`,
-      productName: formData.productName,
-      sku: formData.sku.toUpperCase(),
-      category: formData.category,
-      quantity: formData.quantity,
-      unitCost: formData.unitCost,
-      totalLoss: formData.quantity * formData.unitCost,
-      reason: formData.reason,
-      loggedBy: "Admin Portal",
-      timestamp: new Date().toISOString(),
-      notes: formData.notes
-    };
-
-    onConfirm(newLog);
-    setIsSaving(false);
-    resetAndClose();
+    try {
+      const newLog: WasteLogEntry = {
+        id: `WL-${new Date().getFullYear()}-${Math.floor(Math.random() * 900) + 100}`,
+        productId: "",
+        productName: formData.productName,
+        sku: formData.sku.toUpperCase(),
+        category: formData.category,
+        quantity: formData.quantity,
+        unitCost: formData.unitCost,
+        totalLoss: formData.quantity * formData.unitCost,
+        reason: formData.reason,
+        loggedBy: "Admin Portal",
+        timestamp: new Date().toISOString(),
+        notes: formData.notes
+      };
+      await onConfirm(newLog);
+      resetAndClose();
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const resetAndClose = () => {

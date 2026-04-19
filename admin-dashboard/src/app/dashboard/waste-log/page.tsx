@@ -25,9 +25,10 @@ import { WasteDetailsModal } from "@/components/dashboard/waste/WasteDetailsModa
 import { AddWasteModal } from "@/components/dashboard/waste/AddWasteModal";
 import { EditWasteModal } from "@/components/dashboard/waste/EditWasteModal";
 import { DeleteWasteModal } from "@/components/dashboard/waste/DeleteWasteModal";
-// Data & Types
-import { MOCK_WASTE_LOGS } from "@/constants/waste";
 import { WasteLogEntry } from "@/types/waste";
+import { useInventory, useUpdateStock } from "@/hooks/useInventory";
+import { inventoryService } from "@/services/inventory.service";
+import { useQuery } from "@tanstack/react-query";
 
 export default function WasteLogPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,9 +48,79 @@ export default function WasteLogPage() {
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [pdfSuccess, setPdfSuccess] = useState(false);
   const [showExportOptions, setShowExportOptions] = useState(false);
+  const { data: inventoryResponse, isLoading: inventoryLoading } = useInventory({
+    page: 1,
+    limit: 200,
+  });
+  const { mutateAsync: updateStock } = useUpdateStock();
+  const inventoryItems = inventoryResponse?.data?.items || [];
+
+  const {
+    data: wasteLogs = [],
+    isLoading: logsLoading,
+    refetch: refetchWasteLogs,
+  } = useQuery({
+    queryKey: ["waste-logs", inventoryItems.map((item: { id: string }) => item.id).join(",")],
+    enabled: inventoryItems.length > 0,
+    queryFn: async () => {
+      const rows = await Promise.all(
+        inventoryItems.map(async (item: any) => {
+          const res = await inventoryService.getInventoryHistory(item.id);
+          const history = (res?.data || []) as any[];
+          return history.map((h) => {
+            const meta = (h.metadata || {}) as { old?: number; new?: number };
+            const oldVal = Number(meta.old ?? 0);
+            const newVal = Number(meta.new ?? oldVal);
+            const delta = newVal - oldVal;
+            const isNegativeStockMove = delta < 0;
+            const text = `${h.event || ""} ${h.description || ""}`.toLowerCase();
+            const isWaste =
+              text.includes("waste") ||
+              text.includes("write-off") ||
+              text.includes("spoilage") ||
+              text.includes("expired") ||
+              text.includes("damaged") ||
+              text.includes("lost") ||
+              isNegativeStockMove;
+            if (!isWaste) return null;
+
+            const reasonText = `${h.description || ""} ${h.event || ""}`;
+            let reason: WasteLogEntry["reason"] = "Damaged";
+            if (/expired/i.test(reasonText)) reason = "Expired";
+            else if (/leak/i.test(reasonText)) reason = "Leaked";
+            else if (/spoil/i.test(reasonText)) reason = "Spoilage";
+            else if (/lost/i.test(reasonText)) reason = "Lost";
+
+            const quantity = Math.abs(delta) || 0;
+            const unitCost = Number(item.unitPrice || 0);
+            const entry: WasteLogEntry = {
+              id: h.id,
+              productId: item.id,
+              productName: item.productName,
+              sku: item.sku,
+              category: item.category,
+              quantity,
+              unitCost,
+              totalLoss: quantity * unitCost,
+              reason,
+              loggedBy: "System",
+              timestamp: h.createdAt,
+              notes: h.description || "",
+            };
+            return entry;
+          });
+        })
+      );
+
+      return rows
+        .flat()
+        .filter((x): x is WasteLogEntry => !!x)
+        .sort((a, b) => +new Date(b.timestamp) - +new Date(a.timestamp));
+    },
+  });
 
   const filteredLogs = useMemo(() => {
-    return MOCK_WASTE_LOGS.filter((log) => {
+    return wasteLogs.filter((log) => {
       const matchesReason = 
         activeReason === "All" || 
         log.reason === activeReason;
@@ -63,21 +134,22 @@ export default function WasteLogPage() {
       if (activeTimeFilter !== "All Time") {
         const logDate = new Date(log.timestamp);
         const now = new Date();
-        const diffTime = Math.abs(now.getTime() - logDate.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
         if (activeTimeFilter === "Today") {
-          matchesTime = diffDays <= 1;
+          matchesTime = logDate.toDateString() === now.toDateString();
         } else if (activeTimeFilter === "This Week") {
+          const diffTime = Math.abs(now.getTime() - logDate.getTime());
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
           matchesTime = diffDays <= 7;
         } else if (activeTimeFilter === "This Month") {
-          matchesTime = diffDays <= 30;
+          matchesTime =
+            logDate.getFullYear() === now.getFullYear() &&
+            logDate.getMonth() === now.getMonth();
         }
       }
       
       return matchesReason && matchesSearch && matchesTime;
     });
-  }, [searchTerm, activeReason, activeTimeFilter]);
+  }, [wasteLogs, searchTerm, activeReason, activeTimeFilter]);
 
   const handleExportCSV = () => {
     setIsExportingCSV(true);
@@ -116,16 +188,52 @@ export default function WasteLogPage() {
     setIsDeleteModalOpen(true);
   };
 
-  const handleAddConfirm = (newLog: WasteLogEntry) => {
-    console.log("Adding Log:", newLog);
+  const handleAddConfirm = async (newLog: WasteLogEntry) => {
+    const target = inventoryItems.find(
+      (item: any) =>
+        item.sku.toLowerCase() === newLog.sku.toLowerCase() ||
+        item.productName.toLowerCase() === newLog.productName.toLowerCase()
+    );
+    if (!target) {
+      throw new Error("Product not found in inventory. Use exact SKU or product name.");
+    }
+    const nextStock = Math.max(0, Number(target.currentStock) - Number(newLog.quantity));
+    await updateStock({
+      id: target.id,
+      currentStock: nextStock,
+      reason: `Waste Write-Off | Reason: ${newLog.reason} | Qty: ${newLog.quantity} | UnitCost: ${newLog.unitCost} | Notes: ${newLog.notes || "N/A"}`,
+    });
+    await refetchWasteLogs();
   };
 
-  const handleEditConfirm = (updatedLog: WasteLogEntry) => {
-    console.log("Updating Log:", updatedLog);
+  const handleEditConfirm = async (updatedLog: WasteLogEntry) => {
+    if (!selectedLog) throw new Error("No waste entry selected.");
+    const target = inventoryItems.find((item: any) => item.id === updatedLog.productId);
+    if (!target) throw new Error("Linked product not found.");
+
+    const oldQty = Number(selectedLog.quantity || 0);
+    const newQty = Number(updatedLog.quantity || 0);
+    const delta = newQty - oldQty;
+    const current = Number(target.currentStock || 0);
+    const nextStock = Math.max(0, current - delta);
+    await updateStock({
+      id: target.id,
+      currentStock: nextStock,
+      reason: `Waste Correction | Ref: ${selectedLog.id} | OldQty: ${oldQty} | NewQty: ${newQty} | Reason: ${updatedLog.reason} | Notes: ${updatedLog.notes || "N/A"}`,
+    });
+    await refetchWasteLogs();
   };
 
-  const handleDeleteConfirm = (log: WasteLogEntry) => {
-    console.log("Deleting Log:", log.id);
+  const handleDeleteConfirm = async (log: WasteLogEntry) => {
+    const target = inventoryItems.find((item: any) => item.id === log.productId);
+    if (!target) throw new Error("Linked product not found.");
+    const nextStock = Number(target.currentStock || 0) + Number(log.quantity || 0);
+    await updateStock({
+      id: target.id,
+      currentStock: nextStock,
+      reason: `Waste Reversal | Ref: ${log.id} | RestoredQty: ${log.quantity} | PreviousReason: ${log.reason}`,
+    });
+    await refetchWasteLogs();
   };
 
   return (
@@ -233,7 +341,7 @@ export default function WasteLogPage() {
         />
         <StatCard 
           label="Total Reports" 
-          value={MOCK_WASTE_LOGS.length} 
+          value={wasteLogs.length} 
           icon={Trash2} 
           color="text-blue-600" 
           bgColor="bg-blue-50/50" 
@@ -261,7 +369,11 @@ export default function WasteLogPage() {
           <div className="absolute top-0 right-0 w-96 h-96 bg-rose-50/10 blur-[120px] -z-10 rounded-full"></div>
           
           <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
-            {filteredLogs.length > 0 ? (
+            {inventoryLoading || logsLoading ? (
+              <div className="py-24 flex items-center justify-center leading-none">
+                <Loader2 className="w-8 h-8 animate-spin text-rose-600" />
+              </div>
+            ) : filteredLogs.length > 0 ? (
               <WasteList 
                 logs={filteredLogs} 
                 onView={handleView}
@@ -316,20 +428,26 @@ export default function WasteLogPage() {
       <AddWasteModal 
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onConfirm={handleAddConfirm}
+        onConfirm={async (newLog) => {
+          await handleAddConfirm(newLog);
+        }}
       />
 
       <EditWasteModal 
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onConfirm={handleEditConfirm}
+        onConfirm={async (updatedLog) => {
+          await handleEditConfirm(updatedLog);
+        }}
         log={selectedLog}
       />
 
       <DeleteWasteModal 
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteConfirm}
+        onConfirm={async (log) => {
+          await handleDeleteConfirm(log);
+        }}
         log={selectedLog}
       />
     </div>

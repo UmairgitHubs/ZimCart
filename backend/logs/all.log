@@ -12081,3 +12081,90 @@
 2026-04-12 20:46:30:4630 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=All 200 218 - 36.457 ms[39m
 2026-04-12 20:46:43:4643 [35mhttp[39m: [35mGET /api/v1/auth/me 200 551 - 90.967 ms[39m
 2026-04-12 20:46:43:4643 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=All 200 218 - 27.659 ms[39m
+2026-04-13 21:47:50:4750 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-13 21:47:50:4750 [32minfo[39m: [32mServer listening on http://0.0.0.0:5000[39m
+2026-04-13 21:47:50:4750 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-13 21:47:55:4755 [35mhttp[39m: [35mGET /api/v1/auth/me 200 552 - 648.272 ms[39m
+2026-04-13 21:47:56:4756 [35mhttp[39m: [35mGET /api/v1/analytics/overview 304 - - 421.360 ms[39m
+2026-04-13 21:48:00:480 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 200 359 - 34.503 ms[39m
+2026-04-14 21:25:37:2537 [32minfo[39m: [32mSocket.io initialized successfully[39m
+2026-04-14 21:25:37:2537 [32minfo[39m: [32mServer listening on http://0.0.0.0:5000[39m
+2026-04-14 21:25:37:2537 [32minfo[39m: [32mEnvironment: development[39m
+2026-04-14 21:25:52:2552 [31merror[39m: [31mUnauthorized request[39m
+2026-04-14 21:25:52:2552 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 24.526 ms[39m
+2026-04-14 21:25:55:2555 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1698 - 2573.021 ms[39m
+2026-04-14 21:25:55:2555 [35mhttp[39m: [35mGET /api/v1/auth/me 200 552 - 26.674 ms[39m
+2026-04-14 21:25:56:2556 [35mhttp[39m: [35mGET /api/v1/analytics/overview 200 528 - 542.986 ms[39m
+2026-04-14 21:29:04:294 [35mhttp[39m: [35mGET /api/v1/auth/me 200 552 - 231.827 ms[39m
+2026-04-14 21:29:05:295 [35mhttp[39m: [35mGET /api/v1/analytics/overview 200 528 - 361.054 ms[39m
+2026-04-14 21:30:09:309 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 210.688 ms[39m
+2026-04-14 21:30:11:3011 [35mhttp[39m: [35mGET /api/v1/analytics/overview 304 - - 610.577 ms[39m
+2026-04-14 21:30:15:3015 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 304 - - 65.116 ms[39m
+2026-04-14 21:32:03:323 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 278.097 ms[39m
+2026-04-14 21:32:04:324 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 304 - - 32.263 ms[39m
+2026-04-14 21:34:15:3415 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 304 - - 1328.683 ms[39m
+2026-04-14 21:38:35:3835 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 665.135 ms[39m
+2026-04-14 21:38:35:3835 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 304 - - 34.404 ms[39m
+2026-04-14 21:48:13:4813 [31merror[39m: [31mUnauthorized request[39m
+2026-04-14 21:48:13:4813 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 8.697 ms[39m
+2026-04-14 21:48:14:4814 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1698 - 273.371 ms[39m
+2026-04-14 21:48:14:4814 [35mhttp[39m: [35mGET /api/v1/auth/me 200 552 - 15.964 ms[39m
+2026-04-14 21:48:14:4814 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 304 - - 24.325 ms[39m
+2026-04-14 21:48:25:4825 [35mhttp[39m: [35mGET /api/v1/orders 200 94 - 344.249 ms[39m
+2026-04-14 21:48:25:4825 [35mhttp[39m: [35mGET /api/v1/orders/stats 200 154 - 436.441 ms[39m
+2026-04-14 21:49:16:4916 [35mhttp[39m: [35mPATCH /api/v1/marts/admin/settings 200 587 - 147.351 ms[39m
+2026-04-14 21:49:16:4916 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 200 587 - 16.884 ms[39m
+2026-04-14 21:49:39:4939 [35mhttp[39m: [35mPATCH /api/v1/marts/admin/settings 200 614 - 77.011 ms[39m
+2026-04-14 21:49:39:4939 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 200 614 - 41.697 ms[39m
+2026-04-14 21:49:47:4947 [35mhttp[39m: [35mPATCH /api/v1/marts/admin/settings 200 1192 - 373.290 ms[39m
+2026-04-14 21:49:47:4947 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 200 1192 - 16.326 ms[39m
+2026-04-14 21:54:01:541 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 304 - - 159.854 ms[39m
+2026-04-14 21:57:59:5759 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 304 - - 444.639 ms[39m
+2026-04-14 22:01:57:157 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 259.302 ms[39m
+2026-04-14 22:01:57:157 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 304 - - 42.043 ms[39m
+2026-04-14 22:04:15:415 [31merror[39m: [31mUnauthorized request[39m
+2026-04-14 22:04:15:415 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 8.506 ms[39m
+2026-04-14 22:04:15:415 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 200 1698 - 441.057 ms[39m
+2026-04-14 22:04:15:415 [35mhttp[39m: [35mGET /api/v1/auth/me 200 552 - 27.864 ms[39m
+2026-04-14 22:04:16:416 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 304 - - 35.995 ms[39m
+2026-04-14 22:04:21:421 [35mhttp[39m: [35mGET /api/v1/analytics/overview 304 - - 603.049 ms[39m
+2026-04-14 22:04:24:424 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=8&search=us 200 142 - 167.296 ms[39m
+2026-04-14 22:09:53:953 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 256.410 ms[39m
+2026-04-14 22:09:54:954 [35mhttp[39m: [35mGET /api/v1/analytics/overview 304 - - 743.974 ms[39m
+2026-04-14 22:11:21:1121 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 352.121 ms[39m
+2026-04-14 22:11:22:1122 [35mhttp[39m: [35mGET /api/v1/analytics/overview 304 - - 464.338 ms[39m
+2026-04-14 22:11:57:1157 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 247.234 ms[39m
+2026-04-14 22:11:57:1157 [35mhttp[39m: [35mGET /api/v1/analytics/overview 304 - - 427.429 ms[39m
+2026-04-14 22:11:59:1159 [35mhttp[39m: [35mGET /api/v1/auth/me 304 - - 145.226 ms[39m
+2026-04-14 22:12:00:120 [35mhttp[39m: [35mGET /api/v1/analytics/overview 304 - - 51.865 ms[39m
+2026-04-14 22:12:09:129 [35mhttp[39m: [35mGET /api/v1/orders 200 94 - 232.149 ms[39m
+2026-04-14 22:12:09:129 [35mhttp[39m: [35mGET /api/v1/orders/stats 200 154 - 241.104 ms[39m
+2026-04-14 22:12:13:1213 [35mhttp[39m: [35mGET /api/v1/products?page=1&limit=10&search= 200 142 - 217.402 ms[39m
+2026-04-14 22:12:17:1217 [35mhttp[39m: [35mGET /api/v1/categories 200 152 - 383.420 ms[39m
+2026-04-14 22:12:17:1217 [35mhttp[39m: [35mGET /api/v1/categories?search=&status=All 200 152 - 383.916 ms[39m
+2026-04-14 22:12:39:1239 [35mhttp[39m: [35mGET /api/v1/inventory?search=&page=1&limit=10 200 226 - 146.506 ms[39m
+2026-04-14 22:12:43:1243 [35mhttp[39m: [35mGET /api/v1/customers/admin/all?page=1&limit=10&search=&status=All 200 144 - 174.225 ms[39m
+2026-04-14 22:12:48:1248 [35mhttp[39m: [35mGET /api/v1/riders?page=1&limit=100&status=All 200 218 - 137.739 ms[39m
+2026-04-14 22:12:53:1253 [35mhttp[39m: [35mGET /api/v1/vouchers 200 98 - 129.772 ms[39m
+2026-04-14 22:12:58:1258 [35mhttp[39m: [35mGET /api/v1/analytics/insights?range=ytd 200 367 - 631.691 ms[39m
+2026-04-14 22:13:07:137 [35mhttp[39m: [35mGET /api/v1/inventory?page=1&limit=200 200 226 - 95.296 ms[39m
+2026-04-14 22:13:13:1313 [35mhttp[39m: [35mGET /api/v1/help/tickets/admin 200 96 - 169.749 ms[39m
+2026-04-14 22:13:17:1317 [35mhttp[39m: [35mGET /api/v1/marts/admin/settings 304 - - 125.441 ms[39m
+2026-04-14 22:13:51:1351 [35mhttp[39m: [35mPOST /api/v1/auth/logout 200 79 - 307.347 ms[39m
+2026-04-14 22:13:54:1354 [31merror[39m: [31mUnauthorized request[39m
+2026-04-14 22:13:54:1354 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 4.450 ms[39m
+2026-04-14 22:13:54:1354 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-14 22:13:54:1354 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 108.483 ms[39m
+2026-04-14 22:14:04:144 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1639 - 764.402 ms[39m
+2026-04-14 22:14:06:146 [35mhttp[39m: [35mGET /api/v1/analytics/overview 304 - - 566.658 ms[39m
+2026-04-14 22:15:44:1544 [35mhttp[39m: [35mGET /api/v1/auth/me 200 552 - 842.946 ms[39m
+2026-04-14 22:15:45:1545 [35mhttp[39m: [35mGET /api/v1/analytics/overview 200 528 - 1440.993 ms[39m
+2026-04-14 22:16:04:164 [35mhttp[39m: [35mGET /api/v1/auth/me 200 552 - 93.173 ms[39m
+2026-04-14 22:16:08:168 [35mhttp[39m: [35mGET /api/v1/analytics/overview 200 528 - 2311.008 ms[39m
+2026-04-14 22:16:32:1632 [31merror[39m: [31mUnauthorized request[39m
+2026-04-14 22:16:32:1632 [35mhttp[39m: [35mGET /api/v1/auth/me 401 1361 - 5.250 ms[39m
+2026-04-14 22:16:32:1632 [31merror[39m: [31mInvalid Credentials[39m
+2026-04-14 22:16:32:1632 [35mhttp[39m: [35mPOST /api/v1/auth/refresh-token 401 841 - 14.231 ms[39m
+2026-04-14 22:16:45:1645 [35mhttp[39m: [35mPOST /api/v1/auth/login 200 1639 - 916.271 ms[39m
+2026-04-14 22:16:46:1646 [35mhttp[39m: [35mGET /api/v1/auth/me 200 552 - 120.923 ms[39m
+2026-04-14 22:16:46:1646 [35mhttp[39m: [35mGET /api/v1/analytics/overview 200 528 - 612.299 ms[39m

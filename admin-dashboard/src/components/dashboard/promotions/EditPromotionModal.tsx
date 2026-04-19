@@ -47,6 +47,7 @@ export function EditPromotionModal({
         type: promotion.type,
         value: promotion.value,
         minPurchase: promotion.minPurchase,
+        maxDiscount: promotion.maxDiscount,
         endDate: promotion.endDate,
         usageLimit: promotion.usageLimit,
         status: editableStatus,
@@ -92,6 +93,7 @@ export function EditPromotionModal({
         type: (formData.type as DiscountType) ?? "Percentage",
         value: formData.value ?? 0,
         minPurchase: formData.minPurchase ?? 0,
+        maxDiscount: formData.maxDiscount ?? 0,
         endDate: endDateStr,
         deploymentActive,
       });
@@ -277,6 +279,22 @@ export function EditPromotionModal({
                       value={formData.minPurchase ?? ""}
                       onChange={(e) =>
                         setFormData({ ...formData, minPurchase: parseFloat(e.target.value) || 0 })
+                      }
+                      className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-emerald-500 transition-all"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
+                    Max discount cap
+                  </label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                    <input
+                      type="number"
+                      value={formData.maxDiscount ?? ""}
+                      onChange={(e) =>
+                        setFormData({ ...formData, maxDiscount: parseFloat(e.target.value) || 0 })
                       }
                       className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-emerald-500 transition-all"
                     />

@@ -6,6 +6,7 @@ interface User {
   name: string;
   role: string;
   avatar?: string;
+  isTwoFactorEnabled?: boolean;
 }
 
 interface AuthState {

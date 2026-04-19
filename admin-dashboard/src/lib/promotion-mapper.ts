@@ -39,6 +39,7 @@ export function promotionToCreatePayload(p: {
   type: DiscountType;
   value: number;
   minPurchase: number;
+  maxDiscount?: number;
   endDate: string;
   deploymentActive: boolean;
 }): import('@/types/vouchers').CreateVoucherPayload {
@@ -50,6 +51,7 @@ export function promotionToCreatePayload(p: {
     discountType: p.type === 'Percentage' ? 'PERCENTAGE' : 'FIXED',
     value: p.value,
     minSpend: p.minPurchase > 0 ? p.minPurchase : null,
+    maxDiscount: p.maxDiscount && p.maxDiscount > 0 ? p.maxDiscount : null,
     expiryDate: end.toISOString(),
     isActive: p.deploymentActive,
   };
@@ -62,6 +64,7 @@ export function promotionToUpdatePayload(p: {
   type: DiscountType;
   value: number;
   minPurchase: number;
+  maxDiscount?: number;
   endDate: string;
   deploymentActive: boolean;
 }): import('@/types/vouchers').UpdateVoucherPayload {
@@ -73,6 +76,7 @@ export function promotionToUpdatePayload(p: {
     discountType: p.type === 'Percentage' ? 'PERCENTAGE' : 'FIXED',
     value: p.value,
     minSpend: p.minPurchase > 0 ? p.minPurchase : null,
+    maxDiscount: p.maxDiscount && p.maxDiscount > 0 ? p.maxDiscount : null,
     expiryDate: end.toISOString(),
     isActive: p.deploymentActive,
   };

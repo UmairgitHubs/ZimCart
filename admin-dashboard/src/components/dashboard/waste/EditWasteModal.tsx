@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 interface EditWasteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (updatedLog: WasteLogEntry) => void;
+  onConfirm: (updatedLog: WasteLogEntry) => Promise<void>;
   log: WasteLogEntry | null;
 }
 
@@ -38,11 +38,12 @@ export function EditWasteModal({ isOpen, onClose, onConfirm, log }: EditWasteMod
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    onConfirm({ ...log, ...formData } as WasteLogEntry);
-    setIsSaving(false);
-    onClose();
+    try {
+      await onConfirm({ ...log, ...formData } as WasteLogEntry);
+      onClose();
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const reasons: { value: WasteReason; icon: any; color: string; bg: string; border: string }[] = [

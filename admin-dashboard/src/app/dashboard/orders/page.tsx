@@ -109,6 +109,10 @@ export default function OrdersPage() {
          } else if (timeRange === "This Week") {
             const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
             matchesTime = orderDate >= weekAgo;
+         } else if (timeRange === "This Month") {
+            matchesTime =
+              orderDate.getFullYear() === now.getFullYear() &&
+              orderDate.getMonth() === now.getMonth();
          }
       }
 

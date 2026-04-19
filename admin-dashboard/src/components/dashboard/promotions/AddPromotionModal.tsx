@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   DollarSign,
   Percent,
-  Hash,
   Activity,
   Zap,
   Briefcase,
@@ -36,8 +35,8 @@ export function AddPromotionModal({ isOpen, onClose, onSubmit }: AddPromotionMod
     type: "Percentage" as DiscountType,
     value: 0,
     minPurchase: 0,
+    maxDiscount: 0,
     endDate: "",
-    usageLimit: 0,
     status: "Active" as PromotionStatus,
     targetCategory: "All Categories",
   });
@@ -71,6 +70,7 @@ export function AddPromotionModal({ isOpen, onClose, onSubmit }: AddPromotionMod
         type: formData.type,
         value: formData.value,
         minPurchase: formData.minPurchase,
+        maxDiscount: formData.maxDiscount,
         endDate: formData.endDate,
         deploymentActive,
       });
@@ -91,8 +91,8 @@ export function AddPromotionModal({ isOpen, onClose, onSubmit }: AddPromotionMod
       type: "Percentage",
       value: 0,
       minPurchase: 0,
+      maxDiscount: 0,
       endDate: "",
-      usageLimit: 0,
       status: "Active",
       targetCategory: "All Categories",
     });
@@ -280,21 +280,28 @@ export function AddPromotionModal({ isOpen, onClose, onSubmit }: AddPromotionMod
                 </div>
                 <div className="space-y-2.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
-                    Usage cap (UI only)
+                    Max discount cap
                   </label>
-                  <div className="relative opacity-60">
-                    <Hash className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                  <div className="relative">
+                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                     <input
                       type="number"
-                      value={formData.usageLimit || ""}
+                      value={formData.maxDiscount || ""}
                       onChange={(e) =>
-                        setFormData({ ...formData, usageLimit: parseInt(e.target.value, 10) || 0 })
+                        setFormData({ ...formData, maxDiscount: parseFloat(e.target.value) || 0 })
                       }
-                      className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-700 outline-none"
-                      placeholder="Not stored yet"
-                      disabled
+                      className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-emerald-500 transition-all"
+                      placeholder="0"
                     />
                   </div>
+                </div>
+                <div className="space-y-2.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
+                    Max discount cap
+                  </label>
+                  <p className="text-[10px] font-semibold text-slate-400 px-1">
+                    Leave as 0 for no cap.
+                  </p>
                 </div>
               </div>
             </div>

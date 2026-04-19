@@ -59,6 +59,7 @@ export const useOrders = () => {
     createOrder: createOrderMutation.mutateAsync,
     isCreating: createOrderMutation.isPending,
     updateOrder: updateOrderMutation.mutateAsync,
-    isUpdatingOrder: updateOrderMutation.isPending
+    isUpdatingOrder: updateOrderMutation.isPending,
+    refetch: ordersQuery.refetch,
   };
 };

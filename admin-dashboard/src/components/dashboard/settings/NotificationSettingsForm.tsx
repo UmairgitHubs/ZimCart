@@ -1,14 +1,28 @@
-import React, { useState } from "react";
-import { Bell, Smartphone, Mail, AlertTriangle, Speaker, Save } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Bell, Smartphone, Mail, AlertTriangle, Speaker, Save, Loader2 } from "lucide-react";
 import { NotificationSettings } from "@/types/settings";
 import { cn } from "@/lib/utils";
 
 interface NotificationSettingsFormProps {
   initialData: NotificationSettings;
+  onSave: (prefs: NotificationSettings) => Promise<void>;
+  isSaving: boolean;
+  syncKey: string;
 }
 
-export function NotificationSettingsForm({ initialData }: NotificationSettingsFormProps) {
+export function NotificationSettingsForm({
+  initialData,
+  onSave,
+  isSaving,
+  syncKey,
+}: NotificationSettingsFormProps) {
   const [formData, setFormData] = useState(initialData);
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setFormData(initialData);
+    setLocalError(null);
+  }, [initialData, syncKey]);
 
   const toggleEmailAlert = (key: keyof NotificationSettings['emailAlerts']) => {
     setFormData(prev => ({
@@ -30,6 +44,15 @@ export function NotificationSettingsForm({ initialData }: NotificationSettingsFo
     }));
   };
 
+  const handleSave = async () => {
+    setLocalError(null);
+    try {
+      await onSave(formData);
+    } catch (e) {
+      setLocalError(e instanceof Error ? e.message : "Failed to save notification settings");
+    }
+  };
+
   return (
     <div className="animate-in fade-in duration-500">
       
@@ -37,6 +60,11 @@ export function NotificationSettingsForm({ initialData }: NotificationSettingsFo
          <Bell className="w-5 h-5" />
          <h2 className="text-lg font-bold text-slate-800 tracking-tight">Telemetry & Alerts</h2>
       </div>
+      {localError && (
+        <div className="mb-5 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+          {localError}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
@@ -127,6 +155,17 @@ export function NotificationSettingsForm({ initialData }: NotificationSettingsFo
           </div>
         </div>
 
+      </div>
+      <div className="mt-6 flex justify-end">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={isSaving}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white rounded-xl text-sm font-bold transition-colors shadow-sm"
+        >
+          {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          Save notifications
+        </button>
       </div>
     </div>
   );

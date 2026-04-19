@@ -3,15 +3,24 @@
 import React, { useMemo, useState } from "react";
 import { Store, Bell, ShieldCheck, Loader2, AlertCircle } from "lucide-react";
 import { useSelector } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { MOCK_NOTIFICATION_SETTINGS, MOCK_SECURITY_SETTINGS } from "@/constants/settings";
+import { DEFAULT_NOTIFICATION_SETTINGS } from "@/constants/settings";
 import { StoreSettingsForm } from "@/components/dashboard/settings/StoreSettingsForm";
 import { NotificationSettingsForm } from "@/components/dashboard/settings/NotificationSettingsForm";
 import { SecuritySettingsForm } from "@/components/dashboard/settings/SecuritySettingsForm";
 import { RootState } from "@/lib/store";
 import { useMartSettings } from "@/hooks/useMartSettings";
-import { martDtoToStoreSettings } from "@/lib/mart-settings-mapper";
+import { useAuth } from "@/hooks/useAuth";
+import { authService } from "@/services/auth.service";
+import { SecuritySettings } from "@/types/settings";
+import {
+  buildMartNotificationPatch,
+  buildMartSessionTimeoutPatch,
+  martDtoToNotificationSettings,
+  martDtoToSessionTimeoutMinutes,
+  martDtoToStoreSettings,
+} from "@/lib/mart-settings-mapper";
 import apiClient from "@/lib/api-client";
 
 type SettingTab = "store" | "notifications" | "security" | "team";
@@ -29,6 +38,22 @@ const TABS: TabList[] = [
 ];
 
 type MartListItem = { id: string; name: string; status?: string; isActive?: boolean };
+type SessionListItem = {
+  id: string;
+  deviceName?: string;
+  deviceType?: string;
+  operatingSystem?: string;
+  ipAddress?: string;
+  lastActiveAt?: string;
+  isCurrent?: boolean;
+};
+
+const DEFAULT_SECURITY_SETTINGS: SecuritySettings = {
+  twoFactorAuth: false,
+  passwordLastChanged: "",
+  sessionTimeoutMinutes: 60,
+  activeSessions: [],
+};
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingTab>("store");
@@ -36,6 +61,7 @@ export default function SettingsPage() {
 
   const user = useSelector((s: RootState) => s.auth.user);
   const isAdmin = user?.role === "ADMIN";
+  const { changePassword, updateSecuritySettings } = useAuth();
 
   const { data: marts, isLoading: martsLoading } = useQuery({
     queryKey: ["admin-marts-directory"],
@@ -55,6 +81,49 @@ export default function SettingsPage() {
 
   const formSeed = useMemo(() => (store ? martDtoToStoreSettings(store) : null), [store]);
   const syncKey = store ? `${store.id}-${store.updatedAt}` : "";
+  const { data: sessionList = [], refetch: refetchSessions } = useQuery({
+    queryKey: ["account-active-sessions"],
+    queryFn: async () => {
+      const response = await authService.getSessions();
+      return (response?.data ?? []) as SessionListItem[];
+    },
+    enabled: activeTab === "security",
+  });
+
+  const revokeSession = useMutation({
+    mutationFn: (sessionId: string) => authService.revokeSession(sessionId),
+    onSuccess: () => refetchSessions(),
+  });
+
+  const revokeOtherSessions = useMutation({
+    mutationFn: () => authService.revokeAllOtherSessions(),
+    onSuccess: () => refetchSessions(),
+  });
+
+  const securityFormData = useMemo<SecuritySettings>(() => {
+    if (!store) {
+      return DEFAULT_SECURITY_SETTINGS;
+    }
+    return {
+      ...DEFAULT_SECURITY_SETTINGS,
+      twoFactorAuth: !!user?.isTwoFactorEnabled,
+      sessionTimeoutMinutes: martDtoToSessionTimeoutMinutes(store),
+      activeSessions: sessionList.map((session) => {
+        const parts = [session.deviceName, session.deviceType, session.operatingSystem].filter(Boolean);
+        const device = parts.length > 0 ? parts.join(" - ") : "Unknown device";
+        const lastActive = session.lastActiveAt
+          ? new Date(session.lastActiveAt).toLocaleString()
+          : "Unknown";
+        return {
+          id: session.id,
+          device,
+          location: session.ipAddress ? `IP: ${session.ipAddress}` : "Location unavailable",
+          lastActive,
+          isCurrent: !!session.isCurrent,
+        };
+      }),
+    };
+  }, [sessionList, store, user?.isTwoFactorEnabled]);
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-6 animate-in fade-in duration-500 pb-20 mt-4 px-2 md:px-0">
@@ -63,7 +132,7 @@ export default function SettingsPage() {
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">System settings</h1>
           <p className="text-sm font-medium text-slate-500 mt-1">
             Mart profile is saved to <code className="text-xs bg-slate-100 px-1 rounded">PATCH /marts/admin/settings</code>
-            . Notifications and security below are still local placeholders.
+            . Notifications and session timeout are now persisted for the selected mart.
           </p>
         </div>
       </div>
@@ -166,9 +235,45 @@ export default function SettingsPage() {
           )}
 
           {activeTab === "notifications" && (
-            <NotificationSettingsForm initialData={MOCK_NOTIFICATION_SETTINGS} />
+            <NotificationSettingsForm
+              initialData={store ? martDtoToNotificationSettings(store) : DEFAULT_NOTIFICATION_SETTINGS}
+              isSaving={isSaving}
+              syncKey={syncKey}
+              onSave={(prefs) => {
+                if (!store) throw new Error("Mart settings are not loaded yet.");
+                const patch = buildMartNotificationPatch(store, prefs, {
+                  role: isAdmin ? "ADMIN" : "STORE_MANAGER",
+                  adminStoreId: adminStoreId ?? undefined,
+                });
+                return save(patch);
+              }}
+            />
           )}
-          {activeTab === "security" && <SecuritySettingsForm initialData={MOCK_SECURITY_SETTINGS} />}
+          {activeTab === "security" && (
+            <SecuritySettingsForm
+              initialData={securityFormData}
+              isSaving={isSaving}
+              isUpdatingTwoFactor={updateSecuritySettings.isPending}
+              isChangingPassword={changePassword.isPending}
+              isRevokingSession={revokeSession.isPending}
+              isRevokingOthers={revokeOtherSessions.isPending}
+              syncKey={syncKey}
+              onSave={(sessionTimeoutMinutes) => {
+                if (!store) throw new Error("Mart settings are not loaded yet.");
+                const patch = buildMartSessionTimeoutPatch(store, sessionTimeoutMinutes, {
+                  role: isAdmin ? "ADMIN" : "STORE_MANAGER",
+                  adminStoreId: adminStoreId ?? undefined,
+                });
+                return save(patch);
+              }}
+              onToggleTwoFactor={(isEnabled) =>
+                updateSecuritySettings.mutateAsync({ isTwoFactorEnabled: isEnabled })
+              }
+              onChangePassword={(payload) => changePassword.mutateAsync(payload)}
+              onRevokeSession={(sessionId) => revokeSession.mutateAsync(sessionId)}
+              onRevokeOtherSessions={() => revokeOtherSessions.mutateAsync()}
+            />
+          )}
         </div>
       </div>
     </div>

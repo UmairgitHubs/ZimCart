@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 interface ReconcileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: () => Promise<void>;
 }
 
 export function ReconcileModal({ isOpen, onClose, onConfirm }: ReconcileModalProps) {
@@ -28,16 +28,16 @@ export function ReconcileModal({ isOpen, onClose, onConfirm }: ReconcileModalPro
 
   const handleReconcile = async () => {
     setIsProcessing(true);
-    // Simulate complex reconciliation process
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    setIsProcessing(false);
-    setIsSuccess(true);
-    
-    setTimeout(() => {
-      onConfirm();
-      setIsSuccess(false);
-      onClose();
-    }, 2000);
+    try {
+      await onConfirm();
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+        onClose();
+      }, 1200);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (

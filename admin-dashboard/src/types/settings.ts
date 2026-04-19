@@ -54,7 +54,10 @@ export interface NotificationSettings {
 export interface SecuritySettings {
   twoFactorAuth: boolean;
   passwordLastChanged: string;
+  /** Mart-level UX preference stored in openingHours (minutes). */
+  sessionTimeoutMinutes: 15 | 30 | 60 | 240;
   activeSessions: {
+    id?: string;
     device: string;
     location: string;
     lastActive: string;

@@ -71,6 +71,33 @@ export const useAuth = () => {
     },
   });
 
+  const changePasswordMutation = useMutation({
+    mutationFn: (data: { currentPassword: string; newPassword: string; confirmPassword: string }) =>
+      authService.changePassword(data),
+    onError: (err: any) => {
+      const message = err.response?.data?.message || "Failed to change password.";
+      dispatch(setError(message));
+    },
+  });
+
+  const updateSecuritySettingsMutation = useMutation({
+    mutationFn: (data: { isTwoFactorEnabled?: boolean; dataSharingConsent?: boolean }) =>
+      authService.updateSecuritySettings(data),
+    onError: (err: any) => {
+      const message = err.response?.data?.message || "Failed to update security settings.";
+      dispatch(setError(message));
+    },
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: (data: { name?: string; phone?: string; avatar?: string; isPremium?: boolean }) =>
+      authService.updateProfile(data),
+    onError: (err: any) => {
+      const message = err.response?.data?.message || "Failed to update profile.";
+      dispatch(setError(message));
+    },
+  });
+
   return {
     login: loginMutation,
     signup: signupMutation,
@@ -78,5 +105,8 @@ export const useAuth = () => {
     resetPassword: resetPasswordMutation,
     verifyResetCode: verifyResetCodeMutation,
     logout: logoutMutation,
+    changePassword: changePasswordMutation,
+    updateSecuritySettings: updateSecuritySettingsMutation,
+    updateProfile: updateProfileMutation,
   };
 };

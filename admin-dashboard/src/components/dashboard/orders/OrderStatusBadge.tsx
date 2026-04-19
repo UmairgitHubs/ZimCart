@@ -30,10 +30,20 @@ const statusConfig: Record<OrderStatus, {
     icon: CheckCircle2, 
     colors: "bg-blue-50 text-blue-600 border-blue-100" 
   },
+  Processing: {
+    label: "Processing",
+    icon: Clock,
+    colors: "bg-indigo-50 text-indigo-600 border-indigo-100"
+  },
   Shipped: { 
     label: "Shipped", 
     icon: Package, 
     colors: "bg-purple-50 text-purple-600 border-purple-100" 
+  },
+  "Out for Delivery": {
+    label: "Out for Delivery",
+    icon: Package,
+    colors: "bg-cyan-50 text-cyan-700 border-cyan-100"
   },
   Delivered: { 
     label: "Delivered", 

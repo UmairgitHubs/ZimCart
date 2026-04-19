@@ -27,9 +27,10 @@ import { TransactionDetailsModal } from "@/components/dashboard/transactions/Tra
 import { ReconcileModal } from "@/components/dashboard/transactions/ReconcileModal";
 import { EditTransactionModal } from "@/components/dashboard/transactions/EditTransactionModal";
 import { DeleteTransactionModal } from "@/components/dashboard/transactions/DeleteTransactionModal";
-// Data & Types
-import { MOCK_TRANSACTIONS } from "@/constants/transactions";
 import { Transaction } from "@/types/transactions";
+import { useOrders } from "@/hooks/useOrders";
+import { Order } from "@/types/orders";
+import { ReportService } from "@/lib/reports";
 
 export default function TransactionsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -48,9 +49,36 @@ export default function TransactionsPage() {
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [pdfSuccess, setPdfSuccess] = useState(false);
   const [showExportOptions, setShowExportOptions] = useState(false);
+  const { orders, isLoading, updateStatus, deleteOrder, refetch } = useOrders();
+
+  const deriveTransactionStatus = (order: Order): Transaction["status"] => {
+    if (order.status === "Cancelled" || order.paymentStatus === "Cancelled") return "Refunded";
+    if (order.paymentStatus === "Pending") return "Pending";
+    if (order.paymentStatus === "Unpaid") return "Failed";
+    return "Completed";
+  };
+
+  const transactionEntries = useMemo(
+    () =>
+      orders.map((order) => {
+        const transaction: Transaction = {
+          id: `TRX-${order.id.replace(/[^a-zA-Z0-9]/g, "").slice(-8).toUpperCase()}`,
+          orderId: order.id,
+          customerName: order.customer.name,
+          amount: order.totalAmount,
+          currency: "USD",
+          status: deriveTransactionStatus(order),
+          paymentMethod: order.paymentMethod,
+          timestamp: order.createdAt,
+          reference: order.dbId || order.id,
+        };
+        return { transaction, order };
+      }),
+    [orders]
+  );
 
   const filteredTransactions = useMemo(() => {
-    return MOCK_TRANSACTIONS.filter((trx) => {
+    return transactionEntries.filter(({ transaction: trx }) => {
       const matchesStatus = 
         activeStatus === "All" || 
         trx.status === activeStatus;
@@ -62,33 +90,39 @@ export default function TransactionsPage() {
       
       return matchesStatus && matchesSearch;
     });
-  }, [searchTerm, activeStatus]);
+  }, [transactionEntries, searchTerm, activeStatus]);
 
   const handleExportCSV = () => {
-    setIsExportingCSV(true);
-    setTimeout(() => {
+    try {
+      setIsExportingCSV(true);
+      ReportService.generateCSV(filteredTransactions.map((entry) => entry.order));
       setIsExportingCSV(false);
       setCsvSuccess(true);
       setTimeout(() => setCsvSuccess(false), 2000);
-    }, 1500);
+    } finally {
+      setIsExportingCSV(false);
+    }
   };
 
   const handleExportPDF = () => {
-    setIsExportingPDF(true);
-    setTimeout(() => {
+    try {
+      setIsExportingPDF(true);
+      ReportService.generatePDF(filteredTransactions.map((entry) => entry.order), "Transactions");
       setIsExportingPDF(false);
       setPdfSuccess(true);
       setTimeout(() => setPdfSuccess(false), 2000);
-    }, 1500);
+    } finally {
+      setIsExportingPDF(false);
+    }
   };
 
-  const totalRevenue = MOCK_TRANSACTIONS
-    .filter(t => t.status === 'Completed')
-    .reduce((acc, curr) => acc + curr.amount, 0);
+  const totalRevenue = filteredTransactions
+    .filter(({ transaction: t }) => t.status === 'Completed')
+    .reduce((acc, curr) => acc + curr.transaction.amount, 0);
 
-  const pendingAmount = MOCK_TRANSACTIONS
-    .filter(t => t.status === 'Pending')
-    .reduce((acc, curr) => acc + curr.amount, 0);
+  const pendingAmount = filteredTransactions
+    .filter(({ transaction: t }) => t.status === 'Pending')
+    .reduce((acc, curr) => acc + curr.transaction.amount, 0);
 
   const handleView = (trx: Transaction) => {
     setSelectedTransaction(trx);
@@ -105,19 +139,22 @@ export default function TransactionsPage() {
     setIsDeleteModalOpen(true);
   };
 
-  const handleEditConfirm = (updatedTrx: Transaction) => {
-    console.log("Transaction Updated:", updatedTrx);
-    // Refresh logic here
+  const handleEditConfirm = async (updatedTrx: Transaction) => {
+    const statusMap: Record<Transaction["status"], string> = {
+      Completed: "Delivered",
+      Pending: "Pending",
+      Failed: "Cancelled",
+      Refunded: "Cancelled",
+    };
+    await updateStatus({ id: updatedTrx.orderId, status: statusMap[updatedTrx.status] });
   };
 
-  const handleDeleteConfirm = (trx: Transaction) => {
-    console.log("Transaction Deleted:", trx.id);
-    // Refresh logic here
+  const handleDeleteConfirm = async (trx: Transaction) => {
+    await deleteOrder(trx.orderId);
   };
 
-  const handleReconcileConfirm = () => {
-    console.log("Ledger Reconciled Successfully");
-    // In a real app, refetch data here
+  const handleReconcileConfirm = async () => {
+    await refetch();
   };
 
   return (
@@ -235,7 +272,7 @@ export default function TransactionsPage() {
         />
         <StatCard 
           label="Revoked / Refunded" 
-          value={`$${MOCK_TRANSACTIONS.filter(t => t.status === 'Refunded').reduce((a,c)=>a+c.amount,0).toLocaleString()}`} 
+          value={`$${filteredTransactions.filter(({ transaction: t }) => t.status === 'Refunded').reduce((a,c)=>a+c.transaction.amount,0).toLocaleString()}`} 
           icon={ArrowUpRight} 
           color="text-amber-600" 
           bgColor="bg-amber-50/50" 
@@ -256,9 +293,13 @@ export default function TransactionsPage() {
           <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-50/10 blur-[120px] -z-10 rounded-full"></div>
           
           <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
-            {filteredTransactions.length > 0 ? (
+            {isLoading ? (
+              <div className="py-24 flex items-center justify-center leading-none">
+                <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+              </div>
+            ) : filteredTransactions.length > 0 ? (
               <TransactionList 
-                transactions={filteredTransactions} 
+                transactions={filteredTransactions.map((entry) => entry.transaction)} 
                 onView={handleView}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
@@ -318,20 +359,26 @@ export default function TransactionsPage() {
       <ReconcileModal 
         isOpen={isReconcileModalOpen}
         onClose={() => setIsReconcileModalOpen(false)}
-        onConfirm={handleReconcileConfirm}
+        onConfirm={async () => {
+          await handleReconcileConfirm();
+        }}
       />
 
       <EditTransactionModal 
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onConfirm={handleEditConfirm}
+        onConfirm={async (updatedTrx) => {
+          await handleEditConfirm(updatedTrx);
+        }}
         transaction={selectedTransaction}
       />
 
       <DeleteTransactionModal 
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteConfirm}
+        onConfirm={async (trx) => {
+          await handleDeleteConfirm(trx);
+        }}
         transaction={selectedTransaction}
       />
     </div>

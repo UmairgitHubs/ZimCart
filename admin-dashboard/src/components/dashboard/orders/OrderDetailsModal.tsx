@@ -9,6 +9,7 @@ import { Order } from "@/types/orders";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { InvoiceService } from "@/lib/invoice";
+import { OrderStatus } from "@/types/orders";
 
 interface OrderDetailsModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ interface OrderDetailsModalProps {
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'Delivered': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+    case 'Out for Delivery': return 'bg-cyan-100 text-cyan-800 border-cyan-200';
     case 'Shipped': return 'bg-blue-100 text-blue-800 border-blue-200';
     case 'Processing': return 'bg-purple-100 text-purple-800 border-purple-200';
     case 'Confirmed': return 'bg-indigo-100 text-indigo-800 border-indigo-200';
@@ -99,6 +101,7 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateStatus, isUp
     { label: "Confirmed", icon: CheckCircle2 },
     { label: "Processing", icon: Package },
     { label: "Shipped", icon: Truck },
+    { label: "Out for Delivery", icon: Map },
     { label: "Delivered", icon: MapPin },
   ];
 
@@ -108,7 +111,8 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateStatus, isUp
       'Confirmed': 1,
       'Processing': 2,
       'Shipped': 3,
-      'Delivered': 4,
+      'Out for Delivery': 4,
+      'Delivered': 5,
     };
     return statusMap[order.status] ?? -1;
   };
@@ -150,8 +154,36 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateStatus, isUp
     );
   };
 
+  const resolveAddressText = () => {
+    try {
+      const parsed = JSON.parse(order.shippingAddress);
+      if (parsed && typeof parsed === "object" && "address" in parsed && parsed.address) {
+        return String(parsed.address);
+      }
+    } catch {
+      // plain string fallback
+    }
+    return order.shippingAddress;
+  };
+
+  const openAddressOnMap = () => {
+    const address = resolveAddressText().trim();
+    if (!address) return;
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+    window.open(mapsUrl, "_blank", "noopener,noreferrer");
+  };
+
   const currentIndex = getTimelineIndex();
   const isCancelledOrRefunded = ['Cancelled', 'Refunded'].includes(order.status);
+
+  const NEXT_STATUS_MAP: Partial<Record<OrderStatus, OrderStatus>> = {
+    Pending: "Confirmed",
+    Confirmed: "Processing",
+    Processing: "Shipped",
+    Shipped: "Out for Delivery",
+    "Out for Delivery": "Delivered",
+  };
+  const nextStatus = NEXT_STATUS_MAP[order.status as OrderStatus];
   
   // Financial Calculation Protocol
   const finalTotal = order.totalAmount;
@@ -311,7 +343,7 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateStatus, isUp
                       {currentIndex === 1 && "Payment confirmed. Order is now authorized and ready for processing."}
                       {currentIndex === 2 && "Items are being picked and packed with care in our warehouse."}
                       {currentIndex === 3 && "Order has been picked up by our logistics partner and is on its way."}
-                      {currentIndex === 4 && "The rider is currently out in your area and will deliver the package soon."}
+                      {currentIndex === 4 && "Rider is out for delivery and approaching the customer location."}
                       {currentIndex === 5 && "Success! The package was delivered and signed for. Thank you for shopping with us!"}
                     </p>
                     <p className="text-[12px] text-emerald-600/80 font-medium mt-1 uppercase tracking-wider">
@@ -374,7 +406,11 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateStatus, isUp
                   </div>
                   <div className="mt-auto z-10 pt-4 border-t border-slate-50">
                     {renderAddress()}
-                    <button className="mt-3 text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors">
+                    <button
+                      type="button"
+                      onClick={openAddressOnMap}
+                      className="mt-3 text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors"
+                    >
                        <ExternalLink className="w-3.5 h-3.5" /> View on Map
                     </button>
                   </div>
@@ -483,21 +519,17 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateStatus, isUp
                 </div>
 
                 <div className="mt-8 space-y-3">
-                  {order.status !== 'Delivered' && order.status !== 'Cancelled' && (
+                  {!isCancelledOrRefunded && nextStatus && (
                     <button 
                       onClick={async () => {
-                         if (onUpdateStatus) {
-                            // Simple mock progression: Pending -> Confirmed -> Shipped -> Delivered
-                            let next = "Confirmed";
-                            if (order.status === "Confirmed") next = "Shipped";
-                            if (order.status === "Shipped") next = "Delivered";
-                            await onUpdateStatus(order.id, next);
+                         if (onUpdateStatus && nextStatus) {
+                            await onUpdateStatus(order.id, nextStatus);
                          }
                       }}
                        disabled={isUpdating}
                       className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 transition-all active:scale-[0.98] flex items-center justify-center"
                     >
-                      {isUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Approve Next Step"}
+                      {isUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : `Mark as ${nextStatus}`}
                     </button>
                   )}
                   {order.status !== 'Cancelled' && order.status !== 'Delivered' && (

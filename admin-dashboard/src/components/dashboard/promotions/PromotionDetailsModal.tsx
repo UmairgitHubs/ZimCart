@@ -222,18 +222,24 @@ export function PromotionDetailsModal({ promotion, isOpen, onClose }: PromotionD
                    <div className="flex items-center justify-between p-5 bg-white rounded-[24px] border border-emerald-100 shadow-md shadow-emerald-500/5">
                       <div className="space-y-1 flex-1">
                          <div className="flex justify-between items-center mb-2">
-                            <p className="text-[9px] font-black text-slate-400 uppercase">Usage Progress</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase">Redemptions</p>
                             <p className="text-[10px] font-black text-emerald-600">
-                               {promotion.usageCount} / {promotion.usageLimit || '∞'} 
+                               {promotion.usageCount}
                             </p>
                          </div>
                          <div className="w-full h-2 bg-emerald-50 rounded-full overflow-hidden border border-emerald-100/50">
                             <div 
                               className="h-full bg-emerald-500 rounded-full transition-all duration-1000" 
-                              style={{ width: `${promotion.usageLimit ? (promotion.usageCount / promotion.usageLimit) * 100 : 100}%` }}
+                              style={{ width: `${promotion.usageCount > 0 ? 100 : 0}%` }}
                             />
                          </div>
                       </div>
+                   </div>
+                   <div className="p-5 bg-slate-50 rounded-[24px] border border-slate-100 flex items-center justify-between">
+                     <p className="text-[10px] font-black text-slate-400 uppercase">Max Discount Cap</p>
+                     <p className="text-[12px] font-black text-slate-700">
+                       {promotion.maxDiscount ? `$${promotion.maxDiscount}` : "No cap"}
+                     </p>
                    </div>
                    <div className="p-5 bg-emerald-50/50 rounded-[24px] border border-emerald-100 flex items-start gap-4 shadow-sm shadow-emerald-500/5">
                       <div className="p-2 bg-white rounded-xl shadow-sm border border-emerald-100 flex items-center justify-center">

@@ -1,6 +1,15 @@
 import { Order } from "@/types/orders";
 
-export const STATUS_TABS = ["All Orders", "Pending", "Confirmed", "Shipped", "Delivered", "Cancelled"];
+export const STATUS_TABS = [
+  "All Orders",
+  "Pending",
+  "Confirmed",
+  "Processing",
+  "Shipped",
+  "Out for Delivery",
+  "Delivered",
+  "Cancelled",
+];
 
 export const TIME_RANGES = ["All Time", "Today", "This Week", "This Month"];
 
