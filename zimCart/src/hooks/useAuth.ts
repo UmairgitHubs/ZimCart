@@ -1,23 +1,31 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigation, StackActions } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { InteractionManager } from 'react-native';
 import { authApi } from '../services/auth';
 import { LoginFormData, RegisterFormData } from '@/schemas/auth.schema';
 import { useDispatch } from 'react-redux';
-import { setCredentials, logout } from '@/store/slices/auth.slice';
+import { setCredentials, logout as logoutAction } from '@/store/slices/auth.slice';
+import { resetToAppForUser, resetToCustomerMain, resetToRiderWelcome } from '@/utils/navigation';
+import type { User } from '@/types';
 
 export const useAuth = () => {
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const navigation = useNavigation();
 
+    const afterAuth = (user: User, token: string, refreshToken?: string) => {
+        dispatch(setCredentials({ user, token, refreshToken }));
+        resetToAppForUser(navigation, user);
+    };
+
     const loginMutation = useMutation({
         mutationFn: authApi.login,
         onSuccess: (data: any) => {
             if (!data.mfaRequired) {
-                dispatch(setCredentials({ 
-                    user: data.user, 
-                    token: data.token, 
-                    refreshToken: data.refreshToken 
+                dispatch(setCredentials({
+                    user: data.user,
+                    token: data.token,
+                    refreshToken: data.refreshToken,
                 }));
             }
         },
@@ -26,32 +34,30 @@ export const useAuth = () => {
     const registerMutation = useMutation({
         mutationFn: authApi.register,
         onSuccess: (data) => {
-             dispatch(setCredentials({ 
-                user: data.user, 
-                token: data.token, 
-                refreshToken: data.refreshToken 
-            }));
+             afterAuth(data.user, data.token, data.refreshToken);
         },
     });
 
-    const clearAuth = () => {
-        dispatch(logout());
+    const clearAuth = (destination: 'customer' | 'rider' = 'customer') => {
+        dispatch(logoutAction());
         queryClient.clear();
-        // Senior Implementation: Reset navigation to the absolute root to prevent "ghost" screens
-        navigation.dispatch(StackActions.popToTop());
-        navigation.dispatch(
-            StackActions.replace('CustomerApp', {
-                screen: 'Onboarding'
-            })
-        );
+        InteractionManager.runAfterInteractions(() => {
+            if (destination === 'rider') {
+                resetToRiderWelcome(navigation);
+            } else {
+                resetToCustomerMain(navigation);
+            }
+        });
     };
 
     const logoutMutation = useMutation({
         mutationFn: authApi.logout,
-        onSettled: () => {
-            clearAuth();
-        },
     });
+
+    const logout = (destination: 'customer' | 'rider' = 'customer') => {
+        clearAuth(destination);
+        logoutMutation.mutate();
+    };
 
     const forgotPasswordMutation = useMutation({
         mutationFn: authApi.forgotPassword,
@@ -72,11 +78,7 @@ export const useAuth = () => {
     const verify2FAMutation = useMutation({
         mutationFn: ({ mfaToken, code }: { mfaToken: string, code: string }) => authApi.verify2FA(mfaToken, code),
         onSuccess: (data) => {
-             dispatch(setCredentials({ 
-                user: data.user, 
-                token: data.token, 
-                refreshToken: data.refreshToken 
-            }));
+             afterAuth(data.user, data.token, data.refreshToken);
         }
     });
 
@@ -89,7 +91,8 @@ export const useAuth = () => {
         isLoggingIn: loginMutation.isPending,
         register: registerMutation.mutateAsync,
         isRegistering: registerMutation.isPending,
-        logout: logoutMutation.mutate,
+        logout,
+        isLoggingOut: logoutMutation.isPending,
         forgotPassword: forgotPasswordMutation.mutateAsync,
         isForgotPasswordLoading: forgotPasswordMutation.isPending,
         verifyResetCode: verifyResetCodeMutation.mutateAsync,
@@ -103,5 +106,6 @@ export const useAuth = () => {
         resend2FA: resend2FAMutation.mutateAsync,
         isResending2FA: resend2FAMutation.isPending,
         clearAuth,
+        afterAuth,
     };
 };

@@ -104,6 +104,35 @@ export async function updateStoreSettingsForStaff(
   });
 }
 
+const MART_COVER_DEFAULTS = [
+  'https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=1000&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=1000&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=1000&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1000&auto=format&fit=crop',
+];
+
+function resolvePublicMartImage(
+  store: { id: string; name: string; image: string | null },
+  tags: string[]
+): string {
+  const raw = store.image?.trim();
+  if (raw && raw.startsWith('http') && !raw.includes('via.placeholder.com')) {
+    return raw;
+  }
+  const haystack = `${tags.join(' ')} ${store.name}`.toLowerCase();
+  if (haystack.includes('tech') || haystack.includes('electronic')) {
+    return MART_COVER_DEFAULTS[2]!;
+  }
+  if (haystack.includes('fashion') || haystack.includes('style')) {
+    return MART_COVER_DEFAULTS[3]!;
+  }
+  let index = 0;
+  for (let i = 0; i < store.id.length; i += 1) {
+    index = (index + store.id.charCodeAt(i)) % MART_COVER_DEFAULTS.length;
+  }
+  return MART_COVER_DEFAULTS[index]!;
+}
+
 /** Customer-facing discovery: only marts that are on and accepting traffic (not CLOSED/HIDDEN). */
 const publicMartDiscoveryWhere: Prisma.StoreWhereInput = {
   isActive: true,
@@ -130,12 +159,16 @@ export const getAllMarts = async () => {
     }
   });
 
-  return stores.map(s => ({
-    ...s,
-    tags: s.categories.map(c => c.name),
-    deliveryFee: `Rs. ${s.deliveryFee}`,
-    minOrder: `Rs. ${s.minOrder || 0}`
-  }));
+  return stores.map(s => {
+    const tags = s.categories.map(c => c.name);
+    return {
+      ...s,
+      image: resolvePublicMartImage(s, tags),
+      tags,
+      deliveryFee: `Rs. ${s.deliveryFee}`,
+      minOrder: `Rs. ${s.minOrder || 0}`,
+    };
+  });
 };
 
 /** Full mart list for admin tooling (e.g. settings picker), including inactive or HIDDEN. */

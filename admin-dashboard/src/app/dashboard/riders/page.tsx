@@ -1,9 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Bike,
   MapPin,
+  Map,
+  CreditCard,
   Download,
   FileText,
   UserPlus,
@@ -162,7 +165,23 @@ export default function RidersPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap justify-end">
+          <Link
+            href="/dashboard/riders/fleet-map"
+            className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-[12px] font-bold hover:border-cyan-300 hover:text-cyan-700 transition-all"
+          >
+            <Map className="w-4 h-4" />
+            Live map
+          </Link>
+          {isAdmin && (
+            <Link
+              href="/dashboard/riders/payouts"
+              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-[12px] font-bold hover:border-emerald-300 hover:text-emerald-700 transition-all"
+            >
+              <CreditCard className="w-4 h-4" />
+              Payouts
+            </Link>
+          )}
           <div className="relative group/export hidden sm:block">
             <button
               type="button"

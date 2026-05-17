@@ -5,10 +5,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import { useProfile } from '@/hooks/useCustomer';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { logout } from '@/store/slices/auth.slice';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useAuth } from '@/hooks/useAuth';
 
 const PROFILE_MENU = [
   { id: 'edit-profile', icon: "account-cog-outline", label: "Edit Profile", color: "#3B82F6", bg: "#EFF6FF" },
@@ -29,14 +29,13 @@ export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const dispatch = useDispatch();
-  
+  const { logout: signOut } = useAuth();
+
   // Only fetch profile if authenticated
   const { data: user } = useProfile();
-  
+
   const handleLogout = () => {
-    dispatch(logout());
-    // Optionally clear query cache or navigate
+    signOut('customer');
   };
 
   const handleLoginNavigation = () => {

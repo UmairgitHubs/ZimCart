@@ -93,4 +93,40 @@ export const riderAdminApi = {
   async remove(id: string) {
     await apiClient.delete(`/riders/${id}`);
   },
+
+  async getLiveMap() {
+    const { data } = await apiClient.get('/riders/live-map');
+    return data.data.riders as {
+      id: string;
+      name: string;
+      status: string;
+      latitude: number | null;
+      longitude: number | null;
+      activeOrders: { orderNumber: string }[];
+    }[];
+  },
+
+  async listPayouts(status = 'All') {
+    const { data } = await apiClient.get('/riders/payouts', { params: { status } });
+    return data.data.payouts as RiderPayoutAdmin[];
+  },
+
+  async updatePayout(id: string, body: { status: string; adminNotes?: string }) {
+    const { data } = await apiClient.patch(`/riders/payouts/${id}`, body);
+    return data.data.payout as RiderPayoutAdmin;
+  },
+};
+
+export type RiderPayoutAdmin = {
+  id: string;
+  amount: number;
+  method: string;
+  accountRef: string;
+  accountName: string | null;
+  status: string;
+  notes: string | null;
+  adminNotes: string | null;
+  requestedAt: string;
+  processedAt: string | null;
+  rider: { id: string; name: string; email: string; phone: string | null };
 };

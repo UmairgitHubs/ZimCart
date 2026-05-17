@@ -24,6 +24,18 @@ export const init = (server: HttpServer): void => {
   io.on("connection", (socket) => {
     logger.info(`Client connected: ${socket.id}`);
 
+    socket.on("join", (payload: { userId?: string; role?: string }) => {
+      if (!payload?.userId) return;
+      if (payload.role === "RIDER") {
+        socket.join(`rider:${payload.userId}`);
+        logger.info(`Rider joined room: rider:${payload.userId}`);
+      }
+      if (payload.role === "CUSTOMER") {
+        socket.join(`customer:${payload.userId}`);
+        logger.info(`Customer joined room: customer:${payload.userId}`);
+      }
+    });
+
     socket.on("error", (error) => {
       logger.error(`Socket error for client ${socket.id}: ${error.message}`);
     });

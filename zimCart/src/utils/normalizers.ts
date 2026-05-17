@@ -1,3 +1,5 @@
+import { resolveMartImage } from '@/utils/martImages';
+
 export const normalizeProduct = (passedProduct: any) => {
   if (!passedProduct) return null;
   
@@ -7,8 +9,17 @@ export const normalizeProduct = (passedProduct: any) => {
     price: passedProduct.price 
       ? (typeof passedProduct.price === 'string' ? passedProduct.price : `Rs. ${passedProduct.price}`) 
       : 'Rs. 0',
-    images: passedProduct.images?.length > 0 ? passedProduct.images : [passedProduct.image || 'https://via.placeholder.com/800'],
-    image: passedProduct.images?.[0] || passedProduct.image || 'https://via.placeholder.com/800',
+    images:
+      passedProduct.images?.length > 0
+        ? passedProduct.images
+        : [
+            passedProduct.image ||
+              'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop',
+          ],
+    image:
+      passedProduct.images?.[0] ||
+      passedProduct.image ||
+      'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop',
     description: passedProduct.description || 'Experience the excellence of ZimCart. Sourced for quality and freshness.',
     mart: passedProduct.mart || passedProduct.store?.name || 'ZimCart Mart',
     rating: passedProduct.rating || '4.8',
@@ -26,14 +37,27 @@ export const normalizeProduct = (passedProduct: any) => {
 export const normalizeMart = (passedMart: any) => {
   if (!passedMart) return null;
 
+  const tags = passedMart.tags || [];
+  const deliveryTime = passedMart.deliveryTime || '20-30 min';
+  const deliveryFee = passedMart.deliveryFee || 'Rs. 0';
+  const image = resolveMartImage({
+    id: passedMart.id,
+    name: passedMart.name,
+    image: passedMart.image,
+    tags,
+  });
+
   return {
     id: passedMart.id,
     name: passedMart.name || 'ZimCart Mart',
-    image: passedMart.image || 'https://via.placeholder.com/800',
+    image,
     rating: passedMart.rating || 4.8,
-    deliveryTime: passedMart.deliveryTime || '20-30 min',
-    tags: passedMart.tags || [],
-    deliveryFee: passedMart.deliveryFee || 'Rs. 0',
-    minOrder: passedMart.minOrder || 'Rs. 0'
+    deliveryTime,
+    tags,
+    deliveryFee,
+    minOrder: passedMart.minOrder || 'Rs. 0',
+    time: deliveryTime,
+    delivery: deliveryFee,
+    ratingCount: passedMart.ratingCount || '(250+)',
   };
 };

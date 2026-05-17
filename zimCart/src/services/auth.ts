@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
+import axios from 'axios';
 import { User } from '@/types';
 import { LoginFormData, RegisterFormData } from '@/schemas/auth.schema';
 import api from './api';
@@ -61,11 +62,15 @@ export const authApi = {
   },
 
   logout: async (): Promise<void> => {
-     try {
-         await api.post('/auth/logout');
-     } catch (e) {
-         console.error("Logout failed", e);
-     }
+    try {
+      await api.post('/auth/logout');
+    } catch (e) {
+      const status = axios.isAxiosError(e) ? e.response?.status : undefined;
+      // 401/403 means the session is already gone — local sign-out is sufficient
+      if (status !== 401 && status !== 403 && __DEV__) {
+        console.warn('Logout request failed', status ?? e);
+      }
+    }
   },
 
   forgotPassword: async (email: string): Promise<string> => {

@@ -4,7 +4,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { STORES } from '@/data/mock/home';
+import { goToCartTab } from '@/utils/navigation';
+import { useMarts, useProducts } from '@/hooks/useMarketplace';
+import { ActivityIndicator } from 'react-native';
+import { mapProductToDealCard } from '@/utils/productMappers';
 
 const { width } = Dimensions.get('window');
 
@@ -16,61 +19,37 @@ const TECH_CATEGORIES = [
     { id: '5', name: 'Watches', icon: 'watch-variant', color: '#fff7ed', textColor: '#9a3412' },
 ];
 
-const TECH_DEALS = [
-    { 
-        id: '1', 
-        name: 'iPhone 15 Pro', 
-        mart: 'TechWorld Express', 
-        price: 'Rs. 340,000', 
-        oldPrice: 'Rs. 360,000', 
-        discount: 'Flat Rs. 20,000', 
-        category: 'Mobiles',
-        image: 'https://images.unsplash.com/photo-1696446701796-da61225697cc?q=80&w=400&auto=format&fit=crop' 
-    },
-    { 
-        id: '2', 
-        name: 'MacBook Air M2', 
-        mart: 'Apple Store', 
-        price: 'Rs. 285,000', 
-        oldPrice: 'Rs. 310,000', 
-        discount: 'Save Rs. 25,000', 
-        category: 'Laptops',
-        image: 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=400&auto=format&fit=crop' 
-    },
-    { 
-        id: '3', 
-        name: 'Sony WH-1000XM5', 
-        mart: 'Gadget Core', 
-        price: 'Rs. 85,000', 
-        oldPrice: 'Rs. 95,000', 
-        discount: '10% OFF', 
-        category: 'Audio',
-        image: 'https://images.unsplash.com/photo-1618366712214-8c07623155c2?q=80&w=400&auto=format&fit=crop' 
-    },
-];
-
 export default function TechScreen() {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation<any>();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-    // Dynamic filtering engine
+    const { data: marts = [], isLoading: martsLoading } = useMarts();
+    const { data: dealsData, isLoading: dealsLoading } = useProducts({
+        isDeal: true,
+        search: searchQuery.length >= 2 ? searchQuery : undefined,
+        limit: 20,
+    });
+
+    const apiDeals = useMemo(
+        () => (dealsData?.products ?? []).map((p: Parameters<typeof mapProductToDealCard>[0]) => mapProductToDealCard(p)),
+        [dealsData]
+    );
+
     const filteredDeals = useMemo(() => {
-        return TECH_DEALS.filter(deal => {
-            const matchesSearch = deal.name.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesCategory = !selectedCategory || deal.category === selectedCategory;
-            return matchesSearch && matchesCategory;
-        });
-    }, [searchQuery, selectedCategory]);
+        if (!selectedCategory) return apiDeals;
+        return apiDeals.filter((deal) =>
+            deal.name.toLowerCase().includes(selectedCategory.toLowerCase())
+        );
+    }, [apiDeals, selectedCategory]);
 
     const techMarts = useMemo(() => {
-        const baseMarts = STORES.filter(mart => 
-            mart.tags.some(tag => ['Electronics', 'Mobiles', 'Laptops', 'Gadgets', 'Tech'].includes(tag))
+        if (!searchQuery) return marts;
+        return marts.filter((mart: { name: string }) =>
+            mart.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
-        if (!searchQuery) return baseMarts;
-        return baseMarts.filter(mart => mart.name.toLowerCase().includes(searchQuery.toLowerCase()));
-    }, [searchQuery]);
+    }, [marts, searchQuery]);
 
     const renderHeader = () => (
         <View className="bg-green-700 pb-6 rounded-b-[40px] shadow-xl" style={{ paddingTop: insets.top }}>
@@ -88,7 +67,7 @@ export default function TechScreen() {
                 </View>
                 <TouchableOpacity 
                     className="w-10 h-10 bg-white/20 rounded-full items-center justify-center"
-                    onPress={() => navigation.navigate('Main', { screen: 'Cart' })}
+                    onPress={() => goToCartTab(navigation)}
                 >
                     <MaterialCommunityIcons name="cart-outline" size={20} color="white" />
                 </TouchableOpacity>
@@ -153,7 +132,9 @@ export default function TechScreen() {
                         <TouchableOpacity onPress={() => navigation.navigate('Offers')}><Text className="text-blue-600 font-bold text-xs">View All</Text></TouchableOpacity>
                     </View>
                     
-                    {filteredDeals.length > 0 ? (
+                    {dealsLoading ? (
+                        <ActivityIndicator color="#2e7d32" className="py-6" />
+                    ) : filteredDeals.length > 0 ? (
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-5 px-5">
                             {filteredDeals.map(deal => (
                                 <TouchableOpacity 
@@ -175,7 +156,7 @@ export default function TechScreen() {
                                             <Text className="text-gray-400 text-[10px] line-through">{deal.oldPrice}</Text>
                                         </View>
                                         <TouchableOpacity 
-                                            onPress={() => navigation.navigate('Main', { screen: 'Cart' })}
+                                            onPress={() => goToCartTab(navigation)}
                                             className="bg-gray-900 w-10 h-10 items-center justify-center rounded-2xl"
                                         >
                                             <MaterialCommunityIcons name="plus" size={20} color="white" />
@@ -217,7 +198,7 @@ export default function TechScreen() {
                     {techMarts.length > 0 ? techMarts.map(mart => (
                         <TouchableOpacity 
                             key={mart.id}
-                            onPress={() => navigation.navigate('StoreDetail', { store: mart })}
+                            onPress={() => navigation.navigate('StoreDetail', { mart })}
                             className="bg-white rounded-3xl mb-6 flex-row items-center border border-gray-100 shadow-sm"
                             activeOpacity={0.9}
                         >

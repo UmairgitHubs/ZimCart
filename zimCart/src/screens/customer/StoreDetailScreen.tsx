@@ -14,6 +14,8 @@ import { useStoreDetails } from '@/hooks/useMarketplace';
 import { useCart } from '@/hooks/useCart';
 import { useFavourites } from '@/hooks/useCustomer';
 import { useDebounce } from '@/hooks/useDebounce';
+import { resolveMartFromRoute, goToCartTab } from '@/utils/navigation';
+import MartImage from '@/components/customer/MartImage';
 
 const { width } = Dimensions.get('window');
 
@@ -29,15 +31,17 @@ export default function StoreDetailScreen() {
     const route = useRoute<any>();
     const { isAuthenticated } = useSelector((state: RootState) => state.auth);
     
-    const mart = route.params?.mart || { 
-        id: '',
-        name: 'ZimCart Mart', 
-        rating: 4.8, 
-        deliveryTime: '20-30 min',
-        image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop',
-        tags: ['Grocery', 'Fresh'],
-        deliveryFee: 'Rs. 45'
-    };
+    const mart =
+        resolveMartFromRoute(route.params) || {
+            id: '',
+            name: 'ZimCart Mart',
+            rating: 4.8,
+            deliveryTime: '20-30 min',
+            image:
+                'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop',
+            tags: ['Grocery', 'Fresh'],
+            deliveryFee: 'Rs. 45',
+        };
     
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
@@ -69,7 +73,25 @@ export default function StoreDetailScreen() {
     const cartTotal = useMemo(() => cartItems.reduce((acc: number, curr: any) => acc + (curr.product.price * curr.quantity), 0), [cartItems]);
     const cartCount = useMemo(() => cartItems.reduce((acc: number, curr: any) => acc + curr.quantity, 0), [cartItems]);
     const isThisStoreCart = useMemo(() => cartItems.length > 0 && cartItems[0].product.storeId === mart.id, [cartItems, mart.id]);
-    const displayCategories = useMemo(() => ['All', ...categories.map((c: any) => c.name)], [categories]);
+    const categoryChips = useMemo(() => {
+        const chips: { key: string; label: string }[] = [{ key: 'all', label: 'All' }];
+        const seen = new Set<string>();
+        for (const c of categories) {
+            const label = c?.name;
+            if (!label || seen.has(label)) continue;
+            seen.add(label);
+            chips.push({ key: String(c.id ?? label), label });
+        }
+        return chips;
+    }, [categories]);
+
+    const subtitleTags = useMemo(() => {
+        const combined = [
+            ...(storeDetails?.categories?.map((c: any) => c.name) ?? []),
+            ...(mart.tags ?? []),
+        ].filter(Boolean) as string[];
+        return Array.from(new Set(combined));
+    }, [storeDetails?.categories, mart.tags]);
 
     // Dynamic Promo Handling
     const storeVoucher = useMemo(() => storeDetails?.vouchers?.[0] || null, [storeDetails]);
@@ -87,7 +109,7 @@ export default function StoreDetailScreen() {
             : `Great news! Your cart qualifies for this discount. \n\nEnter code at checkout to save Rs. ${storeVoucher.value}!`;
 
         Alert.alert(title, message, [
-            remaining <= 0 ? { text: "Checkout Now", onPress: () => navigation.navigate('Main', { screen: 'CartTab' }) } : null,
+            remaining <= 0 ? { text: "Checkout Now", onPress: () => goToCartTab(navigation) } : null,
             { text: remaining > 0 ? "Keep Shopping" : "Got it", style: "default" }
         ].filter(Boolean) as any);
     };
@@ -112,7 +134,15 @@ export default function StoreDetailScreen() {
     const renderHeader = () => (
         <View className="relative">
             <View className="h-64 w-full">
-                <Image source={{ uri: storeDetails?.image || mart.image }} className="w-full h-full object-cover" />
+                <MartImage
+                  mart={{
+                    id: mart.id,
+                    name: storeDetails?.name || mart.name,
+                    image: storeDetails?.image || mart.image,
+                    tags: mart.tags,
+                  }}
+                  className="w-full h-full"
+                />
                 <View className="absolute inset-0 bg-black/30" />
             </View>
             <View className="absolute top-0 left-0 right-0 z-10" style={{ paddingTop: insets.top }}>
@@ -127,13 +157,11 @@ export default function StoreDetailScreen() {
                 <View className="flex-row justify-between items-start mb-2">
                     <View className="flex-1">
                         <Text className="text-2xl font-black text-gray-900 leading-8">{storeDetails?.name || mart.name}</Text>
-                        <View className="flex-row flex-wrap mt-1">
-                            {(storeDetails?.categories?.map((c: any) => c.name) || mart.tags || []).map((tag: string, index: number, arr: string[]) => (
-                                <Text key={tag} className="text-gray-500 text-sm font-bold uppercase tracking-widest">
-                                    {tag}{index < arr.length - 1 ? ' • ' : ''}
-                                </Text>
-                            ))}
-                        </View>
+                        {subtitleTags.length > 0 ? (
+                            <Text className="text-gray-500 text-sm font-bold uppercase tracking-widest mt-1">
+                                {subtitleTags.join(' • ')}
+                            </Text>
+                        ) : null}
                     </View>
                     <View className="items-end">
                         <View className="bg-green-50 px-3 py-2 rounded-2xl flex-row items-center mb-2">
@@ -235,6 +263,28 @@ export default function StoreDetailScreen() {
         );
     });
 
+    if (!mart.id) {
+        return (
+            <View className="flex-1 bg-white items-center justify-center px-8">
+                <StatusBar style="dark" />
+                <MaterialCommunityIcons name="store-alert-outline" size={64} color="#D1D5DB" />
+                <Text className="text-xl font-black text-gray-900 mt-4 text-center">Store not found</Text>
+                <Text className="text-gray-500 text-center mt-2 mb-6">
+                    Open a mart from Home or Marts so we can load real products.
+                </Text>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Marts')}
+                    className="bg-green-700 px-8 py-3 rounded-2xl mb-3"
+                >
+                    <Text className="text-white font-bold">Browse marts</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Text className="text-green-700 font-bold">Go back</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
     return (
         <View className="flex-1 bg-white">
             <StatusBar style="light" />
@@ -262,14 +312,14 @@ export default function StoreDetailScreen() {
 
                 <View className="bg-white border-b border-gray-50 pt-2">
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-5 pb-4">
-                        {displayCategories.map(cat => (
+                        {categoryChips.map((chip) => (
                             <TouchableOpacity 
-                                key={cat}
-                                onPress={() => setSelectedCategory(cat)}
-                                className={`mr-4 px-6 py-2.5 rounded-2xl ${selectedCategory === cat ? 'bg-green-700' : 'bg-gray-50'}`}
+                                key={chip.key}
+                                onPress={() => setSelectedCategory(chip.label)}
+                                className={`mr-4 px-6 py-2.5 rounded-2xl ${selectedCategory === chip.label ? 'bg-green-700' : 'bg-gray-50'}`}
                             >
-                                <Text className={`font-black text-xs uppercase tracking-tighter ${selectedCategory === cat ? 'text-white' : 'text-gray-500'}`}>
-                                    {cat}
+                                <Text className={`font-black text-xs uppercase tracking-tighter ${selectedCategory === chip.label ? 'text-white' : 'text-gray-500'}`}>
+                                    {chip.label}
                                 </Text>
                             </TouchableOpacity>
                         ))}
@@ -286,9 +336,9 @@ export default function StoreDetailScreen() {
                         </View>
                     ) : (
                         <View className="flex-row flex-wrap justify-between" style={{ opacity: isSearching ? 0.6 : 1 }}>
-                            {products.map((product: any) => (
+                            {products.map((product: any, index: number) => (
                                 <ProductCard 
-                                    key={product.id} 
+                                    key={product.id ? `${product.id}-${index}` : `product-${index}`}
                                     product={product} 
                                     onQuickAdd={handleQuickAdd}
                                     isFavourited={favourites?.some((f: any) => f.id === product.id) || false}
@@ -304,7 +354,7 @@ export default function StoreDetailScreen() {
                     <TouchableOpacity 
                         className="bg-green-700 h-[70px] rounded-[30px] flex-row items-center px-6 shadow-2xl"
                         style={{ width: '100%' }}
-                        onPress={() => navigation.navigate('Main', { screen: 'CartTab' })}
+                        onPress={() => goToCartTab(navigation)}
                     >
                         <View className="bg-white rounded-2xl w-10 h-10 items-center justify-center mr-4">
                             <Text className="text-green-700 font-black text-lg">{cartCount}</Text>

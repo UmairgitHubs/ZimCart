@@ -27,6 +27,23 @@ export const createTicket = asyncHandler(async (req, res) => {
   );
 });
 
+export const listTickets = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+
+  const rows = await helpService.listTicketsForCustomer(userId);
+  const tickets = rows.map((t) => ({
+    id: t.id,
+    subject: t.subject,
+    message: t.message,
+    status: t.status,
+    createdAt: t.createdAt.toISOString(),
+    updatedAt: t.updatedAt.toISOString(),
+  }));
+
+  return res.status(200).json(new ApiResponse(200, { tickets }, 'Tickets fetched successfully'));
+});
+
 export const listTicketsAdmin = asyncHandler(async (req, res) => {
   const search = typeof req.query.search === 'string' ? req.query.search : undefined;
   const status =

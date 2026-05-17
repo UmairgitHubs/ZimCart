@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { goToCartTab } from '@/utils/navigation';
 import { STORES } from '@/data/mock/home';
 
 const { width } = Dimensions.get('window');
@@ -93,7 +94,7 @@ export default function FashionScreen() {
                 </View>
                 <TouchableOpacity 
                     className="w-10 h-10 bg-white/20 rounded-full items-center justify-center"
-                    onPress={() => navigation.navigate('Main', { screen: 'Cart' })}
+                    onPress={() => goToCartTab(navigation)}
                 >
                     <MaterialCommunityIcons name="shopping-outline" size={20} color="white" />
                 </TouchableOpacity>
@@ -233,7 +234,7 @@ export default function FashionScreen() {
                     {fashionMarts.length > 0 ? fashionMarts.map(mart => (
                         <TouchableOpacity 
                             key={mart.id}
-                            onPress={() => navigation.navigate('StoreDetail', { store: mart })}
+                            onPress={() => navigation.navigate('StoreDetail', { mart })}
                             className="bg-white rounded-3xl mb-6 flex-row items-center border border-gray-100 shadow-sm"
                             activeOpacity={0.9}
                         >

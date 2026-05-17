@@ -502,3 +502,88 @@ export async function getStaffInsights(
     regionStats: regions,
   };
 }
+
+export async function getRecentActivity(user: StaffUser, queryStoreId?: string) {
+  const storeId = await resolveStoreScope(user, queryStoreId);
+  if (storeId === undefined) return [];
+
+  const orderWhere: Prisma.OrderWhereInput = storeId ? { storeId } : {};
+
+  const [recentOrders, recentPayments, lowStock] = await Promise.all([
+    prisma.order.findMany({
+      where: orderWhere,
+      orderBy: { createdAt: 'desc' },
+      take: 8,
+      include: { user: { select: { name: true } } },
+    }),
+    prisma.payment.findMany({
+      where: { order: orderWhere },
+      orderBy: { updatedAt: 'desc' },
+      take: 5,
+      include: { order: { select: { orderNumber: true } } },
+    }),
+    prisma.product.findMany({
+      where: {
+        ...(storeId ? { storeId } : {}),
+        inventory: { lte: LOW_STOCK_THRESHOLD },
+        status: 'Published',
+      },
+      take: 3,
+      select: { name: true, inventory: true },
+    }),
+  ]);
+
+  const activities: {
+    title: string;
+    subtitle: string;
+    time: string;
+    color: string;
+  }[] = [];
+
+  for (const o of recentOrders) {
+    activities.push({
+      title: 'New order',
+      subtitle: `${o.user.name} · ${o.orderNumber}`,
+      time: o.createdAt.toISOString(),
+      color: 'bg-emerald-500',
+    });
+  }
+
+  for (const p of recentPayments) {
+    if (p.status !== 'PAID') continue;
+    activities.push({
+      title: 'Payment received',
+      subtitle: `${p.order.orderNumber} · $${p.amount.toFixed(0)}`,
+      time: (p.paidAt ?? p.updatedAt).toISOString(),
+      color: 'bg-blue-500',
+    });
+  }
+
+  for (const prod of lowStock) {
+    activities.push({
+      title: 'Low stock',
+      subtitle: `${prod.name} (${prod.inventory} left)`,
+      time: new Date().toISOString(),
+      color: 'bg-amber-500',
+    });
+  }
+
+  return activities
+    .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+    .slice(0, 12)
+    .map((a) => ({
+      ...a,
+      time: formatRelativeTime(new Date(a.time)),
+    }));
+}
+
+function formatRelativeTime(date: Date): string {
+  const diffMs = Date.now() - date.getTime();
+  const mins = Math.floor(diffMs / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins} min ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  const days = Math.floor(hours / 24);
+  return days === 1 ? 'Yesterday' : `${days} days ago`;
+}

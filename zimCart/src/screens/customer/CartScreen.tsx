@@ -4,9 +4,14 @@
     import { MaterialCommunityIcons } from '@expo/vector-icons';
     import { StatusBar } from 'expo-status-bar';
     import { useNavigation } from '@react-navigation/native';
+    import { goToMainTab } from '@/utils/navigation';
+    import { useQueryClient } from '@tanstack/react-query';
+    import { useSelector } from 'react-redux';
     import { useCart } from '@/hooks/useCart';
-    import { useAddresses } from '@/hooks/useCustomer';
+    import { useAddresses, useOrderPreview } from '@/hooks/useCustomer';
     import { customerApi } from '@/services/customer';
+    import { parseApiError } from '@/utils/errorUtils';
+    import { RootState } from '@/store';
 
     const { width } = Dimensions.get('window');
 
@@ -20,12 +25,14 @@
     export default function CartScreen() {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation<any>();
+    const queryClient = useQueryClient();
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
     const { data: cartData, update, remove, clear, isLoading: isCartLoading } = useCart();
     const { data: addresses } = useAddresses();
     
     const [instructions, setInstructions] = useState('');
     const [step, setStep] = useState<'cart' | 'payment'>('cart');
-    const [selectedPayment, setSelectedPayment] = useState('wallet');
+    const [selectedPayment, setSelectedPayment] = useState('cod');
     const [isProcessing, setIsProcessing] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
 
@@ -35,6 +42,34 @@
     const [isCheckingVoucher, setIsCheckingVoucher] = useState(false);
 
     const cartItems = useMemo(() => cartData?.items || [], [cartData]);
+
+    const checkoutStoreId = cartItems[0]?.product?.storeId as string | undefined;
+    const hasMixedStores = useMemo(() => {
+        if (cartItems.length <= 1) return false;
+        const ids = new Set(cartItems.map((i: { product: { storeId: string } }) => i.product.storeId));
+        return ids.size > 1;
+    }, [cartItems]);
+
+    const previewItems = useMemo(
+        () =>
+            cartItems.map((item: { productId: string; quantity: number }) => ({
+                productId: item.productId,
+                quantity: item.quantity,
+            })),
+        [cartItems]
+    );
+
+    const storeInfo = cartItems[0]?.product?.store;
+    const localDeliveryFee =
+        cartItems.length === 0 ? 0 : Number(storeInfo?.deliveryFee ?? 0);
+
+    const { data: preview, isFetching: isPreviewLoading, refetch: refetchPreview } = useOrderPreview({
+        storeId: checkoutStoreId,
+        items: previewItems,
+        deliveryFee: localDeliveryFee,
+        voucherCode: appliedVoucher?.code ? String(appliedVoucher.code).trim() : undefined,
+        enabled: !hasMixedStores && !!checkoutStoreId && cartItems.length > 0,
+    });
 
     const updateQty = async (itemId: string, currentQty: number, delta: number) => {
         const newQty = currentQty + delta;
@@ -48,26 +83,13 @@
         }
     };
 
-    const subtotal = cartItems.reduce((acc: number, curr: any) => acc + (curr.product.price * curr.quantity), 0);
-    
-    // Pure Backend Integration: Get the fee directly from the specific Mart's settings
-    const storeInfo = cartItems[0]?.product?.store;
-    const deliveryFee = subtotal === 0 ? 0 : (storeInfo?.deliveryFee ?? 0);
-    
-    const platformFee = subtotal === 0 ? 0 : 20;
-
-    // Calculate Discount
-    const discountAmount = useMemo(() => {
-        if (!appliedVoucher) return 0;
-        if (appliedVoucher.discountType === 'FIXED') {
-            return appliedVoucher.value;
-        } else {
-            const pct = (subtotal * appliedVoucher.value) / 100;
-            return appliedVoucher.maxDiscount ? Math.min(pct, appliedVoucher.maxDiscount) : pct;
-        }
-    }, [appliedVoucher, subtotal]);
-
-    const total = Math.max(0, subtotal + deliveryFee + platformFee - discountAmount);
+    const subtotal =
+        preview?.subtotal ??
+        cartItems.reduce((acc: number, curr: { product: { price: number }; quantity: number }) => acc + curr.product.price * curr.quantity, 0);
+    const deliveryFee = preview?.deliveryFee ?? (cartItems.length === 0 ? 0 : localDeliveryFee);
+    const platformFee = preview?.platformFee ?? (subtotal === 0 ? 0 : 20);
+    const discountAmount = preview?.discount ?? 0;
+    const total = preview?.total ?? Math.max(0, subtotal + deliveryFee + platformFee - discountAmount);
 
     const handleApplyPromo = async () => {
         if (!promoCode.trim()) return;
@@ -78,6 +100,7 @@
                 Alert.alert("Requirement Not Met", `This code requires a minimum spend of Rs. ${voucher.minSpend}`);
             } else {
                 setAppliedVoucher(voucher);
+                await refetchPreview();
                 Alert.alert("Voucher Applied!", `You've saved Rs. ${voucher.discountType === 'FIXED' ? voucher.value : voucher.value + '%'}`);
             }
         } catch (error: any) {
@@ -91,20 +114,35 @@
 
     const handlePlaceOrder = async () => {
         if (cartItems.length === 0) return;
-        
+        if (hasMixedStores) {
+            Alert.alert(
+                'Multiple stores',
+                'Your basket has items from more than one mart. Remove extras or clear the cart before checkout.'
+            );
+            return;
+        }
+        if (!checkoutStoreId) return;
+
         setIsProcessing(true);
         try {
-            // Prepare order data based on backend requirements
+            const latest = await customerApi.previewOrder({
+                storeId: checkoutStoreId,
+                items: previewItems,
+                deliveryFee: localDeliveryFee,
+                voucherCode: appliedVoucher?.code ? String(appliedVoucher.code).trim() : undefined,
+            });
+
             const orderData = {
-                storeId: cartItems[0].product.storeId, // Assuming items are from the same store for this version
-                items: cartItems.map((item: any) => ({
-                    productId: item.productId,
-                    quantity: item.quantity,
-                    price: item.product.price
-                })),
-                subtotal,
-                deliveryFee,
-                total,
+                storeId: checkoutStoreId,
+                items: previewItems,
+                subtotal: latest.subtotal,
+                deliveryFee: latest.deliveryFee,
+                platformFee: latest.platformFee,
+                discount: latest.discount,
+                ...(appliedVoucher?.code
+                    ? { voucherCode: String(appliedVoucher.code).trim() }
+                    : {}),
+                total: latest.total,
                 address: (() => {
                     const savedTarget = addresses?.find((a: any) => a.isDefault) || addresses?.[0];
                     if (savedTarget) {
@@ -121,14 +159,42 @@
 
             await customerApi.placeOrder(orderData);
             await clear(); // Clear persistent cart on backend
+            queryClient.invalidateQueries({ queryKey: ['vouchers'] });
+            setAppliedVoucher(null);
+            setPromoCode('');
             
             setIsProcessing(false);
             setIsSuccess(true);
-        } catch (error: any) {
+        } catch (error: unknown) {
             setIsProcessing(false);
-            Alert.alert("Order Failed", error.message || "An error occurred while placing your order.");
+            Alert.alert("Order failed", parseApiError(error));
         }
     };
+
+    if (!isAuthenticated) {
+        return (
+            <View className="flex-1 bg-white items-center justify-center px-8">
+                <StatusBar style="dark" />
+                <MaterialCommunityIcons name="basket-outline" size={72} color="#D1D5DB" />
+                <Text className="text-2xl font-black text-gray-900 mt-6 mb-2">Sign in to shop</Text>
+                <Text className="text-gray-500 text-center mb-8">
+                    Log in to add items, view your basket, and place orders.
+                </Text>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('CustomerLogin')}
+                    className="bg-green-700 w-full py-4 rounded-2xl items-center mb-3"
+                >
+                    <Text className="text-white font-black text-lg">Log in</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('CustomerRegister')}>
+                    <Text className="text-green-700 font-bold">Create account</Text>
+                </TouchableOpacity>
+                <Text className="text-gray-400 text-xs mt-8 text-center">
+                    Demo: customer@demo.zimcart.com / Demo1234!
+                </Text>
+            </View>
+        );
+    }
 
     if (isCartLoading && !cartData) {
         return (
@@ -152,7 +218,12 @@
                     Your order has been placed. Sit back and relax!
                 </Text>
                 <TouchableOpacity 
-                onPress={() => navigation.navigate('Main')}
+                onPress={() => {
+                    setIsSuccess(false);
+                    setStep('cart');
+                    queryClient.invalidateQueries({ queryKey: ['cart'] });
+                    goToMainTab(navigation, 'HomeTab');
+                }}
                 className="bg-green-700 w-full h-[60px] rounded-[30px] items-center justify-center shadow-2xl shadow-green-900/40"
                 >
                     <Text className="text-white font-black text-lg">Back to Shopping</Text>
@@ -191,6 +262,21 @@
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 160 }}>
+            {hasMixedStores && cartItems.length > 0 && (
+                <View className="mx-5 mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl flex-row items-start">
+                    <MaterialCommunityIcons name="alert-circle" size={22} color="#b91c1c" style={{ marginTop: 2 }} />
+                    <View className="flex-1 ml-3">
+                        <Text className="text-red-800 font-black text-sm">One mart per order</Text>
+                        <Text className="text-red-700 text-xs mt-1 leading-4">
+                            Remove items from other stores or empty your basket to continue checkout.
+                        </Text>
+                        <TouchableOpacity onPress={() => clear()} className="mt-2">
+                            <Text className="text-red-800 font-bold text-xs uppercase">Clear cart</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
+
             {step === 'cart' ? (
                 <View key="cart-step" className="px-5 mt-6">
 
@@ -203,7 +289,7 @@
                         </View>
                     ) : cartItems.map((item: any) => (
                         <View key={item.id} className="bg-white p-4 rounded-[32px] mb-4 flex-row items-center shadow-sm border border-gray-50">
-                            <Image source={{ uri: item.product.images[0] }} className="w-20 h-20 rounded-2xl" />
+                            <Image source={{ uri: item.product.images?.[0] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=200' }} className="w-20 h-20 rounded-2xl" />
                             <View className="flex-1 ml-4">
                                 <Text className="text-sm font-black text-gray-900 mb-0.5" numberOfLines={1}>{item.product.name}</Text>
                                 <Text className="text-[10px] text-gray-400 font-bold uppercase">
@@ -262,8 +348,12 @@
 
                     <View className="mt-8 p-6 bg-green-600 rounded-[32px] shadow-xl shadow-green-900/40 relative overflow-hidden">
                         <MaterialCommunityIcons name="shield-check" size={100} color="white" style={{ position: 'absolute', right: -24, top: -24, opacity: 0.1 }} />
-                        <Text className="text-white font-black text-base mb-2">Secure Payment</Text>
-                        <Text className="text-green-50/80 text-[10px] font-bold uppercase tracking-widest leading-4">Your transaction is encrypted & securely processed by ZimPay gateway.</Text>
+                        <Text className="text-white font-black text-base mb-2">Payment note</Text>
+                        <Text className="text-green-50/80 text-[10px] font-bold uppercase tracking-widest leading-4">
+                          {selectedPayment === 'cod'
+                            ? 'Pay the rider or store on delivery. Your order is recorded as payment pending until confirmed.'
+                            : 'Card and wallet payments stay pending until our team confirms receipt.'}
+                        </Text>
                     </View>
                 </View>
             )}
@@ -350,10 +440,10 @@
                     <Text className="text-gray-900 font-black text-2xl">Rs. {total}</Text>
                 </View>
                 <TouchableOpacity 
-                    onPress={() => cartItems.length > 0 && (step === 'cart' ? setStep('payment') : handlePlaceOrder())}
-                    className={`h-[64px] rounded-[32px] flex-row items-center px-8 shadow-2xl ${cartItems.length > 0 ? 'bg-green-700 shadow-green-900/60' : 'bg-gray-300 shadow-none'}`}
+                    onPress={() => cartItems.length > 0 && !hasMixedStores && (step === 'cart' ? setStep('payment') : handlePlaceOrder())}
+                    className={`h-[64px] rounded-[32px] flex-row items-center px-8 shadow-2xl ${cartItems.length > 0 && !hasMixedStores ? 'bg-green-700 shadow-green-900/60' : 'bg-gray-300 shadow-none'}`}
                     activeOpacity={0.9}
-                    disabled={cartItems.length === 0}
+                    disabled={cartItems.length === 0 || hasMixedStores || (step === 'payment' && isPreviewLoading)}
                 >
                     {isProcessing ? (
                         <ActivityIndicator color="white" />

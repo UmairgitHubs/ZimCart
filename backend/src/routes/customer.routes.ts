@@ -25,7 +25,13 @@ router.post('/push-token', customerController.updatePushToken);
 
 // Orders
 router.get('/orders', validateRequest(schemas.getOrdersSchema), customerController.getOrders);
-router.post('/orders', customerController.placeOrder);
+router.post('/orders/preview', validateRequest(schemas.previewOrderSchema), customerController.previewOrder);
+router.post('/orders', validateRequest(schemas.placeOrderSchema), customerController.placeOrder);
+router.get(
+  '/orders/:id/tracking',
+  validateRequest(schemas.getOrderTrackingSchema),
+  customerController.getOrderTracking
+);
 
 // Vouchers
 router.get('/vouchers', validateRequest(schemas.getVouchersSchema), customerController.getVouchers);

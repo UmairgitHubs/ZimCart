@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import OnboardingScreen from '@/screens/customer/OnboardingScreen';
 import CustomerTabNavigator from '@/navigation/CustomerTabNavigator';
@@ -22,6 +24,7 @@ import HelpSupportScreen from '@/screens/customer/HelpSupportScreen';
 import ChatSupportScreen from '@/screens/customer/ChatSupportScreen';
 import PremiumScreen from '@/screens/customer/PremiumScreen';
 import OrdersScreen from '@/screens/customer/OrdersScreen';
+import OrderTrackingScreen from '@/screens/customer/OrderTrackingScreen';
 import VouchersScreen from '@/screens/customer/VouchersScreen';
 import FavouritesScreen from '@/screens/customer/FavouritesScreen';
 import OffersScreen from '@/screens/customer/OffersScreen';
@@ -42,46 +45,71 @@ import PetCareScreen from '@/screens/customer/PetCareScreen';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { useCustomerOrderSocket } from '@/hooks/useCustomerOrderSocket';
+import { hasCompletedCustomerOnboarding } from '@/utils/onboardingStorage';
 
 const Stack = createStackNavigator();
 
 export default function CustomerNavigator() {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const [initialRoute, setInitialRoute] = useState<string | null>(null);
+  useCustomerOrderSocket();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      if (isAuthenticated) {
+        if (!cancelled) setInitialRoute('Main');
+        return;
+      }
+
+      const onboardingDone = await hasCompletedCustomerOnboarding();
+      if (!cancelled) {
+        setInitialRoute(onboardingDone ? 'Main' : 'Onboarding');
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated]);
+
+  if (!initialRoute) {
+    return (
+      <View className="flex-1 bg-white items-center justify-center">
+        <ActivityIndicator size="large" color="#2e7d32" />
+      </View>
+    );
+  }
 
   return (
-    <Stack.Navigator 
+    <Stack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName={isAuthenticated ? "Main" : "Onboarding"}
+      initialRouteName={initialRoute}
     >
-      {!isAuthenticated ? (
-        <>
-          {/* Public Landing & Entry */}
-          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-          <Stack.Screen name="CustomerLogin" component={CustomerLoginScreen} />
-          <Stack.Screen name="CustomerRegister" component={CustomerRegisterScreen} />
-          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-          <Stack.Screen name="VerifyResetCode" component={VerifyResetCodeScreen} />
-          <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
-        </>
-      ) : null}
+      <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+      <Stack.Screen name="CustomerLogin" component={CustomerLoginScreen} />
+      <Stack.Screen name="CustomerRegister" component={CustomerRegisterScreen} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <Stack.Screen name="VerifyResetCode" component={VerifyResetCodeScreen} />
+      <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
 
-      {/* Main App Hub (Tab Bar) */}
       <Stack.Screen name="Main" component={CustomerTabNavigator} />
-      
-      {/* Common Browsing Screens */}
+
       <Stack.Screen name="StoreDetail" component={StoreDetailScreen} />
       <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
       <Stack.Screen name="Marts" component={MartsScreen} />
       <Stack.Screen name="CategoryDetail" component={CategoryDetailScreen} />
 
+      <Stack.Screen name="Notifications" component={NotificationsScreen} />
+      <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
+
       {isAuthenticated && (
         <>
-          {/* Protected Profile & Safety Actions */}
           <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{ presentation: 'modal' }} />
           <Stack.Screen name="SavedAddresses" component={SavedAddressesScreen} />
           <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
-          <Stack.Screen name="Notifications" component={NotificationsScreen} />
-          <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
           <Stack.Screen name="PrivacySecurity" component={PrivacySecurityScreen} />
           <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
           <Stack.Screen name="Verify2FA" component={Verify2FAScreen} />
@@ -89,12 +117,12 @@ export default function CustomerNavigator() {
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
           <Stack.Screen name="ManageDevices" component={ManageDevicesScreen} />
           <Stack.Screen name="Orders" component={OrdersScreen} />
+          <Stack.Screen name="OrderTracking" component={OrderTrackingScreen} />
           <Stack.Screen name="Vouchers" component={VouchersScreen} />
           <Stack.Screen name="Favourites" component={FavouritesScreen} />
         </>
       )}
 
-      {/* Universal Utility Screens */}
       <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
       <Stack.Screen name="ChatSupport" component={ChatSupportScreen} />
       <Stack.Screen name="Premium" component={PremiumScreen} options={{ presentation: 'modal', headerShown: false }} />

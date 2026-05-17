@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Dimensions } from "react-native";
+import MartImage from "@/components/customer/MartImage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Mart } from "@/types/customer";
 
@@ -27,9 +28,9 @@ export default function MartCard({ mart, onPress }: MartCardProps) {
     >
       {/* Cover Image */}
       <View className="relative">
-        <Image
-          source={{ uri: mart.image }}
-          className="w-full h-48 object-cover"
+        <MartImage
+          mart={mart}
+          className="w-full h-48"
           style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
         />
         

@@ -1,24 +1,35 @@
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import axios from 'axios';
+import { API_BASE_URL } from '@/config/apiConfig';
+
+type ParseApiErrorOptions = {
+  /** Skip LogBox/console noise for expected validation errors (e.g. 409 duplicate email). */
+  quiet?: boolean;
+};
 
 /**
  * Standardized error message extraction.
  * Returns a user-friendly string for UI display.
- * Logs the full error details to the console for debugging.
  */
-export const parseApiError = (error: any): string => {
-  // 1. Log full details for debugging (Terminal/Console)
-  if (axios.isAxiosError(error)) {
-    console.error('API Error Details:', {
-      endpoint: error.config?.url,
-      method: error.config?.method,
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message,
-    });
-  } else {
-    console.error('Unexpected Error:', error);
+export const parseApiError = (error: unknown, options?: ParseApiErrorOptions): string => {
+  const quiet = options?.quiet ?? false;
+
+  if (!quiet) {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status;
+      const isClientError = status !== undefined && status >= 400 && status < 500;
+      const log = isClientError ? console.warn : console.error;
+      log('API Error Details:', {
+        endpoint: error.config?.url,
+        method: error.config?.method,
+        status,
+        data: error.response?.data,
+        message: error.message,
+      });
+    } else {
+      console.error('Unexpected Error:', error);
+    }
   }
 
   // 2. Return clean user-facing message
@@ -45,8 +56,11 @@ export const parseApiError = (error: any): string => {
       }
     }
 
-    // Network Errors
-    if (error.code === 'ERR_NETWORK') {
+    // Network Errors (no response — backend unreachable, wrong IP, or server stopped)
+    if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+      if (__DEV__) {
+        return `Cannot reach the server at ${API_BASE_URL}. Start the backend (npm run dev in /backend) and ensure your phone is on the same Wi‑Fi.`;
+      }
       return 'Network connection lost. Please check your internet.';
     }
     if (error.code === 'ECONNABORTED') {

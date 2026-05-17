@@ -8,6 +8,15 @@ export interface Customer {
   phone?: string;
 }
 
+export interface AssignedRider {
+  id: string;
+  name: string;
+  phone: string | null;
+  avatar: string;
+  vehicleType: string;
+  licensePlate: string | null;
+}
+
 export interface OrderItem {
   id: string;
   productId: string; // Added to match backend
@@ -24,7 +33,8 @@ export interface Order {
   items: OrderItem[];
   totalAmount: number;
   subtotal?: number;
-  tax?: number;
+  platformFee?: number;
+  discount?: number;
   deliveryFee?: number;
   status: OrderStatus;
   paymentMethod: string;
@@ -32,5 +42,9 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
   shippingAddress: string;
+  trackingUrl?: string | null;
+  proofOfDeliveryUrl?: string | null;
   notes?: string;
+  assignedRider?: AssignedRider | null;
+  assignedAt?: string | null;
 }

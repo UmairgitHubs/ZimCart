@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
+import { goToCartTab } from '@/utils/navigation';
 
 const PET_CATEGORIES = [
     { id: '1', name: 'Dogs', icon: 'dog', color: '#F0FDF4', iconColor: '#15803d' },
@@ -183,7 +184,7 @@ export default function PetCareScreen() {
                                     <View className="flex-row justify-between items-center">
                                         <Text className="text-green-700 font-black text-base">{product.price}</Text>
                                         <TouchableOpacity 
-                                            onPress={() => navigation.navigate('Main', { screen: 'Cart' })}
+                                            onPress={() => goToCartTab(navigation)}
                                             className="bg-white w-9 h-9 rounded-xl items-center justify-center shadow-md border border-gray-100 active:bg-gray-50"
                                         >
                                             <MaterialCommunityIcons name="plus" size={20} color="#15803d" />

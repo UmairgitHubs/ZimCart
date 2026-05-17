@@ -1,18 +1,43 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { DAILY_DEALS, PROMO_CARDS, SHOP_CATEGORIES } from '@/data/mock/home';
+import { useSelector } from 'react-redux';
+import { PROMO_CARDS } from '@/data/mock/home';
+import { useProducts } from '@/hooks/useMarketplace';
+import { useCart } from '@/hooks/useCart';
+import { mapProductToOfferCard } from '@/utils/productMappers';
+import { RootState } from '@/store';
 
 export default function OffersScreen() {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation<any>();
+    const { data: dealsData, isLoading } = useProducts({ isDeal: true, limit: 24 });
+    const products = dealsData?.products ?? [];
+    const deals = products.map(mapProductToOfferCard);
+    const { add, isAdding } = useCart();
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
-    const renderOfferCard = ({ item }: { item: any }) => (
+    const handleAdd = (index: number) => {
+        const product = products[index];
+        if (!product?.id) return;
+        if (!isAuthenticated) {
+            Alert.alert('Login required', 'Sign in to add items to your cart.', [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Login', onPress: () => navigation.navigate('CustomerLogin') },
+            ]);
+            return;
+        }
+        add({ productId: product.id, quantity: 1, variants: null }).catch(() =>
+            Alert.alert('Could not add', 'Please try again.')
+        );
+    };
+
+    const renderOfferCard = ({ item, index }: { item: any; index: number }) => (
         <TouchableOpacity 
-            onPress={() => navigation.navigate('ProductDetail', { product: item })}
+            onPress={() => navigation.navigate('ProductDetail', { product: products[index] })}
             className="bg-white rounded-3xl mb-4 overflow-hidden shadow-sm border border-gray-100"
             style={{ width: '48%' }}
         >
@@ -32,7 +57,11 @@ export default function OffersScreen() {
                     <Text className="text-green-700 font-black text-base">{item.price}</Text>
                     <Text className="text-gray-400 text-xs line-through ml-2">{item.oldPrice}</Text>
                 </View>
-                <TouchableOpacity className="bg-green-700 rounded-xl py-2 mt-3 items-center">
+                <TouchableOpacity
+                    onPress={() => handleAdd(index)}
+                    disabled={isAdding}
+                    className="bg-green-700 rounded-xl py-2 mt-3 items-center"
+                >
                     <Text className="text-white font-bold text-xs">Add to Cart</Text>
                 </TouchableOpacity>
             </View>
@@ -119,19 +148,19 @@ export default function OffersScreen() {
                         </TouchableOpacity>
                     </View>
                     
-                    <View className="flex-row flex-wrap justify-between">
-                        {DAILY_DEALS.map(deal => (
-                            <React.Fragment key={deal.id}>
-                                {renderOfferCard({ item: deal })}
-                            </React.Fragment>
-                        ))}
-                        {/* Duplicate for visual density */}
-                        {DAILY_DEALS.map(deal => (
-                            <React.Fragment key={`dup-${deal.id}`}>
-                                {renderOfferCard({ item: deal })}
-                            </React.Fragment>
-                        ))}
-                    </View>
+                    {isLoading ? (
+                        <ActivityIndicator color="#2e7d32" className="py-8" />
+                    ) : deals.length === 0 ? (
+                        <Text className="text-gray-400 font-bold py-6">No flash deals right now</Text>
+                    ) : (
+                        <View className="flex-row flex-wrap justify-between">
+                            {deals.map((deal, index) => (
+                                <React.Fragment key={deal.id}>
+                                    {renderOfferCard({ item: deal, index })}
+                                </React.Fragment>
+                            ))}
+                        </View>
+                    )}
                 </View>
             </ScrollView>
         </View>

@@ -10,6 +10,9 @@ const ignoreWarnings = () => {
         'ViewPropTypes will be removed',
         'Constants.platform.ios.model has been deprecated',
         'Require cycles', // Common in navigation
+        'expo-notifications',
+        'Android Push notifications',
+        'Expo Go',
     ]);
 
     // Handle promise errors that don't need to be disruptive

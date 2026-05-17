@@ -25,6 +25,18 @@ export const analyticsApi = {
     }
   },
 
+  getRecentActivity: async (storeId?: string) => {
+    const res = await apiClient.get('/analytics/activity', {
+      params: storeId ? { storeId } : undefined,
+    });
+    return res.data.data.activities as {
+      title: string;
+      subtitle: string;
+      time: string;
+      color: string;
+    }[];
+  },
+
   getInsights: async (range: string, storeId?: string): Promise<AnalyticsInsightsDto> => {
     try {
       const res = await apiClient.get('/analytics/insights', {

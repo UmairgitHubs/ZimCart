@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import MartImage from '@/components/customer/MartImage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Mart } from '@/types/customer';
 
@@ -17,7 +18,7 @@ const ModernMartCard: React.FC<ModernMartCardProps> = ({ mart, onPress }) => {
     >
         {/* Image Header */}
         <View className="h-40 relative bg-gray-100">
-            <Image source={{ uri: mart.image }} className="w-full h-full object-cover" />
+            <MartImage mart={mart} className="w-full h-full" />
             
             {/* Rating Badge */}
             <View className="absolute top-2 right-2 bg-white/95 px-2 py-1 rounded-full flex-row items-center shadow-sm">

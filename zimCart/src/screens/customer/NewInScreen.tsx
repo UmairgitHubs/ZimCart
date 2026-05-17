@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { FRESH_ARRIVALS } from '@/data/mock/home';
+import { goToCartTab } from '@/utils/navigation';
+import { useProducts } from '@/hooks/useMarketplace';
+import { mapProductToDealCard } from '@/utils/productMappers';
 
 export default function NewInScreen() {
     const insets = useSafeAreaInsets();
@@ -18,6 +20,9 @@ export default function NewInScreen() {
         { id: '4', name: 'Dairy', icon: 'cow' },
     ];
 
+    const { data: freshData, isLoading } = useProducts({ limit: 20 });
+    const products = freshData?.products ?? [];
+    const arrivals = products.map(mapProductToDealCard);
 
     return (
         <View className="flex-1 bg-white">
@@ -86,10 +91,14 @@ export default function NewInScreen() {
 
                 {/* Product List */}
                 <View className="px-4 mt-8">
-                    {FRESH_ARRIVALS.filter(item => selectedCategory === 'All' || item.category === selectedCategory).map(item => (
+                    {isLoading && <ActivityIndicator color="#2e7d32" className="py-8" />}
+                    {!isLoading && arrivals.length === 0 && (
+                        <Text className="text-gray-400 font-bold py-6">No new products yet</Text>
+                    )}
+                    {arrivals.map((item, index) => (
                         <TouchableOpacity 
                             key={item.id}
-                            onPress={() => navigation.navigate('ProductDetail', { product: item })}
+                            onPress={() => navigation.navigate('ProductDetail', { product: products[index] })}
                             className="bg-white rounded-[32px] mb-6 shadow-sm border border-gray-100 overflow-hidden"
                             activeOpacity={0.9}
                         >
@@ -125,7 +134,7 @@ export default function NewInScreen() {
                                 </View>
 
                                 <TouchableOpacity 
-                                    onPress={() => navigation.navigate('Main', { screen: 'Cart' })}
+                                    onPress={() => goToCartTab(navigation)}
                                     className="bg-gray-900 rounded-2xl py-4 items-center flex-row justify-center"
                                 >
                                     <MaterialCommunityIcons name="cart-plus" size={18} color="white" />

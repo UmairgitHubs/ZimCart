@@ -1,0 +1,1 @@
+{"version":3,"file":"EmailLayout.d.ts","sourceRoot":"","sources":["../../../src/emails/components/EmailLayout.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAW1B,UAAU,WAAW;IACjB,QAAQ,EAAE,KAAK,CAAC,SAAS,CAAC;IAC1B,OAAO,CAAC,EAAE,MAAM,CAAC;CACpB;AAED,eAAO,MAAM,WAAW,EAAE,KAAK,CAAC,EAAE,CAAC,WAAW,CA8B7C,CAAC"}

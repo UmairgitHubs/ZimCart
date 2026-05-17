@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import MartImage from '@/components/customer/MartImage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface LargeMartCardProps {
@@ -16,7 +17,7 @@ const LargeMartCard: React.FC<LargeMartCardProps> = ({ item, onPress }) => {
     >
         {/* Large Image Header */}
         <View className="h-48 relative rounded-2xl overflow-hidden mb-3 bg-gray-100">
-            <Image source={{ uri: item.image }} className="w-full h-full object-cover" />
+            <MartImage uri={item.image} mart={item} className="w-full h-full" />
             
             {/* Ad Badge */}
             {item.isAd && (
@@ -47,12 +48,12 @@ const LargeMartCard: React.FC<LargeMartCardProps> = ({ item, onPress }) => {
 
             {/* Subtitle / Meta */}
             <View className="flex-row items-center mb-2">
-                <Text className="text-gray-600 text-sm font-medium">{item.time}</Text>
+                <Text className="text-gray-600 text-sm font-medium">{item.time || item.deliveryTime || '25-35 min'}</Text>
                 <Text className="text-gray-400 mx-1">•</Text>
                 <Text className="text-gray-600 text-sm font-medium">$$</Text>
                 <Text className="text-gray-400 mx-1">•</Text>
                 <Text className="text-gray-600 text-sm font-medium" numberOfLines={1}>
-                    {item.tags.join(', ')}
+                    {(item.tags ?? []).join(', ') || 'General'}
                 </Text>
             </View>
 
@@ -65,7 +66,7 @@ const LargeMartCard: React.FC<LargeMartCardProps> = ({ item, onPress }) => {
                          <Text className="text-xs font-bold text-primary">{item.delivery}</Text>
                      </View>
                  ) : (
-                    <Text className="text-xs font-bold text-gray-600 ml-1">{item.delivery}</Text>
+                    <Text className="text-xs font-bold text-gray-600 ml-1">{item.delivery || item.deliveryFee || 'Rs. 99'}</Text>
                  )}
             </View>
 

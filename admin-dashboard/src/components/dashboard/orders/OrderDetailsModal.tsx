@@ -3,9 +3,12 @@ import {
   X, Calendar, MapPin, User, Package, CreditCard, Printer, 
   Download, Phone, Mail, CheckCircle2, Clock, Truck, 
   AlertCircle, FileText, Check, Copy, ExternalLink, MoreHorizontal,
-  MailWarning, Map, Flag, Loader2
+  MailWarning, Map, Flag, Loader2, Zap
 } from "lucide-react";
 import { Order } from "@/types/orders";
+import { useRiders } from "@/hooks/useRiders";
+import { useQuery } from "@tanstack/react-query";
+import { ordersApi } from "@/services/order.service";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { InvoiceService } from "@/lib/invoice";
@@ -17,6 +20,10 @@ interface OrderDetailsModalProps {
   order: Order | null;
   onUpdateStatus?: (id: string, status: string) => Promise<void>;
   isUpdating?: boolean;
+  onAssignRider?: (orderId: string, riderId: string) => Promise<void>;
+  onUnassignRider?: (orderId: string) => Promise<void>;
+  onAutoDispatch?: (orderId: string) => Promise<{ dispatch?: { riderName: string; distanceKm: number } }>;
+  isAssigningRider?: boolean;
 }
 
 const getStatusColor = (status: string) => {
@@ -42,9 +49,36 @@ const getPaymentStatusColor = (status: string) => {
   }
 };
 
-export function OrderDetailsModal({ isOpen, onClose, order, onUpdateStatus, isUpdating }: OrderDetailsModalProps) {
+export function OrderDetailsModal({
+  isOpen,
+  onClose,
+  order,
+  onUpdateStatus,
+  isUpdating,
+  onAssignRider,
+  onUnassignRider,
+  onAutoDispatch,
+  isAssigningRider,
+}: OrderDetailsModalProps) {
   const [copiedId, setCopiedId] = useState(false);
   const [showActions, setShowActions] = useState(false);
+  const [selectedRiderId, setSelectedRiderId] = useState("");
+  const [assignError, setAssignError] = useState<string | null>(null);
+  const [dispatchSuccess, setDispatchSuccess] = useState<string | null>(null);
+
+  const { data: ridersData, isLoading: ridersLoading } = useRiders({ limit: 100, status: "All" });
+  const assignableRiders = (ridersData?.riders ?? []).filter((r) => r.status !== "Banned");
+
+  const canAssignRiderPreview =
+    !!order &&
+    !['Cancelled', 'Refunded', 'Delivered'].includes(order.status) &&
+    !!onAssignRider;
+
+  const { data: dispatchCandidates = [], isLoading: candidatesLoading } = useQuery({
+    queryKey: ['dispatch-candidates', order?.dbId],
+    queryFn: () => ordersApi.getDispatchCandidates(order!.dbId!),
+    enabled: isOpen && !!order?.dbId && canAssignRiderPreview,
+  });
 
   // Close actions dropdown when clicking outside
   useEffect(() => {
@@ -72,7 +106,65 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateStatus, isUp
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    setSelectedRiderId(order?.assignedRider?.id ?? "");
+    setAssignError(null);
+    setDispatchSuccess(null);
+  }, [order?.id, order?.assignedRider?.id]);
+
+  const handleAutoDispatch = async () => {
+    if (!onAutoDispatch || !order) return;
+    setAssignError(null);
+    setDispatchSuccess(null);
+    try {
+      const result = await onAutoDispatch(order.id);
+      const d = result?.dispatch;
+      if (d) {
+        setDispatchSuccess(`Assigned ${d.riderName} (${d.distanceKm} km away)`);
+      }
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        "Auto-dispatch failed";
+      setAssignError(message);
+    }
+  };
+
   if (!isOpen || !order) return null;
+
+  const isCancelledOrRefunded = ['Cancelled', 'Refunded'].includes(order.status);
+
+  const canAssignRider =
+    !isCancelledOrRefunded &&
+    order.status !== "Delivered" &&
+    !!onAssignRider;
+
+  const handleAssignRider = async () => {
+    if (!selectedRiderId || !onAssignRider) return;
+    setAssignError(null);
+    try {
+      await onAssignRider(order.id, selectedRiderId);
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        "Failed to assign rider";
+      setAssignError(message);
+    }
+  };
+
+  const handleUnassignRider = async () => {
+    if (!onUnassignRider) return;
+    setAssignError(null);
+    try {
+      await onUnassignRider(order.id);
+      setSelectedRiderId("");
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        "Failed to unassign rider";
+      setAssignError(message);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     try {
@@ -174,7 +266,6 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateStatus, isUp
   };
 
   const currentIndex = getTimelineIndex();
-  const isCancelledOrRefunded = ['Cancelled', 'Refunded'].includes(order.status);
 
   const NEXT_STATUS_MAP: Partial<Record<OrderStatus, OrderStatus>> = {
     Pending: "Confirmed",
@@ -416,6 +507,137 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateStatus, isUp
                   </div>
                 </div>
               </div>
+
+              {/* Rider assignment */}
+              {canAssignRider && (
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)]">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center">
+                      <Truck className="w-5 h-5 text-cyan-700" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Delivery partner</p>
+                      <h4 className="text-base font-bold text-slate-800">Assign rider</h4>
+                    </div>
+                  </div>
+
+                  {order.proofOfDeliveryUrl && order.status === "Delivered" && (
+                    <div className="mb-4 p-4 rounded-xl bg-emerald-50/60 border border-emerald-100">
+                      <p className="text-[11px] font-bold text-emerald-700 uppercase tracking-widest mb-2">
+                        Proof of delivery
+                      </p>
+                      <a
+                        href={order.proofOfDeliveryUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block relative w-full max-w-xs aspect-[4/3] rounded-xl overflow-hidden border border-emerald-200"
+                      >
+                        <Image
+                          src={order.proofOfDeliveryUrl}
+                          alt="Proof of delivery"
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </a>
+                    </div>
+                  )}
+
+                  {order.assignedRider ? (
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-cyan-50/60 border border-cyan-100">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-full bg-white border border-cyan-200 flex items-center justify-center overflow-hidden relative shrink-0">
+                          {order.assignedRider.avatar ? (
+                            <Image src={order.assignedRider.avatar} alt={order.assignedRider.name} fill className="object-cover" />
+                          ) : (
+                            <User className="w-5 h-5 text-cyan-600" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-bold text-slate-800 truncate">{order.assignedRider.name}</p>
+                          <p className="text-xs text-slate-500">
+                            {order.assignedRider.vehicleType}
+                            {order.assignedRider.licensePlate ? ` · ${order.assignedRider.licensePlate}` : ""}
+                          </p>
+                          {order.assignedAt && (
+                            <p className="text-[11px] text-cyan-700 font-medium mt-0.5">
+                              Assigned {formatDate(order.assignedAt)}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleUnassignRider}
+                        disabled={isAssigningRider}
+                        className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-xl hover:bg-red-100 disabled:opacity-50"
+                      >
+                        {isAssigningRider ? "Updating…" : "Unassign"}
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-slate-500 mb-4">No rider assigned yet. Select a fleet member to dispatch this order.</p>
+                  )}
+
+                  <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                    <select
+                      value={selectedRiderId}
+                      onChange={(e) => setSelectedRiderId(e.target.value)}
+                      disabled={ridersLoading || isAssigningRider}
+                      className="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                    >
+                      <option value="">
+                        {candidatesLoading || ridersLoading ? "Loading riders…" : "Select a rider"}
+                      </option>
+                      {(dispatchCandidates.length > 0
+                        ? dispatchCandidates.map((r) => ({
+                            id: r.id,
+                            label: `${r.name} — ${r.availability}${
+                              r.distanceKm != null ? ` · ${r.distanceKm} km` : ""
+                            } · ${r.activeJobs} active`,
+                          }))
+                        : assignableRiders.map((r) => ({
+                            id: r.id,
+                            label: `${r.name} — ${r.status} (${r.vehicleType})`,
+                          }))
+                      ).map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.label}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={handleAssignRider}
+                      disabled={!selectedRiderId || isAssigningRider || ridersLoading}
+                      className="px-6 py-3 bg-emerald-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {isAssigningRider ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                      {order.assignedRider ? "Reassign" : "Assign rider"}
+                    </button>
+                  </div>
+
+                  {onAutoDispatch && !order.assignedRider && (
+                    <button
+                      type="button"
+                      onClick={handleAutoDispatch}
+                      disabled={isAssigningRider}
+                      className="mt-3 w-full px-6 py-3 bg-cyan-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-cyan-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {isAssigningRider ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+                      Auto-dispatch nearest rider
+                    </button>
+                  )}
+
+                  {dispatchSuccess && (
+                    <p className="mt-3 text-sm text-emerald-700 font-medium">{dispatchSuccess}</p>
+                  )}
+
+                  {assignError && (
+                    <p className="mt-3 text-sm text-red-600 font-medium">{assignError}</p>
+                  )}
+                </div>
+              )}
 
               {/* Items List */}
               <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden">

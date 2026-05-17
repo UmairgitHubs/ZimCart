@@ -1,6 +1,12 @@
 import prisma from '../config/db.js';
 import { ApiError } from '../utils/ApiError.js';
 import bcrypt from 'bcryptjs';
+import {
+  assertOrderTotalsMatch,
+  computeOrderTotals,
+  computeVoucherDiscountAmount,
+} from './order-pricing.service.js';
+import { createPaymentForOrder } from './payment.service.js';
 
 export const getProfile = async (userId: string) => {
   const user = await prisma.user.findUnique({
@@ -45,11 +51,13 @@ export const updateProfile = async (userId: string, data: any) => {
 
 export const getOrders = async (userId: string, status?: string) => {
   const whereClause: any = { userId };
-  
-  if (status && status !== 'active') {
-    whereClause.status = { not: 'PENDING' };
+
+  if (status === 'active') {
+    whereClause.status = { in: ['PENDING', 'CONFIRMED', 'PREPARING', 'SHIPPING'] };
+  } else if (status === 'history') {
+    whereClause.status = { in: ['COMPLETED', 'CANCELLED'] };
   }
-  
+
   const orders = await prisma.order.findMany({
     where: whereClause,
     include: {
@@ -70,37 +78,225 @@ export const getOrders = async (userId: string, status?: string) => {
   return orders;
 };
 
+const TRACKING_STATUSES = ['PENDING', 'CONFIRMED', 'PREPARING', 'SHIPPING', 'COMPLETED', 'CANCELLED'] as const;
+
+function buildStatusTimeline(status: string) {
+  const order = TRACKING_STATUSES.indexOf(status as (typeof TRACKING_STATUSES)[number]);
+  return TRACKING_STATUSES.map((step, idx) => ({
+    step,
+    label:
+      step === 'PENDING'
+        ? 'Order placed'
+        : step === 'CONFIRMED'
+          ? 'Confirmed'
+          : step === 'PREPARING'
+            ? 'Preparing'
+            : step === 'SHIPPING'
+              ? 'Out for delivery'
+              : step === 'COMPLETED'
+                ? 'Delivered'
+                : 'Cancelled',
+    completed: status === 'CANCELLED' ? step === 'CANCELLED' : idx <= order,
+    current: step === status,
+  }));
+}
+
+export const getOrderTracking = async (userId: string, orderId: string) => {
+  const order = await prisma.order.findFirst({
+    where: { id: orderId, userId },
+    include: {
+      store: { select: { id: true, name: true, image: true } },
+      rider: {
+        select: {
+          id: true,
+          name: true,
+          phone: true,
+          avatar: true,
+          riderProfile: {
+            select: {
+              vehicleType: true,
+              licensePlate: true,
+              lastLatitude: true,
+              lastLongitude: true,
+              lastLocationAt: true,
+            },
+          },
+        },
+      },
+      items: {
+        include: {
+          product: { select: { name: true, images: true } },
+        },
+      },
+    },
+  });
+
+  if (!order) {
+    throw new ApiError(404, 'Order not found');
+  }
+
+  const riderProfile = order.rider?.riderProfile;
+  const showRiderLocation =
+    order.status === 'SHIPPING' &&
+    order.riderId &&
+    riderProfile?.lastLatitude != null &&
+    riderProfile?.lastLongitude != null;
+
+  return {
+    id: order.id,
+    orderNumber: order.orderNumber,
+    status: order.status,
+    subtotal: order.subtotal,
+    deliveryFee: order.deliveryFee,
+    platformFee: order.platformFee,
+    discount: order.discount,
+    total: order.total,
+    address: order.address,
+    paymentMethod: order.paymentMethod,
+    trackingUrl: order.trackingUrl,
+    proofOfDeliveryUrl:
+      order.status === 'COMPLETED' ? (order.proofOfDeliveryUrl ?? null) : null,
+    createdAt: order.createdAt,
+    updatedAt: order.updatedAt,
+    store: order.store,
+    items: order.items,
+    timeline: buildStatusTimeline(order.status),
+    rider: order.rider
+      ? {
+          id: order.rider.id,
+          name: order.rider.name,
+          phone: order.rider.phone,
+          avatar: order.rider.avatar,
+          vehicleType: riderProfile?.vehicleType ?? 'Motorcycle',
+          licensePlate: riderProfile?.licensePlate ?? null,
+        }
+      : null,
+    riderLocation: showRiderLocation
+      ? {
+          latitude: riderProfile!.lastLatitude!,
+          longitude: riderProfile!.lastLongitude!,
+          updatedAt: riderProfile!.lastLocationAt,
+        }
+      : null,
+  };
+};
+
+export const previewOrder = async (userId: string, data: any) => {
+  const voucherCode =
+    typeof data.voucherCode === 'string' && data.voucherCode.trim()
+      ? data.voucherCode.trim()
+      : undefined;
+
+  return computeOrderTotals(userId, {
+    storeId: data.storeId,
+    items: data.items,
+    deliveryFee: data.deliveryFee,
+    voucherCode,
+  });
+};
+
 export const placeOrder = async (userId: string, data: any) => {
-  const { storeId, items, total, subtotal, deliveryFee, discount, address, paymentMethod } = data;
+  const {
+    storeId,
+    items,
+    total,
+    subtotal,
+    deliveryFee,
+    discount: clientDiscount,
+    address,
+    paymentMethod,
+    voucherCode: rawVoucherCode,
+  } = data;
+
+  if (!storeId || !items?.length) {
+    throw new ApiError(400, 'storeId and items are required');
+  }
+  if (!address || typeof address !== 'string') {
+    throw new ApiError(400, 'Delivery address is required');
+  }
+  if (!paymentMethod || typeof paymentMethod !== 'string') {
+    throw new ApiError(400, 'Payment method is required');
+  }
+
+  const voucherCode =
+    typeof rawVoucherCode === 'string' && rawVoucherCode.trim() ? rawVoucherCode.trim().toUpperCase() : '';
+
+  if (clientDiscount && Number(clientDiscount) > 0 && !voucherCode) {
+    throw new ApiError(400, 'Discount requires a valid voucher code');
+  }
+
+  const priced = await assertOrderTotalsMatch(userId, {
+    storeId,
+    items,
+    subtotal,
+    deliveryFee,
+    discount: clientDiscount,
+    total,
+    ...(voucherCode ? { voucherCode } : {}),
+  });
+
+  let voucherIdForMarkUsed: string | null = null;
+  if (voucherCode) {
+    const voucher = await prisma.voucher.findUnique({
+      where: { code: voucherCode },
+    });
+    voucherIdForMarkUsed = voucher?.id ?? null;
+  }
 
   const order = await prisma.$transaction(async (tx) => {
+    if (voucherIdForMarkUsed) {
+      const userVoucher = await tx.userVoucher.findUnique({
+        where: {
+          userId_voucherId: { userId, voucherId: voucherIdForMarkUsed },
+        },
+      });
+      if (userVoucher?.isUsed) {
+        throw new ApiError(400, 'You have already used this voucher');
+      }
+      if (userVoucher) {
+        await tx.userVoucher.update({
+          where: { id: userVoucher.id },
+          data: { isUsed: true, usedAt: new Date() },
+        });
+      }
+    }
+
     const newOrder = await tx.order.create({
       data: {
         orderNumber: `#ZM-${Math.floor(10000 + Math.random() * 90000)}`,
         userId,
         storeId,
-        total,
-        subtotal,
-        deliveryFee,
-        discount: discount || 0,
+        total: priced.total,
+        subtotal: priced.subtotal,
+        deliveryFee: priced.deliveryFee,
+        platformFee: priced.platformFee,
+        discount: priced.discount,
         address,
         paymentMethod,
         items: {
-          create: items.map((item: any) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            price: item.price,
-            total: item.quantity * item.price,
+          create: priced.items.map((row) => ({
+            productId: row.productId,
+            quantity: row.quantity,
+            price: row.price,
+            total: row.total,
+            name: row.name,
           })),
         },
       },
       include: {
         store: true,
         items: {
-          include: { product: true }
-        }
-      }
+          include: { product: true },
+        },
+      },
     });
+
+    await createPaymentForOrder(tx, {
+      id: newOrder.id,
+      total: newOrder.total,
+      paymentMethod: newOrder.paymentMethod,
+    });
+
     return newOrder;
   });
 

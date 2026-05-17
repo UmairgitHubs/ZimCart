@@ -17,3 +17,9 @@ export const getInsights = asyncHandler(async (req, res) => {
   });
   return res.status(200).json(new ApiResponse(200, data, 'Analytics insights loaded'));
 });
+
+export const getRecentActivity = asyncHandler(async (req, res) => {
+  const queryStoreId = typeof req.query.storeId === 'string' ? req.query.storeId : undefined;
+  const activities = await analyticsService.getRecentActivity(req.user!, queryStoreId);
+  return res.status(200).json(new ApiResponse(200, { activities }, 'Recent activity loaded'));
+});

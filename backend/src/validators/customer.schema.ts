@@ -22,6 +22,45 @@ export const getOrdersSchema = z.object({
   })
 });
 
+const orderLineSchema = z.object({
+  productId: z.string().uuid('Invalid product id'),
+  quantity: z.coerce.number().int().min(1).max(99),
+});
+
+export const previewOrderSchema = z.object({
+  body: z
+    .object({
+      storeId: z.string().uuid('Invalid store id'),
+      items: z.array(orderLineSchema).min(1, 'At least one item is required'),
+      deliveryFee: z.coerce.number().min(0).optional(),
+      voucherCode: z.string().trim().min(1).optional(),
+    })
+    .strict(),
+});
+
+export const placeOrderSchema = z.object({
+  body: z
+    .object({
+      storeId: z.string().uuid('Invalid store id'),
+      items: z.array(orderLineSchema).min(1, 'At least one item is required'),
+      subtotal: z.coerce.number().min(0),
+      deliveryFee: z.coerce.number().min(0),
+      platformFee: z.coerce.number().min(0).optional(),
+      discount: z.coerce.number().min(0).optional(),
+      total: z.coerce.number().min(0),
+      address: z.string().min(1, 'Delivery address is required'),
+      paymentMethod: z.string().min(1, 'Payment method is required'),
+      voucherCode: z.string().trim().min(1).optional(),
+    })
+    .strict(),
+});
+
+export const getOrderTrackingSchema = z.object({
+  params: z.object({
+    id: z.string().uuid('Invalid order id'),
+  }),
+});
+
 export const toggleFavouriteSchema = z.object({
   params: z.object({
     productId: z.string().uuid("Invalid Product ID format"),

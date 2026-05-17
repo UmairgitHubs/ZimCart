@@ -69,7 +69,30 @@ export default function OrdersPage() {
     }
   }, [searchParams, pathname, router]);
   
-  const { orders, stats, isLoading, updateStatus, isUpdating, deleteOrder: removeOrder } = useOrders();
+  const listParams = useMemo(
+    () => ({
+      q: debouncedSearchTerm || undefined,
+      status: activeTab,
+      range: timeRange,
+      page: currentPage,
+      limit: itemsPerPage,
+    }),
+    [debouncedSearchTerm, activeTab, timeRange, currentPage, itemsPerPage]
+  );
+
+  const {
+    orders,
+    pagination,
+    stats,
+    isLoading,
+    updateStatus,
+    isUpdating,
+    deleteOrder: removeOrder,
+    assignRider,
+    unassignRider,
+    autoDispatch,
+    isAssigningRider,
+  } = useOrders(listParams);
 
   // Export states
   const [isExportingCSV, setIsExportingCSV] = useState(false);
@@ -87,38 +110,17 @@ export default function OrdersPage() {
   useEffect(() => {
     if (selectedOrder) {
       const latestSnapshot = orders.find(o => o.id === selectedOrder.id);
-      if (latestSnapshot && latestSnapshot.status !== selectedOrder.status) {
+      if (
+        latestSnapshot &&
+        (latestSnapshot.status !== selectedOrder.status ||
+          latestSnapshot.assignedRider?.id !== selectedOrder.assignedRider?.id)
+      ) {
         setSelectedOrder(latestSnapshot);
       }
     }
   }, [orders, selectedOrder]);
 
-  const filteredOrders = useMemo(() => {
-    return orders.filter((order) => {
-      const matchesTab = activeTab === "All Orders" || order.status === activeTab;
-      const matchesSearch = 
-        order.id.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        order.customer.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
-      
-      let matchesTime = true;
-      if (timeRange !== "All Time") {
-         const orderDate = new Date(order.createdAt);
-         const now = new Date();
-         if (timeRange === "Today") {
-            matchesTime = orderDate.toDateString() === now.toDateString();
-         } else if (timeRange === "This Week") {
-            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-            matchesTime = orderDate >= weekAgo;
-         } else if (timeRange === "This Month") {
-            matchesTime =
-              orderDate.getFullYear() === now.getFullYear() &&
-              orderDate.getMonth() === now.getMonth();
-         }
-      }
-
-      return matchesTab && matchesSearch && matchesTime;
-    });
-  }, [orders, activeTab, debouncedSearchTerm, timeRange]);
+  const filteredOrders = orders;
 
   // Optimized Event Handlers
   const handleSearch = useCallback((q: string) => updateQuery({ q, page: "1" }), [updateQuery]);
@@ -126,12 +128,8 @@ export default function OrdersPage() {
   const handleRangeChange = useCallback((range: string) => updateQuery({ range, page: "1" }), [updateQuery]);
   const handlePageChange = useCallback((page: number) => updateQuery({ page: String(page) }), [updateQuery]);
 
-  // Derive paginated chunk
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
-  const paginatedOrders = useMemo(() => {
-    const startIdx = (currentPage - 1) * itemsPerPage;
-    return filteredOrders.slice(startIdx, startIdx + itemsPerPage);
-  }, [filteredOrders, currentPage]);
+  const totalPages = pagination?.pages ?? 1;
+  const paginatedOrders = filteredOrders;
 
   const handleExportCSV = () => {
     setIsExportingCSV(true);
@@ -334,7 +332,7 @@ export default function OrdersPage() {
                       <div className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white shadow-sm ring-1 ring-slate-900/5"></div>
                    </div>
                    <p className="text-xs font-black text-slate-400">
-                     Showing <span className="text-slate-800">{((currentPage - 1) * itemsPerPage) + 1}</span> to <span className="text-slate-800">{Math.min(currentPage * itemsPerPage, filteredOrders.length)}</span> of <span className="text-slate-800">{filteredOrders.length}</span> results
+                     Showing <span className="text-slate-800">{pagination?.total ? ((currentPage - 1) * itemsPerPage) + 1 : 0}</span> to <span className="text-slate-800">{Math.min(currentPage * itemsPerPage, pagination?.total ?? filteredOrders.length)}</span> of <span className="text-slate-800">{pagination?.total ?? filteredOrders.length}</span> results
                    </p>
                 </div>
                 <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -381,6 +379,10 @@ export default function OrdersPage() {
         onClose={() => setSelectedOrder(null)}
         onUpdateStatus={async (id, status) => { await updateStatus({ id, status }); }}
         isUpdating={isUpdating}
+        onAssignRider={async (id, riderId) => { await assignRider({ id, riderId }); }}
+        onUnassignRider={async (id) => { await unassignRider(id); }}
+        onAutoDispatch={async (id) => autoDispatch(id)}
+        isAssigningRider={isAssigningRider}
       />
     </div>
   );

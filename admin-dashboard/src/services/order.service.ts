@@ -1,10 +1,40 @@
 import apiClient from '../lib/api-client';
 import { Order } from '@/types/orders';
 
+export type OrdersListParams = {
+  q?: string;
+  status?: string;
+  range?: string;
+  page?: number;
+  limit?: number;
+};
+
 export const ordersApi = {
-  getAll: async (): Promise<Order[]> => {
-    const response = await apiClient.get('/orders');
-    return response.data.data.orders;
+  getAll: async (
+    params?: OrdersListParams
+  ): Promise<{ orders: Order[]; pagination: { total: number; page: number; pages: number; limit: number } }> => {
+    const response = await apiClient.get('/orders', {
+      params: {
+        search: params?.q,
+        status: params?.status && params.status !== 'All Orders' ? params.status : undefined,
+        range: params?.range && params.range !== 'All Time' ? params.range : undefined,
+        page: params?.page,
+        limit: params?.limit,
+      },
+    });
+    return response.data.data;
+  },
+
+  getDispatchCandidates: async (orderId: string) => {
+    const response = await apiClient.get(`/orders/${encodeURIComponent(orderId)}/dispatch-candidates`);
+    return response.data.data.candidates as {
+      id: string;
+      name: string;
+      availability: string;
+      distanceKm: number | null;
+      activeJobs: number;
+      canAssign: boolean;
+    }[];
   },
 
   updateStatus: async (orderId: string, status: string): Promise<any> => {
@@ -30,5 +60,18 @@ export const ordersApi = {
   updateOrder: async (orderId: string, orderData: any): Promise<Order> => {
     const response = await apiClient.put(`/orders/${orderId}`, orderData);
     return response.data.data.order;
-  }
+  },
+
+  assignRider: async (orderId: string, riderId: string): Promise<void> => {
+    await apiClient.patch(`/orders/${encodeURIComponent(orderId)}/assign-rider`, { riderId });
+  },
+
+  unassignRider: async (orderId: string): Promise<void> => {
+    await apiClient.patch(`/orders/${encodeURIComponent(orderId)}/unassign-rider`);
+  },
+
+  autoDispatch: async (orderId: string): Promise<{ order: Order; dispatch: { riderName: string; distanceKm: number } }> => {
+    const response = await apiClient.post(`/orders/${encodeURIComponent(orderId)}/auto-dispatch`);
+    return response.data.data;
+  },
 };

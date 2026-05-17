@@ -1,0 +1,54 @@
+import { z } from 'zod';
+const deviceInfoSchema = z.object({
+    name: z.string().optional(),
+    type: z.string().optional(),
+    os: z.string().optional(),
+}).optional();
+export const registerSchema = z.object({
+    body: z.object({
+        email: z.string().email("Invalid email address"),
+        password: z.string().min(6, "Password must be at least 6 characters"),
+        name: z.string().min(2, "Name must be at least 2 characters"),
+        phone: z.string().optional(),
+        country: z.string().optional(),
+        role: z.enum(['CUSTOMER', 'ADMIN', 'STORE_MANAGER', 'RIDER']).optional(),
+        avatar: z.string().url().optional(),
+        termsConsent: z.boolean().refine(val => val === true, "Terms must be accepted"),
+        privacyConsent: z.boolean().refine(val => val === true, "Privacy policy must be accepted"),
+        deviceInfo: deviceInfoSchema,
+    }).strict()
+});
+export const loginSchema = z.object({
+    body: z.object({
+        email: z.string().email("Invalid email address"),
+        password: z.string().min(1, "Password is required"),
+        deviceInfo: deviceInfoSchema,
+    }).strict()
+});
+export const refreshTokenSchema = z.object({
+    body: z.object({
+        refreshToken: z.string().optional(),
+    })
+});
+export const forgotPasswordSchema = z.object({
+    body: z.object({
+        email: z.string().email("Invalid email address"),
+    }).strict()
+});
+export const resetPasswordSchema = z.object({
+    body: z.object({
+        token: z.string().min(1, "Token is required"),
+        password: z.string().min(6, "Password must be at least 6 characters"),
+    }).strict()
+});
+export const changePasswordSchema = z.object({
+    body: z.object({
+        currentPassword: z.string().min(1, "Current password is required"),
+        newPassword: z.string().min(8, "New password must be at least 8 characters long"),
+        confirmPassword: z.string().min(1, "Please confirm your new password"),
+    }).refine((data) => data.newPassword === data.confirmPassword, {
+        message: "New passwords do not match",
+        path: ["confirmPassword"],
+    })
+});
+//# sourceMappingURL=auth.schema.js.map

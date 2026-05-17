@@ -5,10 +5,10 @@ import * as orderService from '../services/order.service.js';
 export const getAllOrders = asyncHandler(async (req, res) => {
     // Basic filter extraction
     const query = req.query;
-    const orders = await orderService.getAllOrders(query, req.user);
+    const result = await orderService.getAllOrders(query, req.user);
 
     return res.status(200).json(
-        new ApiResponse(200, { orders }, "Orders fetched successfully")
+        new ApiResponse(200, result, "Orders fetched successfully")
     );
 });
 
@@ -48,6 +48,27 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     
     return res.status(200).json(
         new ApiResponse(200, { order: updatedOrder }, "Order status updated successfully")
+    );
+});
+
+export const assignRider = asyncHandler(async (req, res) => {
+    const { orderId } = req.params;
+    const { riderId } = req.body;
+
+    const updatedOrder = await orderService.assignRiderToOrder(orderId as string, riderId, req.user);
+
+    return res.status(200).json(
+        new ApiResponse(200, { order: updatedOrder }, 'Rider assigned successfully')
+    );
+});
+
+export const unassignRider = asyncHandler(async (req, res) => {
+    const { orderId } = req.params;
+
+    const updatedOrder = await orderService.unassignRiderFromOrder(orderId as string, req.user);
+
+    return res.status(200).json(
+        new ApiResponse(200, { order: updatedOrder }, 'Rider unassigned successfully')
     );
 });
 

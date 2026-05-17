@@ -1,5 +1,122 @@
 import api from './api';
-import { User, Order, Voucher, FavouriteItem } from '@/types';
+import { User, Order, OrderItem, Voucher, FavouriteItem, OrderTracking } from '@/types';
+
+type ApiOrder = {
+  id: string;
+  orderNumber: string;
+  status: string;
+  total: number;
+  subtotal: number;
+  deliveryFee: number;
+  platformFee?: number;
+  discount?: number;
+  createdAt: string;
+  address: string;
+  paymentMethod?: string;
+  trackingUrl?: string | null;
+  storeId: string;
+  store?: { name?: string; image?: string | null };
+  items?: Array<{
+    id: string;
+    productId: string;
+    name?: string;
+    quantity: number;
+    price: number;
+    product?: { name?: string; images?: string[] };
+  }>;
+};
+
+function mapApiOrderStatus(status: string): Order['status'] {
+  switch (status) {
+    case 'COMPLETED':
+      return 'completed';
+    case 'CANCELLED':
+      return 'cancelled';
+    case 'SHIPPING':
+      return 'shipping';
+    case 'PENDING':
+      return 'pending';
+    case 'CONFIRMED':
+    case 'PREPARING':
+      return 'active';
+    default:
+      return 'pending';
+  }
+}
+
+function mapApiOrderToOrder(raw: ApiOrder): Order {
+  const items: OrderItem[] = (raw.items ?? []).map((it) => {
+    const name = it.name || it.product?.name || 'Item';
+    const image = it.product?.images?.[0];
+    return {
+      id: it.productId,
+      productId: it.productId,
+      name,
+      quantity: it.quantity,
+      price: it.price,
+      image,
+    };
+  });
+
+  return {
+    id: raw.id,
+    orderNumber: raw.orderNumber,
+    date: raw.createdAt,
+    status: mapApiOrderStatus(raw.status),
+    items,
+    subtotal: raw.subtotal,
+    deliveryFee: raw.deliveryFee,
+    platformFee: raw.platformFee ?? 0,
+    discount: raw.discount ?? 0,
+    total: raw.total,
+    store: {
+      id: raw.storeId,
+      name: raw.store?.name ?? 'Store',
+      image: raw.store?.image || 'https://via.placeholder.com/200',
+    },
+    trackingUrl: raw.trackingUrl ?? undefined,
+    paymentMethod: raw.paymentMethod ?? '',
+    deliveryAddress: typeof raw.address === 'string' ? raw.address : '',
+  };
+}
+
+type UserVoucherApiRow = {
+  id: string;
+  isUsed: boolean;
+  voucher: {
+    id: string;
+    code: string;
+    description: string | null;
+    discountType: 'PERCENTAGE' | 'FIXED';
+    value: number;
+    minSpend: number | null;
+    maxDiscount: number | null;
+    expiryDate: string;
+    isActive: boolean;
+  };
+};
+
+function mapUserVoucherRow(row: UserVoucherApiRow): Voucher {
+  const v = row.voucher;
+  const exp = new Date(v.expiryDate);
+  const now = new Date();
+  let status: Voucher['status'] = 'active';
+  if (row.isUsed) status = 'used';
+  else if (!v.isActive || exp < now) status = 'expired';
+
+  return {
+    id: row.id,
+    code: v.code,
+    description: v.description ?? '',
+    discountType: v.discountType,
+    value: v.value,
+    minSpend: v.minSpend ?? undefined,
+    maxDiscount: v.maxDiscount ?? undefined,
+    expiryDate: exp.toISOString(),
+    status,
+    title: v.code,
+  };
+}
 
 export const customerApi = {
   // Profile
@@ -16,18 +133,49 @@ export const customerApi = {
   // Orders
   getOrders: async (status?: 'active' | 'history'): Promise<Order[]> => {
     const { data } = await api.get('/customers/orders', { params: { status } });
-    return data.data;
+    const raw = data.data;
+    if (!Array.isArray(raw)) return [];
+    return raw.map((row: unknown) => mapApiOrderToOrder(row as ApiOrder));
   },
   
-  placeOrder: async (orderData: any): Promise<Order> => {
-    const { data } = await api.post('/customers/orders', orderData);
+  previewOrder: async (payload: {
+    storeId: string;
+    items: { productId: string; quantity: number }[];
+    deliveryFee?: number;
+    voucherCode?: string;
+  }): Promise<{
+    subtotal: number;
+    deliveryFee: number;
+    platformFee: number;
+    discount: number;
+    total: number;
+  }> => {
+    const { data } = await api.post('/customers/orders/preview', payload);
     return data.data;
   },
 
-  // Vouchers
+  placeOrder: async (orderData: any): Promise<Order> => {
+    const { data } = await api.post('/customers/orders', orderData);
+    return mapApiOrderToOrder(data.data as ApiOrder);
+  },
+
+  getOrderTracking: async (orderId: string): Promise<OrderTracking> => {
+    const { data } = await api.get(`/customers/orders/${orderId}/tracking`);
+    return data.data as OrderTracking;
+  },
+
+  // Vouchers (API returns UserVoucher rows with nested `voucher`)
   getVouchers: async (): Promise<Voucher[]> => {
     const { data } = await api.get('/customers/vouchers');
-    return data.data;
+    const raw = data.data;
+    if (!Array.isArray(raw)) return [];
+    return raw.map((row: unknown) => {
+      const r = row as Partial<UserVoucherApiRow>;
+      if (r?.voucher && typeof r.voucher === 'object' && r.id != null && typeof r.isUsed === 'boolean') {
+        return mapUserVoucherRow(row as UserVoucherApiRow);
+      }
+      return row as Voucher;
+    });
   },
 
   validateVoucher: async (code: string): Promise<Voucher> => {

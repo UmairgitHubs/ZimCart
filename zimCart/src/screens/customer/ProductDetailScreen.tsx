@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { normalizeProduct } from '@/utils/normalizers';
+import { goToCartTab } from '@/utils/navigation';
 import { useCart } from '@/hooks/useCart';
 import { useFavourites } from '@/hooks/useCustomer';
 
@@ -303,7 +304,7 @@ export default function ProductDetailScreen({ navigation, route }: any) {
             
             Alert.alert("Success", "Item added to cart!", [
                 { text: "Continue Shopping", style: "cancel" },
-                { text: "Go to Cart", onPress: () => navRef.current?.navigate('Main', { screen: 'Cart' }) }
+                { text: "Go to Cart", onPress: () => navRef.current && goToCartTab(navRef.current) }
             ]);
         } catch (error: any) {
             const message = error.response?.data?.message || error.message || "Failed to add item to cart.";

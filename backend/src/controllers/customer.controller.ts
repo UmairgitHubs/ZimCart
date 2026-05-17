@@ -39,6 +39,17 @@ export const getOrders = asyncHandler(async (req, res) => {
   );
 });
 
+export const previewOrder = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+
+  const preview = await customerService.previewOrder(userId, req.body);
+
+  return res.status(200).json(
+    new ApiResponse(200, preview, 'Order preview calculated')
+  );
+});
+
 export const placeOrder = asyncHandler(async (req, res) => {
   const userId = req.user?.id;
   if (!userId) throw new ApiError(401, 'Unauthorized');
@@ -47,6 +58,17 @@ export const placeOrder = asyncHandler(async (req, res) => {
 
   return res.status(201).json(
     new ApiResponse(201, order, 'Order placed successfully')
+  );
+});
+
+export const getOrderTracking = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+
+  const tracking = await customerService.getOrderTracking(userId, req.params.id as string);
+
+  return res.status(200).json(
+    new ApiResponse(200, tracking, 'Order tracking fetched')
   );
 });
 

@@ -136,6 +136,10 @@ export const login = async (data: any, deviceInfo?: any) => {
     throw new ApiError(401, 'Invalid credentials');
   }
 
+  if (user.status === 'BLOCKED') {
+    throw new ApiError(403, 'Your account has been suspended. Contact fleet support.');
+  }
+
   if (user.isTwoFactorEnabled) {
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000);

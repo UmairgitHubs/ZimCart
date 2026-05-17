@@ -45,21 +45,13 @@ export default function CustomerRegisterScreen() {
         setApiError(null);
         try {
             await registerUser(data);
+            reset();
             Alert.alert(
-                'Success', 
-                'Account created successfully! Please log in.',
-                [
-                    { 
-                        text: "OK", 
-                        onPress: () => {
-                            reset(); // Clear form
-                            navigation.replace('CustomerLogin');
-                        } 
-                    }
-                ]
+                'Welcome to ZimCart',
+                'Your account is ready. Start shopping!',
             );
         } catch (error: any) {
-            const message = parseApiError(error);
+            const message = parseApiError(error, { quiet: true });
             setApiError(message);
         }
     };

@@ -42,6 +42,46 @@ export const useOrders = (status?: 'active' | 'history') => {
     });
 };
 
+export const useOrderTracking = (orderId: string | undefined) => {
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+    return useQuery({
+        queryKey: ['order-tracking', orderId],
+        queryFn: () => customerApi.getOrderTracking(orderId!),
+        enabled: isAuthenticated && !!orderId,
+        refetchInterval: (query) => {
+            const status = query.state.data?.status;
+            if (status === 'SHIPPING' || status === 'PREPARING' || status === 'CONFIRMED') {
+                return 15_000;
+            }
+            return false;
+        },
+    });
+};
+
+export const useOrderPreview = (params: {
+    storeId?: string;
+    items: { productId: string; quantity: number }[];
+    deliveryFee?: number;
+    voucherCode?: string;
+    enabled?: boolean;
+}) => {
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+    const { storeId, items, deliveryFee, voucherCode, enabled = true } = params;
+
+    return useQuery({
+        queryKey: ['order-preview', storeId, items, deliveryFee, voucherCode],
+        queryFn: () =>
+            customerApi.previewOrder({
+                storeId: storeId!,
+                items,
+                deliveryFee,
+                voucherCode,
+            }),
+        enabled: isAuthenticated && enabled && !!storeId && items.length > 0,
+        staleTime: 30_000,
+    });
+};
+
 /*
  * Use User Vouchers
  */
@@ -280,7 +320,7 @@ export const useNotificationsInbox = () => {
         queryKey: ['notifications'],
         queryFn: customerApi.getNotifications,
         enabled: isAuthenticated,
-        refetchInterval: 60000, // Refresh every minute
+        refetchInterval: 60_000,
     });
 
     const markRead = useMutation({
@@ -298,9 +338,14 @@ export const useNotificationsInbox = () => {
     });
 
     return {
-        ...query,
+        data: query.data ?? [],
+        isLoading: query.isLoading,
+        isRefetching: query.isRefetching,
+        isFetching: query.isFetching,
+        error: query.error,
+        refetch: query.refetch,
         markRead: markRead.mutateAsync,
         markAllRead: markAllRead.mutateAsync,
-        isReading: markRead.isPending || markAllRead.isPending,
+        isMarking: markRead.isPending || markAllRead.isPending,
     };
 };

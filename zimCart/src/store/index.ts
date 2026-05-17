@@ -1,5 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import authReducer from './slices/auth.slice';
@@ -20,15 +21,47 @@ const expoSecureStorage = {
   },
 };
 
+/** Web + SSR: AsyncStorage touches `window`; SecureStore is not implemented on web. */
+const webPersistStorage = {
+  getItem: (key: string): Promise<string | null> => {
+    try {
+      if (typeof window === 'undefined') return Promise.resolve(null);
+      return Promise.resolve(window.localStorage.getItem(key));
+    } catch {
+      return Promise.resolve(null);
+    }
+  },
+  setItem: (key: string, value: string): Promise<void> => {
+    try {
+      if (typeof window !== 'undefined') window.localStorage.setItem(key, value);
+    } catch {
+      /* storage quota / private mode */
+    }
+    return Promise.resolve();
+  },
+  removeItem: (key: string): Promise<void> => {
+    try {
+      if (typeof window !== 'undefined') window.localStorage.removeItem(key);
+    } catch {
+      /* ignore */
+    }
+    return Promise.resolve();
+  },
+};
+
+const isWeb = Platform.OS === 'web';
+const rootStorage = isWeb ? webPersistStorage : AsyncStorage;
+const authStorage = isWeb ? webPersistStorage : expoSecureStorage;
+
 const rootPersistConfig = {
   key: 'root',
-  storage: AsyncStorage,
+  storage: rootStorage,
   whitelist: ['cart'], // Plain items go to unencrypted async asyncStorage
 };
 
 const authPersistConfig = {
   key: 'auth',
-  storage: expoSecureStorage, // Auth slice goes explicitly to encrypted hardware
+  storage: authStorage, // Native: SecureStore; web: localStorage (no hardware keystore)
 };
 
 const rootReducer = combineReducers({

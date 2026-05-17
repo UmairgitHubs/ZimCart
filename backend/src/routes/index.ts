@@ -13,6 +13,9 @@ import orderRoutes from './order.routes.js';
 import voucherRoutes from './voucher.routes.js';
 import analyticsRoutes from './analytics.routes.js';
 import riderRoutes from './rider.routes.js';
+import riderMobileRoutes from './rider-mobile.routes.js';
+import paymentRoutes from './payment.routes.js';
+import wasteRoutes from './waste.routes.js';
 
 const router = Router();
 
@@ -31,5 +34,8 @@ router.use('/orders', orderRoutes);
 router.use('/vouchers', voucherRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/riders', riderRoutes);
+router.use('/rider', riderMobileRoutes);
+router.use('/payments', paymentRoutes);
+router.use('/waste', wasteRoutes);
 
 export default router;

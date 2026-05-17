@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { store } from '@/store'; // Direct import to avoid hooks
 import { setCredentials, logout } from '@/store/slices/auth.slice';
+import { API_BASE_URL } from '@/config/apiConfig';
 
-
-const BASE_URL = 'http://192.168.100.232:5000/api/v1';
+const BASE_URL = API_BASE_URL;
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -30,6 +30,14 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+    const requestUrl = String(originalRequest?.url ?? '');
+    const isLogoutRequest = requestUrl.includes('/auth/logout');
+
+    // Logout with an expired/invalid token is fine — do not refresh or clear auth here
+    if (error.response?.status === 401 && isLogoutRequest) {
+      return Promise.reject(error);
+    }
 
     // Check for 401 Unauthorized and ensure we haven't already retried
     if (error.response?.status === 401 && !originalRequest._retry) {

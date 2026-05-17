@@ -175,6 +175,15 @@ export default function CustomerLoginScreen() {
                             <Text className="text-green-700 font-bold">Sign Up</Text>
                         </TouchableOpacity>
                     </View>
+
+                    <TouchableOpacity
+                        onPress={() => navigation.getParent()?.navigate('RiderApp', { screen: 'RiderWelcome' })}
+                        className="mt-6 py-3 items-center"
+                    >
+                        <Text className="text-teal-700 font-bold text-sm">
+                            Deliver with ZimCart — Rider sign in
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>
         </SafeAreaView>

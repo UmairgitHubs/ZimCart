@@ -11,9 +11,10 @@ if (Platform.OS === 'android') {
   }
 }
 
-import { useFAQs, useSupportTicket } from '@/hooks/useHelp';
-
+import { useFAQs, useMyTickets, useSupportTicket } from '@/hooks/useHelp';
 import { parseApiError } from '@/utils/errorUtils';
+import { customerMessagePreview, hasStaffReply, statusLabel } from '@/utils/supportTicket';
+import type { SupportTicket } from '@/services/help';
 
 export default function HelpSupportScreen() {
   const insets = useSafeAreaInsets();
@@ -22,7 +23,9 @@ export default function HelpSupportScreen() {
   
   // Data
   const { data: faqs, isLoading, refetch } = useFAQs();
+  const { data: tickets = [], isLoading: ticketsLoading, refetch: refetchTickets } = useMyTickets();
   const { createTicket, isCreating } = useSupportTicket();
+  const [expandedTicketId, setExpandedTicketId] = useState<string | null>(null);
 
   // Ticket Modal State
   const [ticketModalVisible, setTicketModalVisible] = useState(false);
@@ -33,6 +36,20 @@ export default function HelpSupportScreen() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedId(expandedId === id ? null : id);
   };
+
+  const toggleTicket = (id: string) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpandedTicketId(expandedTicketId === id ? null : id);
+  };
+
+  const statusColor = (status: SupportTicket['status']) => {
+    if (status === 'CLOSED') return 'bg-gray-100 text-gray-600';
+    if (status === 'IN_PROGRESS') return 'bg-amber-100 text-amber-800';
+    return 'bg-green-100 text-green-800';
+  };
+
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 
   const handleContactSupport = (type: 'chat' | 'email' | 'call') => {
       if (type === 'call') {
@@ -79,7 +96,13 @@ export default function HelpSupportScreen() {
         className="flex-1" 
         showsVerticalScrollIndicator={false}
         refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+            <RefreshControl
+              refreshing={isLoading || ticketsLoading}
+              onRefresh={() => {
+                refetch();
+                refetchTickets();
+              }}
+            />
         }
       >
           
@@ -131,6 +154,53 @@ export default function HelpSupportScreen() {
                       className="flex-1 ml-3 text-gray-900 font-medium"
                   />
               </View>
+          </View>
+
+          {/* My tickets */}
+          <View className="px-4 mb-8">
+              <Text className="text-gray-900 font-bold text-lg mb-4 ml-1">My support tickets</Text>
+              {ticketsLoading ? (
+                <ActivityIndicator size="small" color="#2e7d32" />
+              ) : tickets.length === 0 ? (
+                <View className="bg-white rounded-2xl p-5 border border-gray-100">
+                  <Text className="text-gray-500 text-sm text-center">No tickets yet. Submit one if you need help.</Text>
+                </View>
+              ) : (
+                tickets.map((ticket) => (
+                  <TouchableOpacity
+                    key={ticket.id}
+                    onPress={() => toggleTicket(ticket.id)}
+                    className="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100"
+                    activeOpacity={0.9}
+                  >
+                    <View className="flex-row justify-between items-start mb-2">
+                      <Text className="flex-1 text-base font-bold text-gray-800 mr-2" numberOfLines={2}>
+                        {ticket.subject}
+                      </Text>
+                      <View className={`px-2 py-1 rounded-lg ${statusColor(ticket.status)}`}>
+                        <Text className="text-[10px] font-bold uppercase">{statusLabel(ticket.status)}</Text>
+                      </View>
+                    </View>
+                    <Text className="text-xs text-gray-400 mb-2">Updated {formatDate(ticket.updatedAt)}</Text>
+                    {hasStaffReply(ticket.message) && (
+                      <View className="flex-row items-center mb-2">
+                        <MaterialCommunityIcons name="message-reply-text-outline" size={14} color="#2e7d32" />
+                        <Text className="text-xs font-bold text-primary ml-1">Team replied</Text>
+                      </View>
+                    )}
+                    {expandedTicketId === ticket.id && (
+                      <View className="mt-2 pt-3 border-t border-gray-50">
+                        <Text className="text-gray-600 leading-5 text-sm">
+                          {customerMessagePreview(ticket.message)}
+                        </Text>
+                      </View>
+                    )}
+                    <Text className="text-xs text-primary font-bold mt-2">
+                      {expandedTicketId === ticket.id ? 'Hide details' : 'View details'}
+                    </Text>
+                  </TouchableOpacity>
+                ))
+              )}
           </View>
 
           {/* FAQs */}

@@ -65,6 +65,24 @@ export const getCart = async (userId: string) => {
 export const addToCart = async (userId: string, productId: string, quantity: number, variants: any = null) => {
   const cart = await getCart(userId);
 
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { storeId: true },
+  });
+  if (!product) {
+    throw new ApiError(404, 'Product not found');
+  }
+
+  if (cart!.items.length > 0) {
+    const existingStoreId = cart!.items[0].product.storeId;
+    if (product.storeId !== existingStoreId) {
+      throw new ApiError(
+        400,
+        'Your cart already has items from another store. Clear your cart or finish that order first.'
+      );
+    }
+  }
+
   // Normalize variants for consistent lookup
   const normalizedVariants = (variants && typeof variants === 'object' && Object.keys(variants).length > 0) 
     ? variants 

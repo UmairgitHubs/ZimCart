@@ -5,7 +5,11 @@ import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useProducts } from '@/hooks/useMarketplace';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Alert } from 'react-native';
+import { useCart } from '@/hooks/useCart';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { goToCartTab } from '@/utils/navigation';
 
 const { width } = Dimensions.get('window');
 
@@ -24,6 +28,28 @@ export default function CategoryDetailScreen() {
 
     const products = productsData?.products || [];
     const [activeFilter, setActiveFilter] = useState('All');
+    const { data: cartData, add, isAdding } = useCart();
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+    const cartItems = cartData?.items ?? [];
+    const cartCount = cartItems.reduce((n: number, i: { quantity: number }) => n + i.quantity, 0);
+    const cartTotal = cartItems.reduce(
+        (n: number, i: { product: { price: number }; quantity: number }) =>
+            n + i.product.price * i.quantity,
+        0
+    );
+
+    const handleQuickAdd = (product: { id: string }) => {
+        if (!isAuthenticated) {
+            Alert.alert('Login required', 'Sign in to add items to your cart.', [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Login', onPress: () => navigation.navigate('CustomerLogin') },
+            ]);
+            return;
+        }
+        add({ productId: product.id, quantity: 1, variants: null }).catch(() =>
+            Alert.alert('Could not add', 'Please try again.')
+        );
+    };
 
     const renderHeader = () => (
         <View className="bg-white px-5 pb-6 rounded-b-[40px] shadow-sm z-10" style={{ paddingTop: insets.top }}>
@@ -38,7 +64,10 @@ export default function CategoryDetailScreen() {
                     <Text className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Shop by Aisle</Text>
                     <Text className="text-gray-900 font-black text-xl">{category.name}</Text>
                 </View>
-                <TouchableOpacity className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center">
+                <TouchableOpacity
+                    onPress={() => goToCartTab(navigation)}
+                    className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center"
+                >
                     <MaterialCommunityIcons name="cart-outline" size={20} color="#111827" />
                 </TouchableOpacity>
             </View>
@@ -124,7 +153,11 @@ export default function CategoryDetailScreen() {
                                             </Text>
                                         </View>
                                     )}
-                                    <TouchableOpacity className="absolute bottom-3 right-3 bg-green-700 w-10 h-10 rounded-2xl items-center justify-center shadow-lg shadow-green-900/40">
+                                    <TouchableOpacity
+                                        onPress={() => handleQuickAdd(product)}
+                                        disabled={isAdding}
+                                        className="absolute bottom-3 right-3 bg-green-700 w-10 h-10 rounded-2xl items-center justify-center shadow-lg shadow-green-900/40"
+                                    >
                                         <MaterialCommunityIcons name="plus" size={24} color="white" />
                                     </TouchableOpacity>
                                 </View>
@@ -149,7 +182,7 @@ export default function CategoryDetailScreen() {
                 )}
             </ScrollView>
 
-            {/* Premium Professional-Grade Cart Bar */}
+            {cartCount > 0 && (
             <View 
                 className="absolute left-0 right-0 items-center z-50 px-5" 
                 style={{ bottom: Math.max(insets.bottom, 20) }}
@@ -158,25 +191,28 @@ export default function CategoryDetailScreen() {
                     className="bg-green-700 h-[70px] rounded-[30px] flex-row items-center px-6 shadow-2xl shadow-green-900/60 border border-white/10"
                     style={{ width: '100%', maxWidth: 550 }}
                     activeOpacity={0.9}
-                    onPress={() => navigation.navigate('Main', { screen: 'Cart' })}
+                    onPress={() => goToCartTab(navigation)}
                 >
                     <View className="bg-white rounded-2xl w-12 h-12 items-center justify-center mr-4 shadow-sm">
-                        <Text className="text-green-700 font-black text-lg">2</Text>
+                        <Text className="text-green-700 font-black text-lg">{cartCount}</Text>
                     </View>
                     
                     <View className="flex-1">
                         <Text className="text-white font-black text-lg tracking-tight">View your Cart</Text>
-                        <Text className="text-green-50/60 text-[10px] font-bold uppercase tracking-widest">2 Items in {category.name}</Text>
+                        <Text className="text-green-50/60 text-[10px] font-bold uppercase tracking-widest">
+                            {cartCount} {cartCount === 1 ? 'item' : 'items'}
+                        </Text>
                     </View>
 
                     <View className="h-10 w-[1.5px] bg-white/10 mx-4 rounded-full" />
                     
                     <View className="items-end">
-                        <Text className="text-white font-black text-lg">Rs. 450</Text>
+                        <Text className="text-white font-black text-lg">Rs. {cartTotal}</Text>
                         <Text className="text-green-50/60 text-[8px] font-bold uppercase">Estimated Total</Text>
                     </View>
                 </TouchableOpacity>
             </View>
+            )}
         </View>
     );
 }

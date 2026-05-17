@@ -10,11 +10,20 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Start the backend (from `backend/`) and seed demo catalog:
 
    ```bash
-   npx expo start
+   npm run dev
+   npx tsx prisma/seed.ts
    ```
+
+3. Start the app (physical device: set API URL in `.env` or use same Wi‑Fi as your PC):
+
+   ```bash
+   npx expo start -c
+   ```
+
+   Demo customer: `customer@demo.zimcart.com` / `Demo1234!`
 
 In the output, you'll find options to open the app in a
 

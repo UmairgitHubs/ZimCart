@@ -1,9 +1,13 @@
+export type UserRole = 'CUSTOMER' | 'ADMIN' | 'STORE_MANAGER' | 'RIDER';
+
 export interface User {
     id: string;
     name: string;
     email: string;
     phone?: string;
     avatar?: string;
+    role?: UserRole;
+    status?: 'ACTIVE' | 'INACTIVE' | 'BLOCKED';
     isPremium: boolean;
     notifications?: {
         emailEnabled: boolean;

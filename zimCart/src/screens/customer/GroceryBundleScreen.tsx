@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { goToCartTab } from '@/utils/navigation';
 
 const GROCERY_BUNDLES = [
     {
@@ -171,7 +172,7 @@ export default function GroceryBundleScreen() {
                                         <Text className="text-gray-400 text-xs font-bold line-through">{bundle.oldPrice}</Text>
                                     </View>
                                     <TouchableOpacity 
-                                        onPress={() => navigation.navigate('Main', { screen: 'Cart' })}
+                                        onPress={() => goToCartTab(navigation)}
                                         className="bg-green-700 px-6 py-3 rounded-2xl shadow-lg shadow-green-900/40"
                                         activeOpacity={0.8}
                                     >

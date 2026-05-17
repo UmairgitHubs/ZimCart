@@ -26,9 +26,8 @@ import { AddWasteModal } from "@/components/dashboard/waste/AddWasteModal";
 import { EditWasteModal } from "@/components/dashboard/waste/EditWasteModal";
 import { DeleteWasteModal } from "@/components/dashboard/waste/DeleteWasteModal";
 import { WasteLogEntry } from "@/types/waste";
-import { useInventory, useUpdateStock } from "@/hooks/useInventory";
-import { inventoryService } from "@/services/inventory.service";
-import { useQuery } from "@tanstack/react-query";
+import { useInventory } from "@/hooks/useInventory";
+import { useWasteLogs, useWasteMutations } from "@/hooks/useWasteLogs";
 
 export default function WasteLogPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -52,71 +51,16 @@ export default function WasteLogPage() {
     page: 1,
     limit: 200,
   });
-  const { mutateAsync: updateStock } = useUpdateStock();
   const inventoryItems = inventoryResponse?.data?.items || [];
+  const { create, update, remove } = useWasteMutations();
 
   const {
     data: wasteLogs = [],
     isLoading: logsLoading,
     refetch: refetchWasteLogs,
-  } = useQuery({
-    queryKey: ["waste-logs", inventoryItems.map((item: { id: string }) => item.id).join(",")],
-    enabled: inventoryItems.length > 0,
-    queryFn: async () => {
-      const rows = await Promise.all(
-        inventoryItems.map(async (item: any) => {
-          const res = await inventoryService.getInventoryHistory(item.id);
-          const history = (res?.data || []) as any[];
-          return history.map((h) => {
-            const meta = (h.metadata || {}) as { old?: number; new?: number };
-            const oldVal = Number(meta.old ?? 0);
-            const newVal = Number(meta.new ?? oldVal);
-            const delta = newVal - oldVal;
-            const isNegativeStockMove = delta < 0;
-            const text = `${h.event || ""} ${h.description || ""}`.toLowerCase();
-            const isWaste =
-              text.includes("waste") ||
-              text.includes("write-off") ||
-              text.includes("spoilage") ||
-              text.includes("expired") ||
-              text.includes("damaged") ||
-              text.includes("lost") ||
-              isNegativeStockMove;
-            if (!isWaste) return null;
-
-            const reasonText = `${h.description || ""} ${h.event || ""}`;
-            let reason: WasteLogEntry["reason"] = "Damaged";
-            if (/expired/i.test(reasonText)) reason = "Expired";
-            else if (/leak/i.test(reasonText)) reason = "Leaked";
-            else if (/spoil/i.test(reasonText)) reason = "Spoilage";
-            else if (/lost/i.test(reasonText)) reason = "Lost";
-
-            const quantity = Math.abs(delta) || 0;
-            const unitCost = Number(item.unitPrice || 0);
-            const entry: WasteLogEntry = {
-              id: h.id,
-              productId: item.id,
-              productName: item.productName,
-              sku: item.sku,
-              category: item.category,
-              quantity,
-              unitCost,
-              totalLoss: quantity * unitCost,
-              reason,
-              loggedBy: "System",
-              timestamp: h.createdAt,
-              notes: h.description || "",
-            };
-            return entry;
-          });
-        })
-      );
-
-      return rows
-        .flat()
-        .filter((x): x is WasteLogEntry => !!x)
-        .sort((a, b) => +new Date(b.timestamp) - +new Date(a.timestamp));
-    },
+  } = useWasteLogs({
+    search: searchTerm || undefined,
+    reason: activeReason,
   });
 
   const filteredLogs = useMemo(() => {
@@ -190,49 +134,37 @@ export default function WasteLogPage() {
 
   const handleAddConfirm = async (newLog: WasteLogEntry) => {
     const target = inventoryItems.find(
-      (item: any) =>
+      (item: { id: string; sku: string; productName: string }) =>
         item.sku.toLowerCase() === newLog.sku.toLowerCase() ||
         item.productName.toLowerCase() === newLog.productName.toLowerCase()
     );
     if (!target) {
       throw new Error("Product not found in inventory. Use exact SKU or product name.");
     }
-    const nextStock = Math.max(0, Number(target.currentStock) - Number(newLog.quantity));
-    await updateStock({
-      id: target.id,
-      currentStock: nextStock,
-      reason: `Waste Write-Off | Reason: ${newLog.reason} | Qty: ${newLog.quantity} | UnitCost: ${newLog.unitCost} | Notes: ${newLog.notes || "N/A"}`,
+    await create.mutateAsync({
+      productId: target.id,
+      quantity: newLog.quantity,
+      reason: newLog.reason,
+      unitCost: newLog.unitCost,
+      notes: newLog.notes,
     });
     await refetchWasteLogs();
   };
 
   const handleEditConfirm = async (updatedLog: WasteLogEntry) => {
     if (!selectedLog) throw new Error("No waste entry selected.");
-    const target = inventoryItems.find((item: any) => item.id === updatedLog.productId);
-    if (!target) throw new Error("Linked product not found.");
-
-    const oldQty = Number(selectedLog.quantity || 0);
-    const newQty = Number(updatedLog.quantity || 0);
-    const delta = newQty - oldQty;
-    const current = Number(target.currentStock || 0);
-    const nextStock = Math.max(0, current - delta);
-    await updateStock({
-      id: target.id,
-      currentStock: nextStock,
-      reason: `Waste Correction | Ref: ${selectedLog.id} | OldQty: ${oldQty} | NewQty: ${newQty} | Reason: ${updatedLog.reason} | Notes: ${updatedLog.notes || "N/A"}`,
+    await update.mutateAsync({
+      id: selectedLog.id,
+      quantity: updatedLog.quantity,
+      reason: updatedLog.reason,
+      notes: updatedLog.notes,
+      unitCost: updatedLog.unitCost,
     });
     await refetchWasteLogs();
   };
 
   const handleDeleteConfirm = async (log: WasteLogEntry) => {
-    const target = inventoryItems.find((item: any) => item.id === log.productId);
-    if (!target) throw new Error("Linked product not found.");
-    const nextStock = Number(target.currentStock || 0) + Number(log.quantity || 0);
-    await updateStock({
-      id: target.id,
-      currentStock: nextStock,
-      reason: `Waste Reversal | Ref: ${log.id} | RestoredQty: ${log.quantity} | PreviousReason: ${log.reason}`,
-    });
+    await remove.mutateAsync(log.id);
     await refetchWasteLogs();
   };
 

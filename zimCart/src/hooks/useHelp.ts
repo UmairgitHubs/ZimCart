@@ -8,9 +8,22 @@ export const useFAQs = (category?: string) => {
     });
 };
 
+export const useMyTickets = () => {
+    return useQuery({
+        queryKey: ['my-tickets'],
+        queryFn: () => helpApi.listTickets(),
+    });
+};
+
 export const useSupportTicket = () => {
+    const queryClient = useQueryClient();
+
     const createTicket = useMutation({
-        mutationFn: (data: { subject: string, message: string }) => helpApi.createTicket(data.subject, data.message),
+        mutationFn: (data: { subject: string; message: string }) =>
+            helpApi.createTicket(data.subject, data.message),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['my-tickets'] });
+        },
     });
 
     return {

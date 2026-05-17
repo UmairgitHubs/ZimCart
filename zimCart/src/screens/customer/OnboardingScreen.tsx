@@ -9,6 +9,7 @@ import {
   NativeSyntheticEvent,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { setCustomerOnboardingComplete } from "@/utils/onboardingStorage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -105,6 +106,11 @@ export default function OnboardingScreen() {
     setCurrentIndex(index);
   };
 
+  const finishOnboarding = async () => {
+    await setCustomerOnboardingComplete();
+    navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+  };
+
   const handleNext = () => {
     if (currentIndex < slides.length - 1) {
       flatListRef.current?.scrollToIndex({
@@ -112,13 +118,12 @@ export default function OnboardingScreen() {
         animated: true,
       });
     } else {
-      // Navigate to Home Hub
-      navigation.navigate('Main');
+      finishOnboarding();
     }
   };
 
   const handleSkip = () => {
-    navigation.navigate('Main');
+    finishOnboarding();
   };
 
   return (

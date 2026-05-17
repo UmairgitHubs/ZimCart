@@ -1,0 +1,3 @@
+-- Mart notification & session preferences are stored in Store.openingHours JSON
+-- (_preferences.martAlertPreferences, _preferences.sessionTimeoutMinutes).
+-- No relational columns were added for this feature.

@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { goToCartTab } from '@/utils/navigation';
 
 const FLASH_COLLECTION = [
     {
@@ -210,7 +211,7 @@ export default function FashionWeekScreen() {
                                         <Text className="text-gray-300 text-[10px] line-through">{item.oldPrice}</Text>
                                     </View>
                                     <TouchableOpacity 
-                                        onPress={() => navigation.navigate('Main', { screen: 'Cart' })}
+                                        onPress={() => goToCartTab(navigation)}
                                         className="bg-gray-900 w-9 h-9 rounded-xl items-center justify-center shadow-md"
                                     >
                                         <MaterialCommunityIcons name="cart-plus" size={16} color="white" />

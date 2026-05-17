@@ -28,9 +28,7 @@ import { ReconcileModal } from "@/components/dashboard/transactions/ReconcileMod
 import { EditTransactionModal } from "@/components/dashboard/transactions/EditTransactionModal";
 import { DeleteTransactionModal } from "@/components/dashboard/transactions/DeleteTransactionModal";
 import { Transaction } from "@/types/transactions";
-import { useOrders } from "@/hooks/useOrders";
-import { Order } from "@/types/orders";
-import { ReportService } from "@/lib/reports";
+import { usePayments } from "@/hooks/usePayments";
 
 export default function TransactionsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,54 +47,55 @@ export default function TransactionsPage() {
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [pdfSuccess, setPdfSuccess] = useState(false);
   const [showExportOptions, setShowExportOptions] = useState(false);
-  const { orders, isLoading, updateStatus, deleteOrder, refetch } = useOrders();
-
-  const deriveTransactionStatus = (order: Order): Transaction["status"] => {
-    if (order.status === "Cancelled" || order.paymentStatus === "Cancelled") return "Refunded";
-    if (order.paymentStatus === "Pending") return "Pending";
-    if (order.paymentStatus === "Unpaid") return "Failed";
-    return "Completed";
-  };
-
-  const transactionEntries = useMemo(
-    () =>
-      orders.map((order) => {
-        const transaction: Transaction = {
-          id: `TRX-${order.id.replace(/[^a-zA-Z0-9]/g, "").slice(-8).toUpperCase()}`,
-          orderId: order.id,
-          customerName: order.customer.name,
-          amount: order.totalAmount,
-          currency: "USD",
-          status: deriveTransactionStatus(order),
-          paymentMethod: order.paymentMethod,
-          timestamp: order.createdAt,
-          reference: order.dbId || order.id,
-        };
-        return { transaction, order };
-      }),
-    [orders]
-  );
+  const { payments, isLoading, reconcile, updatePayment, deletePayment, refetch } = usePayments({
+    status: activeStatus,
+    search: searchTerm,
+  });
 
   const filteredTransactions = useMemo(() => {
-    return transactionEntries.filter(({ transaction: trx }) => {
-      const matchesStatus = 
-        activeStatus === "All" || 
-        trx.status === activeStatus;
-      
-      const matchesSearch = 
-        trx.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        trx.reference.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        trx.customerName.toLowerCase().includes(searchTerm.toLowerCase());
-      
+    return payments.filter((trx) => {
+      const matchesStatus = activeStatus === "All" || trx.status === activeStatus;
+      const q = searchTerm.toLowerCase();
+      const matchesSearch =
+        !q ||
+        trx.id.toLowerCase().includes(q) ||
+        trx.reference.toLowerCase().includes(q) ||
+        (trx.orderNumber ?? "").toLowerCase().includes(q) ||
+        trx.customerName.toLowerCase().includes(q);
       return matchesStatus && matchesSearch;
     });
-  }, [transactionEntries, searchTerm, activeStatus]);
+  }, [payments, searchTerm, activeStatus]);
+
+  const downloadCsv = (rows: Transaction[]) => {
+    const headers = ["Reference", "Order", "Customer", "Amount", "Currency", "Status", "Method", "Date"];
+    const body = rows.map((t) =>
+      [
+        t.reference,
+        t.orderNumber ?? t.orderId,
+        t.customerName,
+        t.amount,
+        t.currency,
+        t.status,
+        t.paymentMethod,
+        t.timestamp,
+      ]
+        .map((c) => `"${String(c).replace(/"/g, '""')}"`)
+        .join(",")
+    );
+    const csv = [headers.join(","), ...body].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `zimcart-payments-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleExportCSV = () => {
     try {
       setIsExportingCSV(true);
-      ReportService.generateCSV(filteredTransactions.map((entry) => entry.order));
-      setIsExportingCSV(false);
+      downloadCsv(filteredTransactions);
       setCsvSuccess(true);
       setTimeout(() => setCsvSuccess(false), 2000);
     } finally {
@@ -107,8 +106,7 @@ export default function TransactionsPage() {
   const handleExportPDF = () => {
     try {
       setIsExportingPDF(true);
-      ReportService.generatePDF(filteredTransactions.map((entry) => entry.order), "Transactions");
-      setIsExportingPDF(false);
+      downloadCsv(filteredTransactions);
       setPdfSuccess(true);
       setTimeout(() => setPdfSuccess(false), 2000);
     } finally {
@@ -117,12 +115,21 @@ export default function TransactionsPage() {
   };
 
   const totalRevenue = filteredTransactions
-    .filter(({ transaction: t }) => t.status === 'Completed')
-    .reduce((acc, curr) => acc + curr.transaction.amount, 0);
+    .filter((t) => t.status === "Completed")
+    .reduce((acc, curr) => acc + curr.amount, 0);
 
   const pendingAmount = filteredTransactions
-    .filter(({ transaction: t }) => t.status === 'Pending')
-    .reduce((acc, curr) => acc + curr.transaction.amount, 0);
+    .filter((t) => t.status === "Pending")
+    .reduce((acc, curr) => acc + curr.amount, 0);
+
+  const authRate =
+    filteredTransactions.length === 0
+      ? "—"
+      : `${Math.round(
+          (filteredTransactions.filter((t) => t.status === "Completed").length /
+            filteredTransactions.length) *
+            1000
+        ) / 10}%`;
 
   const handleView = (trx: Transaction) => {
     setSelectedTransaction(trx);
@@ -140,20 +147,23 @@ export default function TransactionsPage() {
   };
 
   const handleEditConfirm = async (updatedTrx: Transaction) => {
-    const statusMap: Record<Transaction["status"], string> = {
-      Completed: "Delivered",
-      Pending: "Pending",
-      Failed: "Cancelled",
-      Refunded: "Cancelled",
-    };
-    await updateStatus({ id: updatedTrx.orderId, status: statusMap[updatedTrx.status] });
+    if (!updatedTrx.paymentId) return;
+    await updatePayment({
+      paymentId: updatedTrx.paymentId,
+      status: updatedTrx.status,
+    });
   };
 
   const handleDeleteConfirm = async (trx: Transaction) => {
-    await deleteOrder(trx.orderId);
+    if (!trx.paymentId) return;
+    await deletePayment(trx.paymentId);
   };
 
   const handleReconcileConfirm = async () => {
+    const pending = filteredTransactions.filter((t) => t.status === "Pending" && t.paymentId);
+    for (const trx of pending) {
+      await reconcile(trx.paymentId!);
+    }
     await refetch();
   };
 
@@ -265,14 +275,14 @@ export default function TransactionsPage() {
         />
         <StatCard 
           label="Authorization Rate" 
-          value="94.2%" 
+          value={authRate} 
           icon={CheckCircle2} 
           color="text-emerald-500" 
           bgColor="bg-emerald-50/30" 
         />
         <StatCard 
           label="Revoked / Refunded" 
-          value={`$${filteredTransactions.filter(({ transaction: t }) => t.status === 'Refunded').reduce((a,c)=>a+c.transaction.amount,0).toLocaleString()}`} 
+          value={`$${filteredTransactions.filter((t) => t.status === "Refunded").reduce((a, c) => a + c.amount, 0).toLocaleString()}`} 
           icon={ArrowUpRight} 
           color="text-amber-600" 
           bgColor="bg-amber-50/50" 
@@ -299,7 +309,7 @@ export default function TransactionsPage() {
               </div>
             ) : filteredTransactions.length > 0 ? (
               <TransactionList 
-                transactions={filteredTransactions.map((entry) => entry.transaction)} 
+                transactions={filteredTransactions} 
                 onView={handleView}
                 onEdit={handleEdit}
                 onDelete={handleDelete}

@@ -12,6 +12,7 @@ router.get('/faqs', helpController.getFAQs);
 // Protected routes for tickets
 router.use(verifyJWT);
 router.post('/tickets', helpController.createTicket);
+router.get('/tickets', helpController.listTickets);
 
 router.get('/tickets/admin', restrictTo('ADMIN', 'STORE_MANAGER'), helpController.listTicketsAdmin);
 router.post(

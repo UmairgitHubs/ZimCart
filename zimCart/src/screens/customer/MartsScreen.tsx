@@ -6,6 +6,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { goToCartTab } from '@/utils/navigation';
 import { useMarts } from '@/hooks/useMarketplace';
 import LargeMartCard from '@/components/customer/cards/LargeMartCard';
 import ModernMartCard from '@/components/customer/cards/ModernMartCard';
@@ -173,7 +174,7 @@ export default function MartsScreen() {
                     className="bg-green-700 h-[70px] rounded-[30px] flex-row items-center px-6 shadow-2xl shadow-green-900/60 border border-white/10"
                     style={{ width: '100%', maxWidth: 550 }}
                     activeOpacity={0.9}
-                    onPress={() => navigation.navigate('Main', { screen: 'Cart' })}
+                    onPress={() => goToCartTab(navigation)}
                 >
                     <View className="bg-white rounded-2xl w-12 h-12 items-center justify-center mr-4 shadow-sm">
                         <Text className="text-green-700 font-black text-lg">2</Text>

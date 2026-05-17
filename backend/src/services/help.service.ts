@@ -48,6 +48,21 @@ export const createTicket = async (userId: string, subject: string, message: str
   });
 };
 
+export async function listTicketsForCustomer(userId: string) {
+  return prisma.supportTicket.findMany({
+    where: { userId },
+    orderBy: { updatedAt: 'desc' },
+    select: {
+      id: true,
+      subject: true,
+      message: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
+
 export async function listTicketsForStaff(
   staff: StaffUser,
   opts?: { search?: string; status?: TicketStatus }

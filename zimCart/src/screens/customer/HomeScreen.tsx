@@ -17,16 +17,7 @@ import ShopCategoryCard from '@/components/customer/cards/ShopCategoryCard';
 import LargeMartCard from '@/components/customer/cards/LargeMartCard';
 
 // Data
-import { 
-    QUICK_LINKS, 
-    CATEGORY_CIRCLES, 
-    PROMO_CARDS, 
-    DAILY_DEALS, 
-    TOP_BRANDS, 
-    AISLES, 
-    FRESH_ARRIVALS,
-    SHOP_CATEGORIES
-} from '@/data/mock/home';
+import { QUICK_LINKS, CATEGORY_CIRCLES, PROMO_CARDS } from '@/data/mock/home';
 
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -39,7 +30,18 @@ export default function HomeScreen() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { data: marts = [], isLoading } = useMarts();
   const { data: dealsData, isLoading: isLoadingDeals } = useProducts({ isDeal: true });
+  const { data: freshData, isLoading: isLoadingFresh } = useProducts({ limit: 4 });
   const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
+
+  const categoryList = Array.isArray(categories) ? categories : (categories as { items?: unknown[] })?.items ?? [];
+  const categoryCircles =
+    categoryList.length > 0
+      ? categoryList.slice(0, 6).map((cat: { id: string; name: string; image?: string }) => ({
+          id: cat.id,
+          name: cat.name,
+          image: cat.image || 'https://cdn-icons-png.flaticon.com/512/3724/3724720.png',
+        }))
+      : CATEGORY_CIRCLES;
 
   return (
     <View className="flex-1 bg-white">
@@ -68,12 +70,18 @@ export default function HomeScreen() {
              
              {/* Category Circles */}
              <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-8 -mx-4 px-4">
-                 {CATEGORY_CIRCLES.map(item => (
+                 {categoryCircles.map((item: { id: string; name: string; image: string }) => (
                     <CategoryCircle 
                         key={item.id} 
                         item={item} 
                         onPress={() => {
-                            if (item.name === 'Grocery') navigation.navigate('GroceryTab');
+                            const fromApi = categoryList.some((c: { id: string }) => c.id === item.id);
+                            if (fromApi) {
+                              const cat = categoryList.find((c: { id: string }) => c.id === item.id);
+                              if (cat) navigation.navigate('CategoryDetail', { category: cat });
+                              return;
+                            }
+                            if (item.name === 'Grocery') navigation.navigate('Main', { screen: 'GroceryTab' });
                             if (item.name === 'Tech') navigation.navigate('Tech');
                             if (item.name === 'Fashion') navigation.navigate('Fashion');
                             if (item.name === 'Beauty') navigation.navigate('Beauty');
@@ -224,13 +232,29 @@ export default function HomeScreen() {
              {/* Fresh Arrivals */}
              <View className="mb-8">
                  <Text className="text-xl font-black text-gray-900 mb-4 px-1">Fresh Arrivals</Text>
-                 {FRESH_ARRIVALS.map(item => (
-                    <FreshArrivalCard 
-                        key={item.id} 
-                        item={item} 
-                        onPress={() => navigation.navigate('ProductDetail', { product: item })}
-                    />
-                 ))}
+                 {isLoadingFresh ? (
+                     <ActivityIndicator color="#2e7d32" className="py-6" />
+                 ) : (
+                     <>
+                         {freshData?.products?.map((item: { id: string; name: string; price: number; discountPrice?: number; images?: string[]; store?: { name?: string; deliveryTime?: string } }) => (
+                            <FreshArrivalCard 
+                                key={item.id} 
+                                item={{
+                                    id: item.id,
+                                    name: item.name,
+                                    store: item.store?.name || 'ZimCart',
+                                    price: `Rs. ${item.discountPrice ?? item.price}`,
+                                    image: item.images?.[0] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=400&auto=format&fit=crop',
+                                    time: item.store?.deliveryTime || '30-45 min',
+                                }} 
+                                onPress={() => navigation.navigate('ProductDetail', { product: item })}
+                            />
+                         ))}
+                         {(!freshData?.products || freshData.products.length === 0) && (
+                             <Text className="text-gray-400 font-bold px-1">No new products yet</Text>
+                         )}
+                     </>
+                 )}
              </View>
 
              {/* Shops by Category */}

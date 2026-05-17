@@ -1,46 +1,50 @@
-import { useState, useEffect, useRef } from 'react';
-import * as Notifications from 'expo-notifications';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { registerForPushNotificationsAsync, saveTokenToBackend } from '../services/notificationService';
+import {
+  registerForPushNotificationsAsync,
+  saveTokenToBackend,
+  addNotificationListeners,
+  isRemotePushAvailable,
+} from '../services/notificationService';
 
 export function useNotifications() {
   const { token } = useSelector((state: RootState) => state.auth);
   const [expoPushToken, setExpoPushToken] = useState<string | undefined>('');
-  const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
-  const notificationListener = useRef<any>(null);
-  const responseListener = useRef<any>(null);
+  const [notification, setNotification] = useState<unknown>(undefined);
 
   useEffect(() => {
-    // 1. Register for tokens
-    registerForPushNotificationsAsync().then(pushToken => {
+    let removeListeners: (() => void) | undefined;
+    let cancelled = false;
+
+    const setup = async () => {
+      const pushToken = await registerForPushNotificationsAsync();
+      if (cancelled) return;
+
       setExpoPushToken(pushToken);
-      
-      // ONLY sync to backend if we have a token AND the user is logged in
       if (pushToken && token) {
-        saveTokenToBackend(pushToken);
+        await saveTokenToBackend(pushToken);
       }
-    });
 
-    // 2. Listen for incoming notifications while app is foregrounded
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
+      if (!isRemotePushAvailable()) return;
 
-    // 3. Listen for interactions (when user taps the notification)
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log('Notification Tapped:', response);
-    });
+      removeListeners = await addNotificationListeners({
+        onReceived: (n) => setNotification(n),
+        onResponse: (response) => {
+          if (__DEV__) {
+            console.log('Notification tapped:', response);
+          }
+        },
+      });
+    };
+
+    setup();
 
     return () => {
-      if (notificationListener.current) {
-        notificationListener.current.remove();
-      }
-      if (responseListener.current) {
-        responseListener.current.remove();
-      }
+      cancelled = true;
+      removeListeners?.();
     };
-  }, [token]); // Re-run whenever auth token changes
+  }, [token]);
 
   return {
     expoPushToken,
